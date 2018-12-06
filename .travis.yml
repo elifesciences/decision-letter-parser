@@ -5,7 +5,8 @@ matrix:
       env: TOXENV=py27
     - python: 3.5
       env: TOXENV=py35
-# command to install dependencies
+before_install:
+  - sudo apt-get install pandoc
 install: ./travis-install.sh
 script: ./travis-test.sh
 after_success: coveralls
