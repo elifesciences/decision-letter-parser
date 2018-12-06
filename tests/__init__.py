@@ -31,7 +31,7 @@ def read_fixture(filename, folder_name=''):
             'expected property not found in module {module_name}'.format(module_name=module_name))
         return mod.EXPECTED
     else:
-        with open(full_filename, 'rb') as file_fp:
+        with open(full_filename, 'r') as file_fp:
             return file_fp.read()
 
 def data_path(file_name):
