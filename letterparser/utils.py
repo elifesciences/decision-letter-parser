@@ -1,7 +1,6 @@
 # coding=utf-8
 
 "utility helper functions"
-import sys
 
 
 def unicode_encode(string):
