@@ -6,9 +6,10 @@ matrix:
       env: TOXENV=py27
     - python: 3.5
       env: TOXENV=py35
+services:
+  - docker
 before_install:
-  - wget https://github.com/jgm/pandoc/releases/download/2.5/pandoc-2.5-1-amd64.deb
-  - sudo dpkg -i pandoc-2.5-1-amd64.deb
+  - docker pull knsit/pandoc:v2.7
 install: ./travis-install.sh
 script: ./travis-test.sh
 after_success: coveralls
