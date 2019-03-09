@@ -3,14 +3,15 @@ from setuptools import setup
 import letterparser
 
 with open('README.md') as fp:
-    readme = fp.read()
+    README = fp.read()
 
-setup(name='letterparser',
+setup(
+    name='letterparser',
     version=letterparser.__version__,
     description='Decision letter and author response document parser.',
-    long_description=readme,
+    long_description=README,
     packages=['letterparser'],
-    license = 'MIT',
+    license='MIT',
     install_requires=[
         "docker"
     ],
