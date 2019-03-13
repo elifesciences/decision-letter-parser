@@ -1,6 +1,17 @@
 # coding=utf-8
+import os
 
 """utility helper functions"""
+
+
+def get_file_name_path(file_name):
+    """return the folder path to a file excluding the file name itself"""
+    return os.sep.join(file_name.split(os.sep)[0:-1])
+
+
+def get_file_name_file(file_name):
+    """return the file name only removing the folder path preceeding it"""
+    return file_name.split(os.sep)[-1]
 
 
 def unicode_encode(string):
