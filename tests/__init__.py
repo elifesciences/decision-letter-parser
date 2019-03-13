@@ -7,8 +7,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
 def read_fixture(filename):
     """read a file from the fixtures directory"""
-    full_filename = data_path(filename)
-    with open(full_filename, 'r') as file_fp:
+    with open(data_path(filename), 'r') as file_fp:
         return file_fp.read()
 
 
