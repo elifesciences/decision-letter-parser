@@ -1,6 +1,6 @@
 # coding=utf-8
 
-"utility helper functions"
+"""utility helper functions"""
 
 
 def unicode_encode(string):
@@ -15,7 +15,7 @@ def unicode_encode(string):
 
 
 def unicode_decode(string):
-    "try to decode from utf8"
+    """try to decode from utf8"""
     try:
         string = string.decode('utf8')
     except (UnicodeEncodeError, AttributeError):

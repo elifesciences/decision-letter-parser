@@ -1,4 +1,4 @@
-"helper functions for running tests"
+"""helper functions for running tests"""
 import os
 import importlib
 
@@ -6,25 +6,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
 
 def fixture_path_parts(path_parts):
-    "extract non-empty values from the path folders"
+    """extract non-empty values from the path folders"""
     return [part for part in path_parts if part is not None and part != '']
 
 
 def fixture_module_name(filename, folder_name=''):
-    "concatenate a module name for importing for the fixture"
+    """concatenate a module name for importing for the fixture"""
     return '.'.join(fixture_path_parts(
         ["tests", "fixtures", folder_name, filename.rstrip('.py')]))
 
 
 def fixture_file(filename, folder_name=''):
-    "return the path of a file fixture to be read"
+    """return the path of a file fixture to be read"""
     if filename is None:
         return None
     return os.path.join(BASE_DIR, "tests", "fixtures", folder_name, filename)
 
 
 def read_fixture(filename, folder_name=''):
-    "read a file from the fixtures directory"
+    """read a file from the fixtures directory"""
     full_filename = fixture_file(filename, folder_name)
     if full_filename.endswith('.py'):
         # import the fixture and return the value of expected
@@ -40,5 +40,5 @@ def read_fixture(filename, folder_name=''):
 
 
 def data_path(file_name):
-    "path for a file in the test_data directory"
+    """path for a file in the test_data directory"""
     return os.path.join(BASE_DIR, 'tests', 'test_data', file_name)

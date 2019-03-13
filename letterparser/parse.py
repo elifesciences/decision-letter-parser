@@ -31,7 +31,7 @@ def call_pandoc(file_name, output_format="jats"):
 
 
 def raw_jats(file_name, root_tag="root"):
-    "convert file content to JATS"
+    """convert file content to JATS"""
     jats_content = ""
     output = call_pandoc(file_name)
     jats_content = "<%s>%s</%s>" % (root_tag, unicode_encode(unicode_decode(output)), root_tag)
