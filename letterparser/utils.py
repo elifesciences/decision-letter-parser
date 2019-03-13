@@ -1,8 +1,6 @@
 # coding=utf-8
 import os
 
-"""utility helper functions"""
-
 
 def get_file_name_path(file_name):
     """return the folder path to a file excluding the file name itself"""
