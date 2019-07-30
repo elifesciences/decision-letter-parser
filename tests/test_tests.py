@@ -15,7 +15,3 @@ class TestTests(unittest.TestCase):
     def test_read_fixture(self):
         filename = 'true.py'
         self.assertTrue(read_fixture(filename))
-
-
-if __name__ == '__main__':
-    unittest.main()

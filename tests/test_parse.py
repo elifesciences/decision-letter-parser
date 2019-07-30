@@ -12,10 +12,4 @@ class TestParse(unittest.TestCase):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('raw_jats_dutzler_39122.xml')
         jats_content = parse.raw_jats(file_name)
-        print(jats_content)
         self.assertEqual(jats_content, expected)
-        #self.assertTrue(False)
-
-
-if __name__ == '__main__':
-    unittest.main()
