@@ -21,9 +21,15 @@ class TestParse(unittest.TestCase):
         parse.sections(jats_content)
         self.assertEqual(jats_content, expected)
 
+    def test_best_jats(self):
+        file_name = data_path('Dutzler 39122 edit.docx')
+        expected = read_fixture('best_jats_dutzler_39122.xml')
+        jats_content = parse.best_jats(file_name)
+        self.assertEqual(jats_content, expected)
+
     def test_sections(self):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('dutzler_39122_sections.py')
-        jats_content = parse.clean_jats(file_name)
+        jats_content = parse.best_jats(file_name)
         sections = parse.sections(jats_content)
         self.assertEqual(sections, expected)
