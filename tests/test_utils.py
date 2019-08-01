@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import unittest
 from ddt import ddt, data
 from letterparser import utils
