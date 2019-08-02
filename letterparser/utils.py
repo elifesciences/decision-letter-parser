@@ -12,6 +12,11 @@ def unicode_encode(string):
     return string
 
 
+def remove_non_breaking_space(string):
+    """replace non breaking space characters"""
+    return string.replace("\xc2\xa0", "").replace("\xa0", "")
+
+
 def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
     if line_one is None or (line_one.endswith('>') and line_two.startswith('<')):

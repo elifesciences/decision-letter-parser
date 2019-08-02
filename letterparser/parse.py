@@ -22,6 +22,7 @@ def clean_jats(file_name, root_tag="root"):
     jats_content = ""
     raw_jats_content = raw_jats(file_name, root_tag)
     jats_content = utils.collapse_newlines(raw_jats_content)
+    jats_content = utils.remove_non_breaking_space(jats_content)
     return jats_content
 
 
