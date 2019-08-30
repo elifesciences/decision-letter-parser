@@ -86,9 +86,10 @@ def sections(jats_content, root_tag="root", section_map=None):
         portion_section_type = section_type(portion, section_map)
         # populate the section
         section = {portion_section_type: portion}
-        # append it
-        sections.append(section)
-        # set for next interation
+        # append it if not empty
+        if portion:
+            sections.append(section)
+        # set for next iteration
         substring_start = string_index
 
     return sections
