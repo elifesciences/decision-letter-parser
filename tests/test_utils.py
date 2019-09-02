@@ -6,6 +6,51 @@ from letterparser import utils
 
 
 @ddt
+class TestRemoveStrike(unittest.TestCase):
+
+    @data(
+        {
+            "comment": "None value",
+            "string": None,
+            "expected": ""
+        },
+        {
+            "comment": "Basic string",
+            "string": "string",
+            "expected": "string"
+        },
+        {
+            "comment": "One strike tag",
+            "string": "This is <strike>not</strike> that.",
+            "expected": "This is that."
+        },
+        {
+            "comment": "Two strike tags",
+            "string": "This is <strike>really</strike> <strike>not</strike> that.",
+            "expected": "This is that."
+        },
+        {
+            "comment": "Strike tag at end of sentence",
+            "string": "This is really <strike>the end</strike>.",
+            "expected": "This is really."
+        },
+        {
+            "comment": "Strike tag at end of sentence",
+            "string": "<strike>Hmm...</strike> Just testing.",
+            "expected": "Just testing."
+        },
+        )
+    def test_remove_strike(self, test_data):
+        new_string = utils.remove_strike(test_data.get("string"))
+        self.assertEqual(
+            new_string, test_data.get("expected"),
+            "{value} does not equal {expected}, scenario {comment}".format(
+                value=new_string,
+                expected=test_data.get("expected"),
+                comment=test_data.get("comment")))
+
+
+@ddt
 class TestNewLineReplaceWith(unittest.TestCase):
 
     @data(

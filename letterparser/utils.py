@@ -17,6 +17,19 @@ def remove_non_breaking_space(string):
     return string.replace("\xc2\xa0", "").replace("\xa0", "")
 
 
+def remove_strike(string):
+    """replace strike tags and leading and tailing whitespace"""
+    if not string:
+        return ""
+    for match in re.finditer(r'\s*<strike>.*?</strike>\s*', string):
+        # replace with blank string unless flanked by spaces replace with a space char
+        replace_char = ""
+        if match.group(0).startswith(" ") and match.group(0).endswith(" "):
+            replace_char = " "
+        string = string.replace(match.group(0), replace_char)
+    return string
+
+
 def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
     if line_one is None or (line_one.endswith('>') and line_two.startswith('<')):

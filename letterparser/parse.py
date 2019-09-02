@@ -29,6 +29,7 @@ def clean_jats(file_name, root_tag="root"):
 def best_jats(file_name, root_tag="root"):
     """from file input, produce the best JATS output possible"""
     clean_jats_content = clean_jats(file_name, root_tag)
+    clean_jats_content = utils.remove_strike(clean_jats_content)
     jats_content = convert_break_tags(clean_jats_content, root_tag)
     # wrap in root_tag
     root_open_tag = "<" + root_tag + ">"
