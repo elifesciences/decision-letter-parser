@@ -30,6 +30,11 @@ class TestRemoveStrike(unittest.TestCase):
             "expected": "This is that."
         },
         {
+            "comment": "Strike tag around italic",
+            "string": "This is <strike><italic>really</italic></strike> that.",
+            "expected": "This is that."
+        },
+        {
             "comment": "Strike tag at end of sentence",
             "string": "This is really <strike>the end</strike>.",
             "expected": "This is really."
