@@ -1,0 +1,135 @@
+<root><p><bold>Decision letter</bold></p>
+<p>...</p>
+<p><bold>Author response</bold></p>
+<p><italic>...</italic></p>
+<p>&lt;Author response table 1 title/legend&gt;<bold>Author response
+table 1.</bold> Cell lines were plated at initial densities of 1000 or
+2000 cells per well of a 96-well plate. The following day, cells were
+treated with the indicated inhibitors at concentrations ranging from 10
+to 0.04 µM (0.5 to 0.002 µM for panobinostat). Cell viability was
+determined 7 days after treatment. Data for NSC 19630, ML-216 and
+panobinostat are representative IC<sub>50</sub> values from three
+experiments, NSC 617145 IC<sub>50</sub> values are from a single
+analysis.&lt;/Author response table 1 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th><bold>Tumor Type</bold></th>
+      <th><bold>MSS/MSI<break />status</bold></th>
+      <th><bold>Cell line</bold></th>
+      <th><bold>NSC 617145<break />IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>NSC 19630<break />IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>ML-216<break />IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>Panobinostat<break />IC<sub>50</sub> [µM]</bold></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CRC</td>
+      <td>MSS</td>
+      <td>SK-CO-1</td>
+      <td>7.09</td>
+      <td>3.11</td>
+      <td>&gt;10</td>
+      <td>0.011</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSS</td>
+      <td>SW480</td>
+      <td>2.14</td>
+      <td>3.32</td>
+      <td>&gt;10</td>
+      <td>0.028</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSS</td>
+      <td>SW480_wt_clone</td>
+      <td>1.83</td>
+      <td>4.09</td>
+      <td>&gt;10</td>
+      <td>0.018</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSS</td>
+      <td>SW480_WRN_KO_clone#1</td>
+      <td>1.73</td>
+      <td>2.64</td>
+      <td>&gt;10</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSS</td>
+      <td>SW480_WRN_KO_clone#2</td>
+      <td>1.38</td>
+      <td>3.73</td>
+      <td>&gt;10</td>
+      <td>0.022</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSI</td>
+      <td>HCT 116</td>
+      <td>8.87</td>
+      <td>4.99</td>
+      <td>4.40</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSI</td>
+      <td>RKO</td>
+      <td>&gt;10</td>
+      <td>6.39</td>
+      <td>&gt;10</td>
+      <td>0.044</td>
+    </tr>
+    <tr>
+      <td>Endometrial<break />carcinoma</td>
+      <td>MSS</td>
+      <td>MFE-280</td>
+      <td>4.54</td>
+      <td>3.38</td>
+      <td>5.71</td>
+      <td>0.009</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSI</td>
+      <td>HEC-265</td>
+      <td>7.74</td>
+      <td>6.80</td>
+      <td>&gt;10</td>
+      <td>0.021</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>MSI</td>
+      <td>ISHIKAWA</td>
+      <td>&gt;10</td>
+      <td>5.55</td>
+      <td>&gt;10</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>Non-transformed</td>
+      <td>MSS</td>
+      <td>hTERT-RPE-1</td>
+      <td>4.34</td>
+      <td>5.54</td>
+      <td>&gt;10</td>
+      <td>0.035</td>
+    </tr>
+  </tbody>
+</table>
+</root>
