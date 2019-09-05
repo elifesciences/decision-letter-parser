@@ -4,6 +4,7 @@ from letterparser import utils
 
 
 SECTION_MAP = {
+    "preamble": "<p><bold>Preamble</bold></p>",
     "decision_letter": "<p><bold>Decision letter</bold></p>",
     "author_response": "<p><bold>Author response</bold></p>"
 }
