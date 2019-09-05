@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 import pypandoc
 from letterparser import utils
 
@@ -47,7 +48,7 @@ def convert_break_tags(jats_content, root_tag="root"):
     break_section_map = {"": break_section_match}
     break_sections = sections(jats_content, root_tag, break_section_map)
     for i, break_section in enumerate(break_sections):
-        content = list(break_section.values())[0]
+        content = break_section.get("content")
         content = content.replace(break_section_match, "")
         if i != 0:
             converted_jats_content += "<p>"
@@ -87,7 +88,9 @@ def sections(jats_content, root_tag="root", section_map=None):
         # set the section type based on the match string
         portion_section_type = section_type(portion, section_map)
         # populate the section
-        section = {portion_section_type: portion}
+        section = OrderedDict()
+        section["section_type"] = portion_section_type
+        section["content"] = portion
         # append it if not empty
         if portion:
             sections.append(section)
