@@ -1,0 +1,90 @@
+<root><p><bold>Decision letter</bold></p>
+<p>...</p>
+<p><bold>Author response</bold></p>
+<p>...</p>
+<p>Secondly, we wanted to determine how small a sub-population of very
+stable binding we would be able to detect in our SMT imaging. We
+performed Monte Carlo simulations of CTCF binding using the Gillespie
+algorithm and the following assumptions:</p>
+<list list-type="bullet">
+  <list-item>
+    <p>Photobleaching is a Poisson process with a rate constant of 1/120
+    s.</p>
+  </list-item>
+  <list-item>
+    <p>Non-specific binding is a Poisson process with a residence time
+    of 1 s and 30% of all events are non-specific.</p>
+  </list-item>
+  <list-item>
+    <p>A very stable subpopulation binds as a Poisson process with a
+    residence time of 10 min and X % of all events are in this very
+    stable pool.</p>
+  </list-item>
+  <list-item>
+    <p>Specific binding is a Poisson process with a residence time of 1
+    min and 100% – 30% – X% of all events are specific.</p>
+  </list-item>
+</list>
+<p>...</p>
+<p>Second, although there is clearly at most a very small bias present
+in the practical case of our data, we also wanted to thoroughly consider
+the “ideal” case or thought excercise considered by the reviewer. As the
+reviewer suggested, we performed extensive Monte Carlo simulations
+following the Euler-Maruyama scheme to assess if there could be any bias
+coming from free molecules being over counted due to continuous
+re-appearance. For simplicity, we will continue with the numbers
+provided by the reviewer (e.g. 50% bound) and for unspecified numbers
+use what we find for CTCF in mESCs. Thus, we will assume the
+following:</p>
+<list list-type="bullet">
+  <list-item>
+    <p>50% of molecules are bound and 50% are in free 3D diffusion.</p>
+  </list-item>
+  <list-item>
+    <p>The free diffusion constant is the same as for Halo-mCTCF: 2.5
+    μm2/s.</p>
+  </list-item>
+  <list-item>
+    <p>For simplicity, we assume the nucleus is approximately a cube
+    with a side length of 8 μm. This assumption gives us an mESC nuclear
+    volume very similar to that calculated for an mES nucleus as an
+    ellipsoid (Chen et al., 2014). For purposes of our calculations, a
+    cuboid nucleus greatly simplifies our simulations. The particles
+    have to remain within this cube.</p>
+  </list-item>
+  <list-item>
+    <p>We assume the laser excitation beam thickness is 4 μm under
+    highly inclined and laminated optical sheet illumination which we
+    used for single-molecule tracking. This number is based on Tokunaga
+    et al., 2008. Thus, since the nucleus is modeled as a cube with a
+    diameter of 8 μm, half the nucleus is being illuminated. For
+    simplicity, we model the excitation beam as a step-function with
+    uniform photobleaching probability.</p>
+  </list-item>
+  <list-item>
+    <p>We assume that molecules photobleach with a first-order rate
+    constant of λ.</p>
+  </list-item>
+  <list-item>
+    <p>We will use our experimentally determined axial detection volume
+    of 700 nm (so just below 1/10 of the nucleus like the reviewer
+    suggested).</p>
+  </list-item>
+  <list-item>
+    <p>The 2D localization error is 35 nm as in our experiments.
+    Accordingly, the 1D localization error is 25 nm.</p>
+  </list-item>
+  <list-item>
+    <p>The time between frames, <inline-formula><alternatives>
+    <tex-math><![CDATA[\Delta\tau]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>Δ</mml:mi><mml:mi>τ</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>,
+    is 4.5 ms as in our experiments.</p>
+  </list-item>
+  <list-item>
+    <p>Since the rate of unbinding (~1 min) and the rate of re-binding
+    (~1 min) for CTCF is negligible at a 4.5 ms frame rate, we assume
+    molecules never shift between the free and bound states (in
+    practice, that they photobleach before they can shift).</p>
+  </list-item>
+</list>
+</root>
