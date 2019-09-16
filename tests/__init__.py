@@ -24,7 +24,7 @@ def fixture_file(filename, folder_name=''):
     return os.path.join(BASE_DIR, "tests", "fixtures", folder_name, filename)
 
 
-def read_fixture(filename, folder_name=''):
+def read_fixture(filename, folder_name='', mode='r'):
     "read a file from the fixtures directory"
     full_filename = fixture_file(filename, folder_name)
     if full_filename.endswith('.py'):
@@ -36,7 +36,7 @@ def read_fixture(filename, folder_name=''):
             'expected property not found in module {module_name}'.format(module_name=module_name))
         return mod.EXPECTED
     else:
-        with open(full_filename, 'r') as file_fp:
+        with open(full_filename, mode) as file_fp:
             return file_fp.read()
 
 

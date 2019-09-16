@@ -12,7 +12,9 @@ setup(name='letterparser',
     packages=['letterparser'],
     license = 'MIT',
     install_requires=[
-        "pypandoc"
+        "elifearticle",
+        "elifetools",
+        "pypandoc",
     ],
     url='https://github.com/elifesciences/decision-letter-parser',
     maintainer='eLife Sciences Publications Ltd.',
