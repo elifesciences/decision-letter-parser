@@ -76,6 +76,8 @@ def set_content_blocks(parent, content_blocks, level=1):
                 # add empty tags too
                 block_tag = SubElement(parent, block.block_type)
                 block_tag.text = block.content
+                for key, value in block.attr.items():
+                    block_tag.set(key, value)
         if block_tag is not None and block.content_blocks:
             # recursion
             set_content_blocks(block_tag, block.content_blocks, level+1)
