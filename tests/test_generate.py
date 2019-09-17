@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import unittest
+from xml.etree.ElementTree import Element
 from elifearticle.article import Article
 from letterparser import generate
 from letterparser.objects import ContentBlock
@@ -43,6 +44,15 @@ def simple_author_response():
         "p", "1) I am not sure that I understand ...."))
     sub_article.content_blocks.append(disp_quote_block)
     return sub_article
+
+
+class TestGenerateOutputXML(unittest.TestCase):
+
+    def test_output_xml(self):
+        """test non-pretty output of a simple ElementTree object"""
+        root = Element("root")
+        expected = b'<?xml version="1.0" encoding="utf-8"?><root/>'
+        self.assertEqual(generate.output_xml(root), expected)
 
 
 class TestGenerate(unittest.TestCase):
