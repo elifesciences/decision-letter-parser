@@ -2,31 +2,13 @@
 
 import unittest
 from xml.etree.ElementTree import Element
-from elifearticle.article import Article
 from letterparser import generate
 from letterparser.objects import ContentBlock
-from tests import data_path, read_fixture
-
-
-def base_sub_article(title, article_type, article_id):
-    sub_article = Article(None, title)
-    sub_article.article_type = article_type
-    sub_article.id = article_id
-    # dynamically set content_blocks until this property is added to the Article object properly
-    sub_article.content_blocks = []
-    return sub_article
-
-
-def base_decision_letter():
-    return base_sub_article("Decision letter", "decision-letter", "SA1",)
-
-
-def base_author_response():
-    return base_sub_article("Author response", "reply", "SA2")
+from tests import data_path, helpers, read_fixture
 
 
 def simple_decision_letter():
-    sub_article = base_decision_letter()
+    sub_article = helpers.base_decision_letter()
     preamble_block = ContentBlock("boxed-text")
     preamble_block.content_blocks.append(ContentBlock("p", "Preamble"))
     sub_article.content_blocks.append(preamble_block)
@@ -36,7 +18,7 @@ def simple_decision_letter():
 
 
 def simple_author_response():
-    sub_article = base_author_response()
+    sub_article = helpers.base_author_response()
     sub_article.content_blocks.append(ContentBlock("p", "Essential revisions:"))
     disp_quote_block = ContentBlock("disp-quote")
     disp_quote_block.attr["content-type"] = "editor-comment"
@@ -82,7 +64,7 @@ class TestGenerateMaxLevel(unittest.TestCase):
         max_level_original = generate.MAX_LEVEL
         generate.MAX_LEVEL = 1
         # add two levels of nested content
-        article = base_decision_letter()
+        article = helpers.base_decision_letter()
         parent_block = ContentBlock("p", "First level paragraph.")
         child_block = ContentBlock("p", "Second level paragraph.")
         parent_block.content_blocks.append(child_block)
