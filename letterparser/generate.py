@@ -35,6 +35,7 @@ def generate(articles, root_tag="root"):
     root = Element(root_tag)
     # set namespaces
     root.set('xmlns:mml', 'http://www.w3.org/1998/Math/MathML')
+    root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
     for article in articles:
         sub_article_tag = SubElement(root, "sub-article")
         set_if_value(sub_article_tag, "article-type", article.article_type)
