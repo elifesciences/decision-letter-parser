@@ -22,6 +22,15 @@ def unicode_encode(string):
     return string
 
 
+def unicode_decode(string):
+    "try to decode from utf8"
+    try:
+        string = string.decode('utf8')
+    except (UnicodeEncodeError, AttributeError):
+        pass
+    return string
+
+
 def remove_non_breaking_space(string):
     """replace non breaking space characters"""
     return string.replace("\xc2\xa0", "").replace("\xa0", "")
@@ -92,6 +101,7 @@ def append_to_parent_tag(parent, tag_name, original_string,
     tag_converted_string = etoolsutils.escape_ampersand(original_string)
     tag_converted_string = etoolsutils.escape_unmatched_angle_brackets(
         tag_converted_string, allowed_tags())
-    minidom_tag = xmlio.reparsed_tag(tag_name, tag_converted_string, namespaces, attributes_text)
+    minidom_tag = xmlio.reparsed_tag(
+        tag_name, unicode_decode(tag_converted_string), namespaces, attributes_text)
     xmlio.append_minidom_xml_to_elementtree_xml(
         parent, minidom_tag, attributes=attributes, child_attributes=True)
