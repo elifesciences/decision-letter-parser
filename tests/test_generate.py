@@ -63,3 +63,21 @@ class TestGenerateFromDocx(unittest.TestCase):
         file_name = data_path('Dutzler 39122 edit.docx')
         pretty_xml = generate.generate_xml_from_docx(file_name, pretty=True, indent="    ")
         self.assertIsNotNone(pretty_xml)
+
+
+class TestGenerateMaxLevel(unittest.TestCase):
+
+    def test_generate_max_level(self):
+        """test exceeding the MAX_LEVEL of nested content"""
+        max_level_original = generate.MAX_LEVEL
+        generate.MAX_LEVEL = 1
+        # add two levels of nested content
+        article = base_decision_letter()
+        parent_block = ContentBlock("p", "First level paragraph.")
+        child_block = ContentBlock("p", "Second level paragraph.")
+        parent_block.content_blocks.append(child_block)
+        article.content_blocks.append(parent_block)
+        articles = [article]
+        self.assertRaises(Exception, generate.generate, articles)
+        # reset the module MAX_LEVEL value
+        generate.MAX_LEVEL = max_level_original
