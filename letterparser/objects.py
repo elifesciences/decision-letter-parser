@@ -23,7 +23,7 @@ class ContentBlock(object):
         """tag attributes formatted as a string"""
         string = ''
         if self.attr:
-            for key, value in self.attr.items():
+            for key, value in sorted(self.attr.items()):
                 attr = '%s="%s"' % (
                     key, etoolsutils.escape_ampersand(value).replace('"', '&quot;'))
                 string = ' '.join([string, attr])
