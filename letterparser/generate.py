@@ -66,7 +66,8 @@ def set_content_blocks(parent, content_blocks, level=1):
         raise Exception('Maximum level of nested content blocks reached')
     for block in content_blocks:
         block_tag = None
-        if block.block_type in ["boxed-text", "disp-formula", "disp-quote", "list", "p"]:
+        if block.block_type in ["boxed-text", "disp-formula", "disp-quote", "fig",
+                                "list", "media", "p", "table-wrap"]:
             # retain standard tag attributes as well as any specific ones from the block object
             if block.content:
                 utils.append_to_parent_tag(

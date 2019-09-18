@@ -92,6 +92,15 @@ def allowed_tags():
         '<ext-link', '</ext-link>',
         '<list', '</list>',
         '<list-item', '</list-item>',
+        '<label>', '</label>',
+        '<caption>', '</caption>',
+        '<graphic', '</graphic>',
+        '<table', '</table>',
+        '<thead>', '</thead>',
+        '<tbody>', '</tbody>',
+        '<tr>', '</tr>',
+        '<th>', '</th>',
+        '<td', '</td>',
     )
 
 
