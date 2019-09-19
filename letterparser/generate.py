@@ -54,8 +54,8 @@ def generate(articles, root_tag="root"):
 def id_prefix(tag_name):
     """return the id attribute prefix for the tag name"""
     id_prefix_map = {
-        "mml:math": "m",
-        "disp-formula": "equ",
+        "mml:math": "respm",
+        "disp-formula": "respequ",
         "fig": "respfig",
         "table-wrap": "resptable",
         "media": "respvideo"

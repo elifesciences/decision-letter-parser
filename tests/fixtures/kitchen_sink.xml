@@ -106,7 +106,7 @@
             <p>
                 Adding some MathML to the sub-article.
                 <inline-formula>
-                    <mml:math id="m1">
+                    <mml:math id="respm1">
                         <mml:mrow>
                             <mml:munder>
                                 <mml:mo/>
@@ -129,8 +129,8 @@
             </p>
             <p>
                 May also contain a formula as a block
-                <disp-formula id="equ1">
-                    <mml:math id="m2" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+                <disp-formula id="respequ1">
+                    <mml:math id="respm2" xmlns:mml="http://www.w3.org/1998/Math/MathML">
                         <mml:mrow>
                             <mml:mi>ϕ</mml:mi>
                             <mml:mo>=</mml:mo>
