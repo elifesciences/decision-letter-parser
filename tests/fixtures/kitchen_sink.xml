@@ -2,6 +2,7 @@
 <root xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
     <sub-article article-type="decision-letter" id="SA1">
         <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.DL</article-id>
             <title-group>
                 <article-title>Decision letter</article-title>
             </title-group>
@@ -21,6 +22,7 @@
     </sub-article>
     <sub-article article-type="reply" id="SA2">
         <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.AR</article-id>
             <title-group>
                 <article-title>Author response</article-title>
             </title-group>

@@ -74,11 +74,14 @@ def set_id_attributes(root, tag_name):
 
 def set_front_stub(parent, article):
     front_stub_tag = SubElement(parent, "front-stub")
+    if article.doi:
+        doi_tag = SubElement(front_stub_tag, "article-id")
+        doi_tag.set("pub-id-type", "doi")
+        doi_tag.text = article.doi
     if article.title:
         title_group_tag = SubElement(front_stub_tag, "title-group")
         article_title_tag = SubElement(title_group_tag, "article-title")
         article_title_tag.text = article.title
-    # todo!!! continue to fill in the front-stub tag
 
 
 def set_body(parent, article):

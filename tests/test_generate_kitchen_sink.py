@@ -8,6 +8,7 @@ from tests import helpers, read_fixture
 
 def kitchen_sink_decision_letter():
     sub_article = helpers.base_decision_letter()
+    sub_article.doi = "10.7554/eLife.00666.DL"
 
     preamble_block = ContentBlock("boxed-text")
     preamble_block.content_blocks.append(ContentBlock("p", (
@@ -37,6 +38,7 @@ def kitchen_sink_decision_letter():
 
 def kitchen_sink_author_response():
     sub_article = helpers.base_author_response()
+    sub_article.doi = "10.7554/eLife.00666.AR"
 
     disp_quote_block = ContentBlock("disp-quote")
     disp_quote_block.attr["content-type"] = "editor-comment"
