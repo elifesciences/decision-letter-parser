@@ -55,15 +55,12 @@ def kitchen_sink_author_response():
         " against display on the PMC site, see Author response image 1., Author response video 1" +
         " and Author response table 1.")))
 
-    fig_block = ContentBlock("fig", (
+    sub_article.content_blocks.append(ContentBlock("fig", (
         "<label>Author response image 1.</label><caption><p>Single figure: The header of an" +
         ' eLife article example on the HTML page.</p></caption><graphic mimetype="image"' +
-        ' mime-subtype="tiff" xlink:href="elife-00666-resp-fig1.tif"/>'))
-    fig_block.attr["id"] = "respfig1"
-    fig_block.attr["position"] = "float"
-    sub_article.content_blocks.append(fig_block)
+        ' mime-subtype="tiff" xlink:href="elife-00666-resp-fig1.tif"/>')))
 
-    table_block = ContentBlock("table-wrap", (
+    sub_article.content_blocks.append(ContentBlock("table-wrap", (
         "<label>Author response Table 1.</label><caption><p>Author response table</p></caption>" +
         '<table frame="hsides" rules="groups"><thead>' +
         '<tr><th>Sample</th><th>Same</th><th>Difference more than 10%</th></tr>' +
@@ -76,17 +73,13 @@ def kitchen_sink_author_response():
         '<tr><td>DKO1.exo.3</td><td>86.80%</td><td>2.30%</td></tr>' +
         '<tr><td>DKS8.cell.1</td><td>77.30%</td><td>7.80%</td></tr>' +
         '<tr><td>DKS8.cell.2</td><td>79.70%</td><td>6.70%</td></tr>' +
-        '</tbody></table>'))
-    table_block.attr["id"] = "resptable1"
-    table_block.attr["position"] = "float"
-    sub_article.content_blocks.append(table_block)
+        '</tbody></table>')))
 
     media_block = ContentBlock("media", (
         "<label>Author response video 1.</label><caption><p>Caption and/or a title is required" +
         " for all author response assets</p></caption>"))
     media_block.attr["mimetype"] = "video"
     media_block.attr["mime-subtype"] = "mp4"
-    media_block.attr["id"] = "respvideo1"
     media_block.attr["xlink:href"] = "elife-00666-resp-video1.mp4"
     sub_article.content_blocks.append(media_block)
 

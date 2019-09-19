@@ -42,8 +42,34 @@ def generate(articles, root_tag="root"):
         set_if_value(sub_article_tag, "id", article.id)
         set_front_stub(sub_article_tag, article)
         set_body(sub_article_tag, article)
-    # todo!!!! - set mml:math tag id attributes
+    # set tag id attributes
+    set_id_attributes(root, "mml:math")
+    set_id_attributes(root, "disp-formula")
+    set_id_attributes(root, "fig")
+    set_id_attributes(root, "table-wrap")
+    set_id_attributes(root, "media")
     return root
+
+
+def id_prefix(tag_name):
+    """return the id attribute prefix for the tag name"""
+    id_prefix_map = {
+        "mml:math": "m",
+        "disp-formula": "equ",
+        "fig": "respfig",
+        "table-wrap": "resptable",
+        "media": "respvideo"
+    }
+    return str(id_prefix_map.get(tag_name))
+
+
+def set_id_attributes(root, tag_name):
+    """set the id attribute of tags"""
+    i = 1
+    for tag in root.iter(tag_name):
+        if "id" not in tag.attrib:
+            tag.set("id", "%s%s" % (id_prefix(tag_name), i))
+            i += 1
 
 
 def set_front_stub(parent, article):
