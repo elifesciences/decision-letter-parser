@@ -162,3 +162,17 @@ class TestCleanPortion(unittest.TestCase):
                 value=new_string,
                 expected=test_data.get("expected"),
                 comment=test_data.get("comment")))
+
+
+class TestFileNameFunctions(unittest.TestCase):
+
+    def setUp(self):
+        self.file_name = 'folder/file.txt'
+
+    def test_get_file_name_path(self):
+        expected = 'folder'
+        self.assertEqual(utils.get_file_name_path(self.file_name), expected)
+
+    def test_get_file_name_file(self):
+        expected = 'file.txt'
+        self.assertEqual(utils.get_file_name_file(self.file_name), expected)
