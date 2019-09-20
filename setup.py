@@ -15,6 +15,7 @@ setup(name='letterparser',
         "elifearticle",
         "elifetools",
         "pypandoc",
+        "docker"
     ],
     url='https://github.com/elifesciences/decision-letter-parser',
     maintainer='eLife Sciences Publications Ltd.',
