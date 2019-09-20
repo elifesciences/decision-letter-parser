@@ -54,8 +54,10 @@ def kitchen_sink_author_response():
     sub_article.content_blocks.append(ContentBlock("p", (
         "In response to this comment, we validated the XML against the DTD (JATS 1) each time" +
         " we made an update. We also regularly used the PMC validator to check our decisions" +
-        " against display on the PMC site, see Author response image 1., Author response video 1" +
-        " and Author response table 1.")))
+        ' against display on the PMC site, see <xref ref-type="fig" rid="respfig1">' +
+        'Author response image 1.</xref>, <xref ref-type="video" rid="respvideo1">' +
+        'Author response video 1</xref> and <xref ref-type="table" rid="resptable1">' +
+        "Author response table 1</xref>.")))
 
     sub_article.content_blocks.append(ContentBlock("fig", (
         "<label>Author response image 1.</label><caption><p>Single figure: The header of an" +

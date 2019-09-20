@@ -32,7 +32,15 @@
                 <p>The reviewers have discussed the reviews with one another and the Reviewing Editor has drafted this decision to help you prepare a revised submission.</p>
                 <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging togenerate a typeset PDF from the XML with no additional information provided.</p>
             </disp-quote>
-            <p>In response to this comment, we validated the XML against the DTD (JATS 1) each time we made an update. We also regularly used the PMC validator to check our decisions against display on the PMC site, see Author response image 1., Author response video 1 and Author response table 1.</p>
+            <p>
+                In response to this comment, we validated the XML against the DTD (JATS 1) each time we made an update. We also regularly used the PMC validator to check our decisions against display on the PMC site, see 
+                <xref ref-type="fig" rid="respfig1">Author response image 1.</xref>
+                , 
+                <xref ref-type="video" rid="respvideo1">Author response video 1</xref>
+                 and 
+                <xref ref-type="table" rid="resptable1">Author response table 1</xref>
+                .
+            </p>
             <fig id="respfig1">
                 <label>Author response image 1.</label>
                 <caption>

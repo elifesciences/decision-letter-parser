@@ -85,6 +85,7 @@ def allowed_tags():
         '<tr>', '</tr>',
         '<th>', '</th>',
         '<td', '</td>',
+        '<xref', '</xref>'
     )
 
 
