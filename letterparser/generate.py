@@ -35,23 +35,53 @@ def generate(articles, root_tag="root"):
     root = Element(root_tag)
     # set namespaces
     root.set('xmlns:mml', 'http://www.w3.org/1998/Math/MathML')
+    root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
     for article in articles:
         sub_article_tag = SubElement(root, "sub-article")
         set_if_value(sub_article_tag, "article-type", article.article_type)
         set_if_value(sub_article_tag, "id", article.id)
         set_front_stub(sub_article_tag, article)
         set_body(sub_article_tag, article)
-    # todo!!!! - set mml:math tag id attributes
+    # set tag id attributes
+    set_id_attributes(root, "mml:math")
+    set_id_attributes(root, "disp-formula")
+    set_id_attributes(root, "fig")
+    set_id_attributes(root, "table-wrap")
+    set_id_attributes(root, "media")
     return root
+
+
+def id_prefix(tag_name):
+    """return the id attribute prefix for the tag name"""
+    id_prefix_map = {
+        "mml:math": "respm",
+        "disp-formula": "respequ",
+        "fig": "respfig",
+        "table-wrap": "resptable",
+        "media": "respvideo"
+    }
+    return str(id_prefix_map.get(tag_name))
+
+
+def set_id_attributes(root, tag_name):
+    """set the id attribute of tags"""
+    i = 1
+    for tag in root.iter(tag_name):
+        if "id" not in tag.attrib:
+            tag.set("id", "%s%s" % (id_prefix(tag_name), i))
+            i += 1
 
 
 def set_front_stub(parent, article):
     front_stub_tag = SubElement(parent, "front-stub")
+    if article.doi:
+        doi_tag = SubElement(front_stub_tag, "article-id")
+        doi_tag.set("pub-id-type", "doi")
+        doi_tag.text = article.doi
     if article.title:
         title_group_tag = SubElement(front_stub_tag, "title-group")
         article_title_tag = SubElement(title_group_tag, "article-title")
         article_title_tag.text = article.title
-    # todo!!! continue to fill in the front-stub tag
 
 
 def set_body(parent, article):
@@ -65,7 +95,8 @@ def set_content_blocks(parent, content_blocks, level=1):
         raise Exception('Maximum level of nested content blocks reached')
     for block in content_blocks:
         block_tag = None
-        if block.block_type in ["boxed-text", "disp-formula", "disp-quote", "list", "p"]:
+        if block.block_type in ["boxed-text", "disp-formula", "disp-quote", "fig",
+                                "list", "media", "p", "table-wrap"]:
             # retain standard tag attributes as well as any specific ones from the block object
             if block.content:
                 utils.append_to_parent_tag(
@@ -76,6 +107,8 @@ def set_content_blocks(parent, content_blocks, level=1):
                 # add empty tags too
                 block_tag = SubElement(parent, block.block_type)
                 block_tag.text = block.content
+                for key, value in block.attr.items():
+                    block_tag.set(key, value)
         if block_tag is not None and block.content_blocks:
             # recursion
             set_content_blocks(block_tag, block.content_blocks, level+1)

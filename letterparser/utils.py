@@ -1,6 +1,7 @@
 # coding=utf-8
 
 "utility helper functions"
+import os
 import sys
 import re
 from elifetools import xmlio
@@ -76,6 +77,16 @@ def allowed_tags():
         '<ext-link', '</ext-link>',
         '<list', '</list>',
         '<list-item', '</list-item>',
+        '<label>', '</label>',
+        '<caption>', '</caption>',
+        '<graphic', '</graphic>',
+        '<table', '</table>',
+        '<thead>', '</thead>',
+        '<tbody>', '</tbody>',
+        '<tr>', '</tr>',
+        '<th>', '</th>',
+        '<td', '</td>',
+        '<xref', '</xref>'
     )
 
 
@@ -89,3 +100,13 @@ def append_to_parent_tag(parent, tag_name, original_string,
         tag_name, tag_converted_string, namespaces, attributes_text)
     xmlio.append_minidom_xml_to_elementtree_xml(
         parent, minidom_tag, attributes=attributes, child_attributes=True)
+
+
+def get_file_name_path(file_name):
+    """return the folder path to a file excluding the file name itself"""
+    return os.sep.join(file_name.split(os.sep)[0:-1])
+
+
+def get_file_name_file(file_name):
+    """return the file name only removing the folder path preceeding it"""
+    return file_name.split(os.sep)[-1]
