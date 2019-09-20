@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root xmlns:mml="http://www.w3.org/1998/Math/MathML">
+<root xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
     <sub-article article-type="decision-letter" id="SA1">
         <front-stub>
             <title-group>
@@ -25,7 +25,7 @@
         </front-stub>
         <body>
             <p>Essential revisions:</p>
-            <disp-quote>
+            <disp-quote content-type="editor-comment">
                 <p>1) I am not sure that I understand ....</p>
             </disp-quote>
         </body>
