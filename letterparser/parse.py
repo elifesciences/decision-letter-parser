@@ -1,7 +1,8 @@
 import re
 from collections import OrderedDict
 import pypandoc
-from letterparser import utils
+import requests
+from letterparser import docker_lib, utils
 
 
 SECTION_MAP = {
@@ -11,12 +12,34 @@ SECTION_MAP = {
 }
 
 
+def pandoc_output(file_name):
+    try:
+        return pypandoc.convert_file(file_name, "jats")
+    except OSError:
+        # todo!! log exception pandoc is probably not installed locally
+        pass
+
+
+def docker_pandoc_output(file_name):
+    try:
+        return docker_lib.call_pandoc(file_name)
+    except requests.exceptions.ConnectionError:
+        # todo !! log exception - docker may not be running
+        pass
+
+
+def parse_file(file_name):
+    """issue the call to pandoc locally or via docker"""
+    output = pandoc_output(file_name)
+    if not output:
+        output = docker_pandoc_output(file_name)
+    return output
+
+
 def raw_jats(file_name, root_tag="root"):
     "convert file content to JATS"
-    jats_content = ""
-    output = pypandoc.convert_file(file_name, "jats")
-    jats_content = "<%s>%s</%s>" % (root_tag, output, root_tag)
-    return jats_content
+    output = parse_file(file_name)
+    return "<%s>%s</%s>" % (root_tag, output, root_tag)
 
 
 def clean_jats(file_name, root_tag="root"):
