@@ -3,4 +3,6 @@ pytest==2.9.1
 ddt==1.1.0
 git+https://github.com/elifesciences/elife-tools.git@5b57b1798788cc1c56077601df9a66e8de6a0239#egg=elifetools
 git+https://github.com/elifesciences/elife-article.git@a4a3e5921a3458b0e281eb5fcd730100ce690747#egg=elifearticle
+requests==2.22.0
 docker==4.0.2
+mock==1.3.0

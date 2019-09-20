@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 import pypandoc
-from requests.exceptions import ConnectionError
+import requests
 from letterparser import docker_lib, utils
 
 
@@ -23,7 +23,7 @@ def pandoc_output(file_name):
 def docker_pandoc_output(file_name):
     try:
         return docker_lib.call_pandoc(file_name)
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         # todo !! log exception - docker may not be running
         pass
 
