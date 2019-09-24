@@ -101,8 +101,8 @@ def set_content_blocks(parent, content_blocks, level=1):
             # retain standard tag attributes as well as any specific ones from the block object
             if block.content:
                 utils.append_to_parent_tag(
-                    parent, block.block_type, block.content, attributes=block.attr_names(),
-                    attributes_text=block.attr_string())
+                    parent, block.block_type, block.content, utils.XML_NAMESPACE_MAP,
+                    attributes=block.attr_names(), attributes_text=block.attr_string())
                 block_tag = parent[-1]
             else:
                 # add empty tags too

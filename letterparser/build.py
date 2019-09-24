@@ -1,8 +1,10 @@
 # coding=utf-8
 
 import re
+from xml.etree import ElementTree
+from collections import OrderedDict
 from elifearticle.article import Article
-from letterparser import parse
+from letterparser import parse, utils
 from letterparser.objects import ContentBlock
 
 
@@ -73,25 +75,43 @@ def set_content_blocks(article, section):
     """set the body content blocks"""
     # trim away the section heading
     section = trim_section_heading(section)
-    # first split into paragraphs
-    paragraphs = split_paragraphs(section)
+    # split into content sections
+    content_sections = split_content_sections(section)
     # profile and process into content blocks
-    content_blocks = process_paragraphs(paragraphs)
+    content_blocks = process_content_sections(content_sections)
     # add to the article
     article.content_blocks = content_blocks
 
 
-def split_paragraphs(section):
-    """split section content into paragraphs by <p> tags"""
-    paragraphs = section.get("content").split("<p>")
-    paragraphs = [re.sub('</p>$', '', para) for para in paragraphs if para]
-    return paragraphs
+def split_content_sections(section):
+    """split first child level tags into content parts"""
+    content_sections = []
+    # register namespaces
+    for prefix, uri in utils.XML_NAMESPACE_MAP.items():
+        ElementTree.register_namespace(prefix, uri)
+    # parse content
+    xml_string = '<root %s>%s</root>' % (
+        utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP),
+        section.get("content"))
+    section_xml = ElementTree.fromstring(xml_string)
+
+    for block_tag in section_xml.findall("./*"):
+        content_section = OrderedDict()
+        if block_tag.tag in ["list", "p", "table"]:
+            rough_string = ElementTree.tostring(block_tag, 'utf8').decode('utf8')
+            rough_string = rough_string.replace("<?xml version='1.0' encoding='utf8'?>", "")
+            rough_string = rough_string.lstrip("\n")
+            content_section["tag_name"] = block_tag.tag
+            content_section["content"] = rough_string
+        content_sections.append(content_section)
+    return content_sections
 
 
-def process_paragraphs(paragraphs):
+def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
-    for para in paragraphs:
-        # todo!!
-        content_blocks.append(ContentBlock("p", para))
+    for section in content_sections:
+        # todo!! format the content
+        content = section.get("content")
+        content_blocks.append(ContentBlock(section.get("tag_name"), content))
     return content_blocks
