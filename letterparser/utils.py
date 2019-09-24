@@ -119,3 +119,11 @@ def get_file_name_path(file_name):
 def get_file_name_file(file_name):
     """return the file name only removing the folder path preceeding it"""
     return file_name.split(os.sep)[-1]
+
+
+def open_tag(tag_name):
+    return "<%s>" % tag_name
+
+
+def close_tag(tag_name):
+    return "</%s>" % tag_name

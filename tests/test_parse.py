@@ -55,3 +55,18 @@ class TestParse(unittest.TestCase):
         jats_content = parse.best_jats(file_name)
         sections = parse.sections(jats_content)
         self.assertEqual(sections, expected)
+
+
+class TestConvertBreakTags(unittest.TestCase):
+
+    def test_convert_break_tags_simple(self):
+        jats_content = '<p>One.<break /><break />Two.</p>'
+        expected = '<p>One.</p><p>Two.</p>'
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
+
+    def test_convert_break_tags_open_italic(self):
+        jats_content = '<p><italic>One</italic> <italic>two.<break /><break />3.</italic></p>'
+        expected = '<p><italic>One</italic> <italic>two.</italic></p><p><italic>3.</italic></p>'
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
