@@ -64,7 +64,7 @@ def collapse_newlines(string):
 def clean_portion(string, root_tag="root"):
     if not string:
         return ""
-    string = re.sub(r'^<' + root_tag + '>', '', string)
+    string = re.sub(r'^<' + root_tag + '.*?>', '', string)
     string = re.sub(r'</' + root_tag + '>$', '', string)
     return string.lstrip().rstrip()
 

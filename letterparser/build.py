@@ -95,6 +95,9 @@ def split_content_sections(section):
         section.get("content"))
     section_xml = ElementTree.fromstring(xml_string)
 
+    # clean the math alternatives here
+    section_xml = clean_math_alternatives(section_xml)
+
     for block_tag in section_xml.findall("./*"):
         content_section = OrderedDict()
         if block_tag.tag in ["list", "p", "table"]:
@@ -107,11 +110,51 @@ def split_content_sections(section):
     return content_sections
 
 
+def clean_math_alternatives(section_xml):
+    """use mml:math from the <alternatives> tag"""
+    for formula_tag in (section_xml.findall(".//disp-formula") +
+                        section_xml.findall(".//inline-formula")):
+        mml_tag = formula_tag.find(
+            './/{http://www.w3.org/1998/Math/MathML}math', utils.XML_NAMESPACE_MAP)
+        alt_tag = formula_tag.find('./alternatives')
+        formula_tag.remove(alt_tag)
+        formula_tag.append(mml_tag)
+    return section_xml
+
+
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
+    prev_section = None
     for section in content_sections:
         # todo!! format the content
-        content = section.get("content")
+        content = process_content(section.get("tag_name"), section.get("content"))
         content_blocks.append(ContentBlock(section.get("tag_name"), content))
+        prev_section = section
     return content_blocks
+
+
+def process_content(tag_name, content):
+    if tag_name == "list":
+        return process_list_content(content)
+    elif tag_name == "table":
+        return process_table_content(content)
+    elif tag_name == "p":
+        return process_p_content(content)
+    return content
+
+
+def process_table_content(content):
+    return content
+
+
+def process_list_content(content):
+    return content
+
+
+def process_p_content(content):
+    # todo !!
+    content = utils.clean_portion(content, "p")
+    return content
+    # if content.startswith('<disp-formula'):
+    #    pass
