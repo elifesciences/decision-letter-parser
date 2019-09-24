@@ -34,6 +34,7 @@ def generate(articles, root_tag="root"):
     # Create the root XML node
     root = Element(root_tag)
     # set namespaces
+    root.set('xmlns:ali', 'http://www.niso.org/schemas/ali/1.0/')
     root.set('xmlns:mml', 'http://www.w3.org/1998/Math/MathML')
     root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
     for article in articles:
