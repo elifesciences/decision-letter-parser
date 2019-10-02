@@ -35,8 +35,8 @@ def kitchen_sink_decision_letter():
 
     sub_article.content_blocks.append(ContentBlock("fig", (
         "<label>Decision letter image 1.</label><caption><p>Single figure: The header of an" +
-        ' eLife article example on the HTML page.</p></caption><graphic mimetype="image"' +
-        ' mime-subtype="tiff" xlink:href="elife-00666-des-fig1.tif"/>')))
+        ' eLife article example on the HTML page.</p></caption><graphic' +
+        ' mimetype="image" xlink:href="elife-00666-sa1-fig1.jpg"/>')))
 
     return sub_article
 
@@ -66,8 +66,8 @@ def kitchen_sink_author_response():
 
     sub_article.content_blocks.append(ContentBlock("fig", (
         "<label>Author response image 1.</label><caption><p>Single figure: The header of an" +
-        ' eLife article example on the HTML page.</p></caption><graphic mimetype="image"' +
-        ' mime-subtype="tiff" xlink:href="elife-00666-resp-fig1.tif"/>')))
+        ' eLife article example on the HTML page.</p></caption><graphic' +
+        ' mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>')))
 
     sub_article.content_blocks.append(ContentBlock("table-wrap", (
         "<label>Author response Table 1.</label><caption><p>Author response table</p></caption>" +
@@ -88,8 +88,7 @@ def kitchen_sink_author_response():
         "<label>Author response video 1.</label><caption><p>Caption and/or a title is required" +
         " for all author response assets</p></caption>"))
     media_block.attr["mimetype"] = "video"
-    media_block.attr["mime-subtype"] = "mp4"
-    media_block.attr["xlink:href"] = "elife-00666-resp-video1.mp4"
+    media_block.attr["xlink:href"] = "elife-00666-sa2-video1.mp4"
     sub_article.content_blocks.append(media_block)
 
     sub_article.content_blocks.append(ContentBlock("p", (

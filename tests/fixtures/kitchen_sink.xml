@@ -23,7 +23,7 @@
                 <caption>
                     <p>Single figure: The header of an eLife article example on the HTML page.</p>
                 </caption>
-                <graphic mime-subtype="tiff" mimetype="image" xlink:href="elife-00666-des-fig1.tif"/>
+                <graphic mimetype="image" xlink:href="elife-00666-sa1-fig1.jpg"/>
             </fig>
         </body>
     </sub-article>
@@ -53,7 +53,7 @@
                 <caption>
                     <p>Single figure: The header of an eLife article example on the HTML page.</p>
                 </caption>
-                <graphic mime-subtype="tiff" mimetype="image" xlink:href="elife-00666-resp-fig1.tif"/>
+                <graphic mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>
             </fig>
             <table-wrap id="sa2table1">
                 <label>Author response Table 1.</label>
@@ -112,7 +112,7 @@
                     </tbody>
                 </table>
             </table-wrap>
-            <media id="sa2video1" mime-subtype="mp4" mimetype="video" xlink:href="elife-00666-resp-video1.mp4">
+            <media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">
                 <label>Author response video 1.</label>
                 <caption>
                     <p>Caption and/or a title is required for all author response assets</p>
