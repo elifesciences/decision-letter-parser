@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <sub-article article-type="decision-letter" id="SA1">
+    <sub-article article-type="decision-letter" id="sa1">
         <front-stub>
             <article-id pub-id-type="doi">10.7554/eLife.00666.DL</article-id>
             <title-group>
@@ -20,7 +20,7 @@
             <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging to generate a typeset PDF from the XML with no additional information provided.</p>
         </body>
     </sub-article>
-    <sub-article article-type="reply" id="SA2">
+    <sub-article article-type="reply" id="sa2">
         <front-stub>
             <article-id pub-id-type="doi">10.7554/eLife.00666.AR</article-id>
             <title-group>
