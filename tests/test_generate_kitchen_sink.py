@@ -109,14 +109,18 @@ def kitchen_sink_author_response():
         " letter, however, this is not a requirement.")))
 
     sub_article.content_blocks.append(ContentBlock("p", (
-        "Adding some MathML to the sub-article.<inline-formula><mml:math><mml:mrow><mml:munder>" +
+        "Adding some MathML to the sub-article.<inline-formula><mml:math" +
+        ' alttext="\\underset{m}{}{\\overset{}{p}}_{m} = 0">' +
+        "<mml:mrow><mml:munder>" +
         '<mml:mo/><mml:mi>m</mml:mi></mml:munder><mml:mrow><mml:msub><mml:mover accent="true">' +
         "<mml:mi>p</mml:mi><mml:mo/></mml:mover><mml:mi>m</mml:mi></mml:msub><mml:mo>=</mml:mo>" +
         "<mml:mn>0</mml:mn></mml:mrow></mml:mrow></mml:math></inline-formula>")))
 
     sub_article.content_blocks.append(ContentBlock("p", (
         'May also contain a formula as a block<disp-formula><mml:math' +
-        ' xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ϕ</mml:mi>' +
+        ' xmlns:mml="http://www.w3.org/1998/Math/MathML"' +
+        ' alttext="\\phi = e^{- \\frac{\\text{zFV}}{\\text{nRT}}}">' +
+        '<mml:mrow><mml:mi>ϕ</mml:mi>' +
         '<mml:mo>=</mml:mo><mml:msup><mml:mi>e</mml:mi><mml:mrow><mml:mo>−</mml:mo><mml:mfrac>' +
         '<mml:mtext mathvariant="normal">zFV</mml:mtext><mml:mtext mathvariant="normal">nRT' +
         '</mml:mtext></mml:mfrac></mml:mrow></mml:msup></mml:mrow></mml:math></disp-formula>')))
