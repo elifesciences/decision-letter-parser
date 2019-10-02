@@ -18,6 +18,13 @@
             </p>
             <p>The reviewers have discussed the reviews with one another and the Reviewing Editor has drafted this decision to help you prepare a revised submission.</p>
             <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging to generate a typeset PDF from the XML with no additional information provided.</p>
+            <fig id="respfig1">
+                <label>Decision letter image 1.</label>
+                <caption>
+                    <p>Single figure: The header of an eLife article example on the HTML page.</p>
+                </caption>
+                <graphic mime-subtype="tiff" mimetype="image" xlink:href="elife-00666-des-fig1.tif"/>
+            </fig>
         </body>
     </sub-article>
     <sub-article article-type="reply" id="sa2">
@@ -41,7 +48,7 @@
                 <xref ref-type="table" rid="resptable1">Author response table 1</xref>
                 .
             </p>
-            <fig id="respfig1">
+            <fig id="respfig2">
                 <label>Author response image 1.</label>
                 <caption>
                     <p>Single figure: The header of an eLife article example on the HTML page.</p>

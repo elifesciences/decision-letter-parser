@@ -33,6 +33,11 @@ def kitchen_sink_decision_letter():
         " platform and also that there is enough information contained within the tagging to" +
         " generate a typeset PDF from the XML with no additional information provided.")))
 
+    sub_article.content_blocks.append(ContentBlock("fig", (
+        "<label>Decision letter image 1.</label><caption><p>Single figure: The header of an" +
+        ' eLife article example on the HTML page.</p></caption><graphic mimetype="image"' +
+        ' mime-subtype="tiff" xlink:href="elife-00666-des-fig1.tif"/>')))
+
     return sub_article
 
 
