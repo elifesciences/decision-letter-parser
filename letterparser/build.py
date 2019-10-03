@@ -20,7 +20,7 @@ def build_articles(jats_content):
             preamble_section = section
             continue
 
-        id_value = 'SA%s' % id_count
+        id_value = 'sa%s' % id_count
         if section.get("section_type") == "decision_letter":
             article = build_decision_letter(section, preamble_section, id_value)
         else:

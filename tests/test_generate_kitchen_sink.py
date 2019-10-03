@@ -33,6 +33,11 @@ def kitchen_sink_decision_letter():
         " platform and also that there is enough information contained within the tagging to" +
         " generate a typeset PDF from the XML with no additional information provided.")))
 
+    sub_article.content_blocks.append(ContentBlock("fig", (
+        "<label>Decision letter image 1.</label><caption><p>Single figure: The header of an" +
+        ' eLife article example on the HTML page.</p></caption><graphic' +
+        ' mimetype="image" xlink:href="elife-00666-sa1-fig1.jpg"/>')))
+
     return sub_article
 
 
@@ -54,15 +59,15 @@ def kitchen_sink_author_response():
     sub_article.content_blocks.append(ContentBlock("p", (
         "In response to this comment, we validated the XML against the DTD (JATS 1) each time" +
         " we made an update. We also regularly used the PMC validator to check our decisions" +
-        ' against display on the PMC site, see <xref ref-type="fig" rid="respfig1">' +
-        'Author response image 1.</xref>, <xref ref-type="video" rid="respvideo1">' +
-        'Author response video 1</xref> and <xref ref-type="table" rid="resptable1">' +
+        ' against display on the PMC site, see <xref ref-type="fig" rid="sa2fig1">' +
+        'Author response image 1.</xref>, <xref ref-type="video" rid="sa2video1">' +
+        'Author response video 1</xref> and <xref ref-type="table" rid="sa2table1">' +
         "Author response table 1</xref>.")))
 
     sub_article.content_blocks.append(ContentBlock("fig", (
         "<label>Author response image 1.</label><caption><p>Single figure: The header of an" +
-        ' eLife article example on the HTML page.</p></caption><graphic mimetype="image"' +
-        ' mime-subtype="tiff" xlink:href="elife-00666-resp-fig1.tif"/>')))
+        ' eLife article example on the HTML page.</p></caption><graphic' +
+        ' mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>')))
 
     sub_article.content_blocks.append(ContentBlock("table-wrap", (
         "<label>Author response Table 1.</label><caption><p>Author response table</p></caption>" +
@@ -83,8 +88,7 @@ def kitchen_sink_author_response():
         "<label>Author response video 1.</label><caption><p>Caption and/or a title is required" +
         " for all author response assets</p></caption>"))
     media_block.attr["mimetype"] = "video"
-    media_block.attr["mime-subtype"] = "mp4"
-    media_block.attr["xlink:href"] = "elife-00666-resp-video1.mp4"
+    media_block.attr["xlink:href"] = "elife-00666-sa2-video1.mp4"
     sub_article.content_blocks.append(media_block)
 
     sub_article.content_blocks.append(ContentBlock("p", (
@@ -105,14 +109,18 @@ def kitchen_sink_author_response():
         " letter, however, this is not a requirement.")))
 
     sub_article.content_blocks.append(ContentBlock("p", (
-        "Adding some MathML to the sub-article.<inline-formula><mml:math><mml:mrow><mml:munder>" +
+        "Adding some MathML to the sub-article.<inline-formula><mml:math" +
+        ' alttext="\\underset{m}{}{\\overset{}{p}}_{m} = 0">' +
+        "<mml:mrow><mml:munder>" +
         '<mml:mo/><mml:mi>m</mml:mi></mml:munder><mml:mrow><mml:msub><mml:mover accent="true">' +
         "<mml:mi>p</mml:mi><mml:mo/></mml:mover><mml:mi>m</mml:mi></mml:msub><mml:mo>=</mml:mo>" +
         "<mml:mn>0</mml:mn></mml:mrow></mml:mrow></mml:math></inline-formula>")))
 
     sub_article.content_blocks.append(ContentBlock("p", (
         'May also contain a formula as a block<disp-formula><mml:math' +
-        ' xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ϕ</mml:mi>' +
+        ' xmlns:mml="http://www.w3.org/1998/Math/MathML"' +
+        ' alttext="\\phi = e^{- \\frac{\\text{zFV}}{\\text{nRT}}}">' +
+        '<mml:mrow><mml:mi>ϕ</mml:mi>' +
         '<mml:mo>=</mml:mo><mml:msup><mml:mi>e</mml:mi><mml:mrow><mml:mo>−</mml:mo><mml:mfrac>' +
         '<mml:mtext mathvariant="normal">zFV</mml:mtext><mml:mtext mathvariant="normal">nRT' +
         '</mml:mtext></mml:mfrac></mml:mrow></mml:msup></mml:mrow></mml:math></disp-formula>')))
