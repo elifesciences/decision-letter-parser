@@ -42,33 +42,33 @@ def generate(articles, root_tag="root"):
         set_if_value(sub_article_tag, "id", article.id)
         set_front_stub(sub_article_tag, article)
         set_body(sub_article_tag, article)
-    # set tag id attributes
-    set_id_attributes(root, "mml:math")
-    set_id_attributes(root, "disp-formula")
-    set_id_attributes(root, "fig")
-    set_id_attributes(root, "table-wrap")
-    set_id_attributes(root, "media")
+        # set tag id attributes per sub-article
+        set_id_attributes(sub_article_tag, "mml:math", article.id)
+        set_id_attributes(sub_article_tag, "disp-formula", article.id)
+        set_id_attributes(sub_article_tag, "fig", article.id)
+        set_id_attributes(sub_article_tag, "table-wrap", article.id)
+        set_id_attributes(sub_article_tag, "media", article.id)
     return root
 
 
 def id_prefix(tag_name):
     """return the id attribute prefix for the tag name"""
     id_prefix_map = {
-        "mml:math": "respm",
-        "disp-formula": "respequ",
-        "fig": "respfig",
-        "table-wrap": "resptable",
-        "media": "respvideo"
+        "mml:math": "m",
+        "disp-formula": "equ",
+        "fig": "fig",
+        "table-wrap": "table",
+        "media": "video"
     }
     return str(id_prefix_map.get(tag_name))
 
 
-def set_id_attributes(root, tag_name):
+def set_id_attributes(root, tag_name, article_id):
     """set the id attribute of tags"""
     i = 1
     for tag in root.iter(tag_name):
         if "id" not in tag.attrib:
-            tag.set("id", "%s%s" % (id_prefix(tag_name), i))
+            tag.set("id", "%s%s%s" % (article_id, id_prefix(tag_name), i))
             i += 1
 
 

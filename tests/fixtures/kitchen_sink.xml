@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <sub-article article-type="decision-letter" id="SA1">
+    <sub-article article-type="decision-letter" id="sa1">
         <front-stub>
             <article-id pub-id-type="doi">10.7554/eLife.00666.DL</article-id>
             <title-group>
@@ -18,9 +18,16 @@
             </p>
             <p>The reviewers have discussed the reviews with one another and the Reviewing Editor has drafted this decision to help you prepare a revised submission.</p>
             <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging to generate a typeset PDF from the XML with no additional information provided.</p>
+            <fig id="sa1fig1">
+                <label>Decision letter image 1.</label>
+                <caption>
+                    <p>Single figure: The header of an eLife article example on the HTML page.</p>
+                </caption>
+                <graphic mimetype="image" xlink:href="elife-00666-sa1-fig1.jpg"/>
+            </fig>
         </body>
     </sub-article>
-    <sub-article article-type="reply" id="SA2">
+    <sub-article article-type="reply" id="sa2">
         <front-stub>
             <article-id pub-id-type="doi">10.7554/eLife.00666.AR</article-id>
             <title-group>
@@ -34,21 +41,21 @@
             </disp-quote>
             <p>
                 In response to this comment, we validated the XML against the DTD (JATS 1) each time we made an update. We also regularly used the PMC validator to check our decisions against display on the PMC site, see 
-                <xref ref-type="fig" rid="respfig1">Author response image 1.</xref>
+                <xref ref-type="fig" rid="sa2fig1">Author response image 1.</xref>
                 , 
-                <xref ref-type="video" rid="respvideo1">Author response video 1</xref>
+                <xref ref-type="video" rid="sa2video1">Author response video 1</xref>
                  and 
-                <xref ref-type="table" rid="resptable1">Author response table 1</xref>
+                <xref ref-type="table" rid="sa2table1">Author response table 1</xref>
                 .
             </p>
-            <fig id="respfig1">
+            <fig id="sa2fig1">
                 <label>Author response image 1.</label>
                 <caption>
                     <p>Single figure: The header of an eLife article example on the HTML page.</p>
                 </caption>
-                <graphic mime-subtype="tiff" mimetype="image" xlink:href="elife-00666-resp-fig1.tif"/>
+                <graphic mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>
             </fig>
-            <table-wrap id="resptable1">
+            <table-wrap id="sa2table1">
                 <label>Author response Table 1.</label>
                 <caption>
                     <p>Author response table</p>
@@ -105,7 +112,7 @@
                     </tbody>
                 </table>
             </table-wrap>
-            <media id="respvideo1" mime-subtype="mp4" mimetype="video" xlink:href="elife-00666-resp-video1.mp4">
+            <media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">
                 <label>Author response video 1.</label>
                 <caption>
                     <p>Caption and/or a title is required for all author response assets</p>
@@ -116,7 +123,7 @@
             <p>
                 Adding some MathML to the sub-article.
                 <inline-formula>
-                    <mml:math id="respm1">
+                    <mml:math alttext="\underset{m}{}{\overset{}{p}}_{m} = 0" id="sa2m1">
                         <mml:mrow>
                             <mml:munder>
                                 <mml:mo/>
@@ -139,8 +146,8 @@
             </p>
             <p>
                 May also contain a formula as a block
-                <disp-formula id="respequ1">
-                    <mml:math id="respm2" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+                <disp-formula id="sa2equ1">
+                    <mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2" xmlns:mml="http://www.w3.org/1998/Math/MathML">
                         <mml:mrow>
                             <mml:mi>ϕ</mml:mi>
                             <mml:mo>=</mml:mo>
