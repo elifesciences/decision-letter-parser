@@ -127,22 +127,33 @@ def clean_math_alternatives(section_xml):
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
-    prev_section = None
+    prev_content = None
+    tag_name = None
     for section in content_sections:
-        # todo!! format the content
-        content = process_content(section.get("tag_name"), section.get("content"))
-        content_blocks.append(ContentBlock(section.get("tag_name"), content))
-        prev_section = section
+        tag_name = section.get("tag_name")
+        content, action = process_content(
+            tag_name, section.get("content"), prev_content)
+        if action == "add":
+            content_blocks.append(ContentBlock(tag_name, content))
+            prev_content = None
+        elif action == "append":
+            if prev_content:
+                prev_content = prev_content + content
+            else:
+                prev_content = content
+    # finish by appending final iteration
+    if prev_content:
+        content_blocks.append(ContentBlock(tag_name, prev_content))
     return content_blocks
 
 
-def process_content(tag_name, content):
+def process_content(tag_name, content, prev_content):
     if tag_name == "list":
-        return process_list_content(content)
+        return process_list_content(content), "add"
     elif tag_name == "table":
-        return process_table_content(content)
+        return process_table_content(content), "add"
     elif tag_name == "p":
-        return process_p_content(content)
+        return process_p_content(content, prev_content)
     return content
 
 
@@ -154,9 +165,10 @@ def process_list_content(content):
     return content
 
 
-def process_p_content(content):
-    # todo !!
+def process_p_content(content, prev_content):
+    """set paragraph content and decide to append or add to previous paragraph content"""
+    action = "append"
     content = utils.clean_portion(content, "p")
-    return content
-    # if content.startswith('<disp-formula'):
-    #    pass
+    if prev_content and prev_content.startswith('<disp-formula'):
+        action = "add"
+    return content, action

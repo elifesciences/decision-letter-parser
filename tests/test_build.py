@@ -106,3 +106,25 @@ class TestBuildArticles(unittest.TestCase):
         result = build.process_content_sections(content_sections)
         self.assertEqual(result[0].block_type, "list")
         self.assertEqual(result[0].content, '<list></list>')
+
+    def test_process_content_sections_maths(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>First Paragraph</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><disp-formula><mml:math alttext="\\beta_{V}"' +
+                 ' xmlns:mml="http://www.w3.org/1998/Math/MathML" display="block">' +
+                 '<mml:mrow><mml:msub><mml:mi>β</mml:mi><mml:mi>V</mml:mi></mml:msub>' +
+                 '</mml:mrow></mml:math></disp-formula></p>'),
+            ])
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "p")
+        self.assertEqual(result[0].content, (
+            'First Paragraph<disp-formula><mml:math alttext="\\beta_{V}"' +
+            ' xmlns:mml="http://www.w3.org/1998/Math/MathML" display="block">' +
+            '<mml:mrow><mml:msub><mml:mi>β</mml:mi><mml:mi>V</mml:mi></mml:msub>' +
+            '</mml:mrow></mml:math></disp-formula>'))
