@@ -116,6 +116,8 @@ def clean_math_alternatives(section_xml):
                         section_xml.findall(".//inline-formula")):
         mml_tag = formula_tag.find(
             './/{http://www.w3.org/1998/Math/MathML}math', utils.XML_NAMESPACE_MAP)
+        tex_math_tag = formula_tag.find('.//tex-math')
+        mml_tag.set("alttext", tex_math_tag.text)
         alt_tag = formula_tag.find('./alternatives')
         formula_tag.remove(alt_tag)
         formula_tag.append(mml_tag)

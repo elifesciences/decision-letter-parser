@@ -48,13 +48,15 @@ class TestBuildArticles(unittest.TestCase):
     def test_clean_math_alternatives(self):
         xml_string = (
             '<root xmlns:mml="http://www.w3.org/1998/Math/MathML"><p><disp-formula>' +
-            '<alternatives><tex-math></tex-math><mml:math></mml:math></alternatives>' +
+            '<alternatives><tex-math><![CDATA[\\beta]]></tex-math><mml:math><mml:mi>β</mml:mi>' +
+            '</mml:math></alternatives>' +
             '</disp-formula></p></root>'
         )
         section_xml = ElementTree.fromstring(xml_string)
         expected = (
             b'<?xml version="1.0" encoding="utf-8"?><root xmlns:mml="' +
-            b'http://www.w3.org/1998/Math/MathML"><p><disp-formula><mml:math/>' +
+            b'http://www.w3.org/1998/Math/MathML"><p><disp-formula>' +
+            b'<mml:math alttext="\\beta"><mml:mi>\xce\xb2</mml:mi></mml:math>' +
             b'</disp-formula></p></root>'
         )
         clean_element = build.clean_math_alternatives(section_xml)
