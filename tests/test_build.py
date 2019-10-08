@@ -105,7 +105,8 @@ class TestBuildArticles(unittest.TestCase):
         ]
         result = build.process_content_sections(content_sections)
         self.assertEqual(result[0].block_type, "list")
-        self.assertEqual(result[0].content, '<list></list>')
+        self.assertEqual(result[0].attr, {})
+        self.assertEqual(result[0].content, '')
 
     def test_process_content_sections_maths(self):
         content_sections = [
@@ -128,3 +129,32 @@ class TestBuildArticles(unittest.TestCase):
             ' xmlns:mml="http://www.w3.org/1998/Math/MathML" display="block">' +
             '<mml:mrow><mml:msub><mml:mi>β</mml:mi><mml:mi>V</mml:mi></mml:msub>' +
             '</mml:mrow></mml:math></disp-formula>'))
+
+    def test_process_content_sections_append(self):
+        """test case for non-p following a disp-formula p"""
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>First Paragraph</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><disp-formula></disp-formula></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "list"),
+                ("content", '<list list-type="bullet"><list-item></list-item></list>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><disp-formula></disp-formula></p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "p")
+        self.assertEqual(result[0].content, 'First Paragraph<disp-formula></disp-formula>')
+        self.assertEqual(result[1].block_type, "list")
+        self.assertEqual(result[1].attr, {"list-type": "bullet"})
+        self.assertEqual(result[1].content, '<list-item></list-item>')
+        self.assertEqual(result[2].block_type, "p")
+        self.assertEqual(result[2].content, '<disp-formula></disp-formula>')

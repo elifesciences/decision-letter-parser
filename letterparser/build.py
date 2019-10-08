@@ -128,30 +128,37 @@ def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
     prev_content = None
-    tag_name = None
+    prev_action = None
+    prev_tag_name = None
+    prev_attr = None
     for section in content_sections:
         tag_name = section.get("tag_name")
-        content, action = process_content(
+        content, attr, action = process_content(
             tag_name, section.get("content"), prev_content)
         if action == "add":
-            content_blocks.append(ContentBlock(tag_name, content))
+            if prev_action == "append":
+                content_blocks.append(ContentBlock(prev_tag_name, prev_content, prev_attr))
+            content_blocks.append(ContentBlock(tag_name, content, attr))
             prev_content = None
         elif action == "append":
             if prev_content:
                 prev_content = prev_content + content
             else:
                 prev_content = content
+        prev_action = action
+        prev_tag_name = tag_name
+        prev_attr = attr
     # finish by appending final iteration
     if prev_content:
-        content_blocks.append(ContentBlock(tag_name, prev_content))
+        content_blocks.append(ContentBlock(prev_tag_name, prev_content, prev_attr))
     return content_blocks
 
 
 def process_content(tag_name, content, prev_content):
     if tag_name == "list":
-        return process_list_content(content), "add"
+        return process_list_content(content)
     elif tag_name == "table":
-        return process_table_content(content), "add"
+        return process_table_content(content), "table", "add"
     elif tag_name == "p":
         return process_p_content(content, prev_content)
     return content
@@ -162,7 +169,8 @@ def process_table_content(content):
 
 
 def process_list_content(content):
-    return content
+    content_xml = ElementTree.fromstring(content)
+    return utils.clean_portion(content, "list"), content_xml.attrib, "add"
 
 
 def process_p_content(content, prev_content):
@@ -171,4 +179,4 @@ def process_p_content(content, prev_content):
     content = utils.clean_portion(content, "p")
     if prev_content and prev_content.startswith('<disp-formula'):
         action = "add"
-    return content, action
+    return content, None, action
