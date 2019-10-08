@@ -127,6 +127,7 @@ def clean_math_alternatives(section_xml):
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
+    appended_content = ''
     prev_content = None
     prev_action = None
     prev_tag_name = None
@@ -137,20 +138,19 @@ def process_content_sections(content_sections):
             tag_name, section.get("content"), prev_content)
         if action == "add":
             if prev_action == "append":
-                content_blocks.append(ContentBlock(prev_tag_name, prev_content, prev_attr))
+                content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
             content_blocks.append(ContentBlock(tag_name, content, attr))
             prev_content = None
+            appended_content = ''
         elif action == "append":
-            if prev_content:
-                prev_content = prev_content + content
-            else:
-                prev_content = content
+            appended_content = appended_content + content
+            prev_content = content
         prev_action = action
         prev_tag_name = tag_name
         prev_attr = attr
     # finish by appending final iteration
-    if prev_content:
-        content_blocks.append(ContentBlock(prev_tag_name, prev_content, prev_attr))
+    if appended_content:
+        content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
     return content_blocks
 
 
@@ -177,6 +177,7 @@ def process_p_content(content, prev_content):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     content = utils.clean_portion(content, "p")
-    if prev_content and prev_content.startswith('<disp-formula'):
+    if (prev_content and not prev_content.startswith('<disp-formula') and
+            not content.startswith('<disp-formula')):
         action = "add"
     return content, None, action

@@ -120,7 +120,15 @@ class TestBuildArticles(unittest.TestCase):
                  ' xmlns:mml="http://www.w3.org/1998/Math/MathML" display="block">' +
                  '<mml:mrow><mml:msub><mml:mi>β</mml:mi><mml:mi>V</mml:mi></mml:msub>' +
                  '</mml:mrow></mml:math></disp-formula></p>'),
-            ])
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Second Paragraph</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Third Paragraph</p>'),
+            ]),
         ]
         result = build.process_content_sections(content_sections)
         self.assertEqual(result[0].block_type, "p")
@@ -128,7 +136,10 @@ class TestBuildArticles(unittest.TestCase):
             'First Paragraph<disp-formula><mml:math alttext="\\beta_{V}"' +
             ' xmlns:mml="http://www.w3.org/1998/Math/MathML" display="block">' +
             '<mml:mrow><mml:msub><mml:mi>β</mml:mi><mml:mi>V</mml:mi></mml:msub>' +
-            '</mml:mrow></mml:math></disp-formula>'))
+            '</mml:mrow></mml:math></disp-formula>Second Paragraph'))
+        self.assertEqual(result[1].block_type, "p")
+        self.assertEqual(result[1].content, (
+            'Third Paragraph'))
 
     def test_process_content_sections_append(self):
         """test case for non-p following a disp-formula p"""
