@@ -9,11 +9,19 @@ from elifetools import utils as etoolsutils
 
 
 # namespaces for when reparsing XML strings
-REPARSING_NAMESPACES = (
-    'xmlns:ali="http://www.niso.org/schemas/ali/1.0/" ' +
-    'xmlns:mml="http://www.w3.org/1998/Math/MathML" ' +
-    'xmlns:xlink="http://www.w3.org/1999/xlink"'
-)
+XML_NAMESPACE_MAP = {
+    'ali': 'http://www.niso.org/schemas/ali/1.0/',
+    'mml': 'http://www.w3.org/1998/Math/MathML',
+    'xlink': 'http://www.w3.org/1999/xlink'
+}
+
+
+def reparsing_namespaces(namespace_map):
+    """compile a string representation of the namespaces"""
+    namespace_string = ''
+    for prefix, uri in namespace_map.items():
+        namespace_string += 'xmlns:%s="%s" ' % (prefix, uri)
+    return namespace_string.rstrip()
 
 
 def remove_non_breaking_space(string):
@@ -56,7 +64,7 @@ def collapse_newlines(string):
 def clean_portion(string, root_tag="root"):
     if not string:
         return ""
-    string = re.sub(r'^<' + root_tag + '>', '', string)
+    string = re.sub(r'^<' + root_tag + '.*?>', '', string)
     string = re.sub(r'</' + root_tag + '>$', '', string)
     return string.lstrip().rstrip()
 
@@ -64,7 +72,7 @@ def clean_portion(string, root_tag="root"):
 def allowed_tags():
     """tuple of whitelisted tags"""
     return (
-        '<p>', '</p>',
+        '<p>', '<p ', '</p>',
         '<italic>', '</italic>',
         '<bold>', '</bold>',
         '<underline>', '</underline>',
@@ -75,29 +83,30 @@ def allowed_tags():
         '<disp-formula>', '</disp-formula>',
         '<mml:', '</mml:',
         '<ext-link', '</ext-link>',
-        '<list', '</list>',
+        '<list>', '<list ', '</list>',
         '<list-item', '</list-item>',
         '<label>', '</label>',
         '<caption>', '</caption>',
-        '<graphic', '</graphic>',
-        '<table', '</table>',
+        '<graphic ', '</graphic>',
+        '<table', '<table ', '</table>',
         '<thead>', '</thead>',
         '<tbody>', '</tbody>',
         '<tr>', '</tr>',
         '<th>', '</th>',
-        '<td', '</td>',
-        '<xref', '</xref>'
+        '<td>', '<td ', '</td>',
+        '<xref ', '</xref>'
     )
 
 
 def append_to_parent_tag(parent, tag_name, original_string,
-                         namespaces=REPARSING_NAMESPACES, attributes=None, attributes_text=''):
+                         namespace_map, attributes=None, attributes_text=''):
     """escape and reparse the string then add it to the parent tag"""
     tag_converted_string = etoolsutils.escape_ampersand(original_string)
     tag_converted_string = etoolsutils.escape_unmatched_angle_brackets(
         tag_converted_string, allowed_tags())
+    namespaces_string = reparsing_namespaces(namespace_map)
     minidom_tag = xmlio.reparsed_tag(
-        tag_name, tag_converted_string, namespaces, attributes_text)
+        tag_name, tag_converted_string, namespaces_string, attributes_text)
     xmlio.append_minidom_xml_to_elementtree_xml(
         parent, minidom_tag, attributes=attributes, child_attributes=True)
 
@@ -110,3 +119,11 @@ def get_file_name_path(file_name):
 def get_file_name_file(file_name):
     """return the file name only removing the folder path preceeding it"""
     return file_name.split(os.sep)[-1]
+
+
+def open_tag(tag_name):
+    return "<%s>" % tag_name
+
+
+def close_tag(tag_name):
+    return "</%s>" % tag_name

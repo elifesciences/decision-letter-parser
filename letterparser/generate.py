@@ -34,6 +34,7 @@ def generate(articles, root_tag="root"):
     # Create the root XML node
     root = Element(root_tag)
     # set namespaces
+    root.set('xmlns:ali', 'http://www.niso.org/schemas/ali/1.0/')
     root.set('xmlns:mml', 'http://www.w3.org/1998/Math/MathML')
     root.set('xmlns:xlink', 'http://www.w3.org/1999/xlink')
     for article in articles:
@@ -100,8 +101,8 @@ def set_content_blocks(parent, content_blocks, level=1):
             # retain standard tag attributes as well as any specific ones from the block object
             if block.content:
                 utils.append_to_parent_tag(
-                    parent, block.block_type, block.content, attributes=block.attr_names(),
-                    attributes_text=block.attr_string())
+                    parent, block.block_type, block.content, utils.XML_NAMESPACE_MAP,
+                    attributes=block.attr_names(), attributes_text=block.attr_string())
                 block_tag = parent[-1]
             else:
                 # add empty tags too

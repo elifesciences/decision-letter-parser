@@ -1,3 +1,4 @@
+import os
 import docker
 from letterparser import utils
 
@@ -15,7 +16,7 @@ def create_docker_volumes_dict(source_path, bind_path='/data', mode='ro'):
 
 def call_pandoc(file_name, output_format="jats"):
     client = get_docker_client()
-    file_name_path = utils.get_file_name_path(file_name)
+    file_name_path = utils.get_file_name_path(os.path.abspath(file_name))
     file_name_file = utils.get_file_name_file(file_name)
     volumes = create_docker_volumes_dict(file_name_path)
     command = 'pandoc "/data/%s" -t %s' % (file_name_file, output_format)
