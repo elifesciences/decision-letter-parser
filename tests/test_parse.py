@@ -70,3 +70,23 @@ class TestConvertBreakTags(unittest.TestCase):
         expected = '<p><italic>One</italic> <italic>two.</italic></p><p><italic>3.</italic></p>'
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
+
+    def test_convert_break_tags_even_tag_count(self):
+        jats_content = (
+            '<p><italic>One.<break /><break />A </italic><italic>half. ' +
+            '<break /><break />Two.</italic></p>')
+        expected = (
+            '<p><italic>One.</italic></p><p><italic>A </italic><italic>half.</italic></p>' +
+            '<p><italic>Two.</italic></p>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
+
+    def test_convert_break_tags_running_italic(self):
+        jats_content = (
+            '<p><italic>One.<break /><break />Keeps.<break /><break />' +
+            'Going.</italic></p>')
+        expected = (
+            '<p><italic>One.</italic></p><p><italic>Keeps.</italic></p>' +
+            '<p><italic>Going.</italic></p>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)

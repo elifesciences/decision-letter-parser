@@ -72,7 +72,7 @@ def convert_break_tags(jats_content, root_tag="root"):
     break_sections = sections(jats_content, root_tag, break_section_map)
     # hanging tags could possibly be still open across <break /><break /> dividers
     hanging_tags = ["italic", "bold"]
-    open_tags = []
+    open_tags = set()
     for i, break_section in enumerate(break_sections):
         content = break_section.get("content")
         content = content.replace(break_section_match, "")
@@ -80,16 +80,29 @@ def convert_break_tags(jats_content, root_tag="root"):
             converted_jats_content += "<p>"
             for tag_name in open_tags:
                 converted_jats_content += utils.open_tag(tag_name)
-            open_tags = []
+
         converted_jats_content += content
+
         if i < len(break_sections)-1:
             # detect and close any open tags
             for tag_name in hanging_tags:
                 open_tag_count = content.count(utils.open_tag(tag_name))
                 close_tag_count = content.count(utils.close_tag(tag_name))
+                first_close_tag_index = content.find(utils.close_tag(tag_name))
+                first_open_tag_index = content.find(utils.open_tag(tag_name))
                 if open_tag_count > close_tag_count:
                     converted_jats_content += utils.close_tag(tag_name)
-                    open_tags.append(tag_name)
+                    open_tags.add(tag_name)
+                elif (first_close_tag_index and first_open_tag_index and
+                      first_close_tag_index < first_open_tag_index):
+                    # do the same if tag counts equal but close tag comes before the open tag
+                    converted_jats_content += utils.close_tag(tag_name)
+                    open_tags.add(tag_name)
+                elif tag_name in open_tags:
+                    # there are open tags from previous section
+                    converted_jats_content += utils.close_tag(tag_name)
+                    open_tags.add(tag_name)
+
             converted_jats_content += "</p>"
 
     # remove other break tags
