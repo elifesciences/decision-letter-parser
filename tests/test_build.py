@@ -108,6 +108,30 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[0].attr, {})
         self.assertEqual(result[0].content, '')
 
+    def test_process_content_sections_disp_quote(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "disp-quote"),
+                ("content", '<disp-quote><p>Quotation</p></disp-quote>'),
+            ])
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "disp-quote")
+        self.assertEqual(result[0].attr, {})
+        self.assertEqual(result[0].content, '<p>Quotation</p>')
+
+    def test_process_content_sections_unknown(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", None),
+                ("content", '<unknown />'),
+            ])
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, None)
+        self.assertEqual(result[0].attr, {})
+        self.assertEqual(result[0].content, '<unknown />')
+
     def test_process_content_sections_maths(self):
         content_sections = [
             OrderedDict([

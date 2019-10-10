@@ -3,6 +3,7 @@
 import re
 from xml.etree import ElementTree
 from collections import OrderedDict
+import elifearticle.utils as eautils
 from elifearticle.article import Article
 from letterparser import parse, utils
 from letterparser.objects import ContentBlock
@@ -100,7 +101,7 @@ def split_content_sections(section):
 
     for block_tag in section_xml.findall("./*"):
         content_section = OrderedDict()
-        if block_tag.tag in ["list", "p", "table"]:
+        if block_tag.tag in ["list", "p", "table", "disp-quote"]:
             rough_string = ElementTree.tostring(block_tag, 'utf8').decode('utf8')
             rough_string = rough_string.replace("<?xml version='1.0' encoding='utf8'?>", "")
             rough_string = rough_string.lstrip("\n")
@@ -161,7 +162,10 @@ def process_content(tag_name, content, prev_content):
         return process_table_content(content), "table", "add"
     elif tag_name == "p":
         return process_p_content(content, prev_content)
-    return content
+    elif tag_name == "disp-quote":
+        return process_disp_quote_content(content)
+    # default
+    return content, None, "add"
 
 
 def process_table_content(content):
@@ -169,6 +173,9 @@ def process_table_content(content):
 
 
 def process_list_content(content):
+    # simple replacement of list-type="order" with list-type="number"
+    content = content.replace('<list list-type="order">', '<list list-type="number">')
+    content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
     return utils.clean_portion(content, "list"), content_xml.attrib, "add"
 
@@ -181,3 +188,7 @@ def process_p_content(content, prev_content):
             not content.startswith('<disp-formula')):
         action = "add"
     return content, None, action
+
+
+def process_disp_quote_content(content):
+    return utils.clean_portion(content, "disp-quote"), None, "add"

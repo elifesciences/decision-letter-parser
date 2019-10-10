@@ -19,3 +19,9 @@ class TestParseList(unittest.TestCase):
         expected = read_fixture('list-25776_raw.xml')
         jats_content = parse.raw_jats(file_name)
         self.assertEqual(jats_content, expected)
+
+    def test_raw_jats_list_types(self):
+        file_name = data_path('list-types.docx')
+        expected = read_fixture('list-types.xml')
+        jats_content = parse.raw_jats(file_name)
+        self.assertEqual(jats_content, expected)
