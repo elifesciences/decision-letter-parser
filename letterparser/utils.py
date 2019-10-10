@@ -55,8 +55,8 @@ def collapse_newlines(string):
     new_string = ""
     prev_line = None
     for line in string.split("\n"):
-        replace_with = new_line_replace_with(prev_line, line)
-        new_string += replace_with + line
+        replace_with = new_line_replace_with(prev_line, line.lstrip())
+        new_string += replace_with + line.lstrip()
         prev_line = line
     return new_string
 
