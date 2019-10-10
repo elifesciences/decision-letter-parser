@@ -73,6 +73,7 @@ def allowed_tags():
     """tuple of whitelisted tags"""
     return (
         '<p>', '<p ', '</p>',
+        '<disp-quote', '</disp-quote>',
         '<italic>', '</italic>',
         '<bold>', '</bold>',
         '<underline>', '</underline>',
