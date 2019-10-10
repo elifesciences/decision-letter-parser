@@ -3,6 +3,7 @@
 import re
 from xml.etree import ElementTree
 from collections import OrderedDict
+import elifearticle.utils as eautils
 from elifearticle.article import Article
 from letterparser import parse, utils
 from letterparser.objects import ContentBlock
@@ -172,6 +173,9 @@ def process_table_content(content):
 
 
 def process_list_content(content):
+    # simple replacement of list-type="order" with list-type="number"
+    content = content.replace('<list list-type="order">', '<list list-type="number">')
+    content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
     return utils.clean_portion(content, "list"), content_xml.attrib, "add"
 
