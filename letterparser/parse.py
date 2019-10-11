@@ -66,6 +66,8 @@ def best_jats(file_name, root_tag="root"):
 def convert_break_tags(jats_content, root_tag="root"):
     """convert break tags to p tags and remove unwanted break tags"""
     converted_jats_content = ""
+    # simple fix for italic sandwich
+    jats_content = jats_content.replace("<break /><italic><break />", "</p><p><italic>")
     # collapse double break tags into paragraph tags
     break_section_match = "<break /><break />"
     break_section_map = {"": break_section_match}

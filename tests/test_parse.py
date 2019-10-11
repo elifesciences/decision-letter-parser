@@ -90,3 +90,9 @@ class TestConvertBreakTags(unittest.TestCase):
             '<p><italic>Going.</italic></p>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
+
+    def test_convert_break_tags_italic_sandwich(self):
+        jats_content = '<p>Bread.<break /><italic><break />Cheese.</italic></p>'
+        expected = '<p>Bread.</p><p><italic>Cheese.</italic></p>'
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
