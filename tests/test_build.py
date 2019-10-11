@@ -23,7 +23,8 @@ class TestBuildArticles(unittest.TestCase):
         sections = {
             "content": (
                 '<p>One<xref xlink:href="" /></p>' +
-                '<list><list-item><p>Extra</p></list-item></list><p>Two</p>')
+                '<list><list-item><p>Extra</p></list-item></list><p>Two</p>' +
+                '<disp-quote><p>Quotation 1</p><p>Quotation 2</p></disp-quote>')
             }
         expected = [
             OrderedDict([
@@ -40,6 +41,14 @@ class TestBuildArticles(unittest.TestCase):
             OrderedDict([
                 ("tag_name", "p"),
                 ("content", '<p>Two</p>')
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Quotation 1</p>')
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Quotation 2</p>')
             ]),
         ]
         result = build.split_content_sections(sections)

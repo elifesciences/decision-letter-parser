@@ -100,15 +100,29 @@ def split_content_sections(section):
     section_xml = clean_math_alternatives(section_xml)
 
     for block_tag in section_xml.findall("./*"):
-        content_section = OrderedDict()
         if block_tag.tag in ["list", "p", "table", "disp-quote"]:
-            rough_string = ElementTree.tostring(block_tag, 'utf8').decode('utf8')
-            rough_string = rough_string.replace("<?xml version='1.0' encoding='utf8'?>", "")
-            rough_string = rough_string.lstrip("\n")
-            content_section["tag_name"] = block_tag.tag
-            content_section["content"] = rough_string
-        content_sections.append(content_section)
+            # add p tags from disp-quote blocks
+            if block_tag.tag == "disp-quote":
+                for p_tag in block_tag.findall("./p"):
+                    append_tag_to_sections(content_sections, p_tag)
+            else:
+                append_tag_to_sections(content_sections, block_tag)
     return content_sections
+
+
+def append_tag_to_sections(sections, tag):
+    content_section = OrderedDict()
+    rough_string = element_to_string(tag)
+    content_section["tag_name"] = tag.tag
+    content_section["content"] = rough_string
+    sections.append(content_section)
+
+
+def element_to_string(tag):
+    rough_string = ElementTree.tostring(tag, 'utf8').decode('utf8')
+    rough_string = rough_string.replace("<?xml version='1.0' encoding='utf8'?>", "")
+    rough_string = rough_string.lstrip("\n")
+    return rough_string
 
 
 def clean_math_alternatives(section_xml):
