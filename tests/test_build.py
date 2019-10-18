@@ -5,6 +5,7 @@ from collections import OrderedDict
 from xml.etree import ElementTree
 from letterparser import build, parse
 from letterparser.generate import output_xml
+from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path
 
 
@@ -14,10 +15,25 @@ class TestBuildArticles(unittest.TestCase):
         """simple test for coverage of parsing sections"""
         file_name = data_path('sections.docx')
         jats_content = parse.best_jats(file_name)
-        articles = build.build_articles(jats_content)
+        config = parse_raw_config(raw_config('elife'))
+        articles = build.build_articles(jats_content, config)
         self.assertEqual(len(articles), 2)
         self.assertEqual(articles[0].article_type, "decision-letter")
         self.assertEqual(articles[1].article_type, "reply")
+
+    def test_build_articles_default_preamble(self):
+        """build article with a default preamble"""
+        jats_content = '<p><bold>Decision letter</bold></p><p>Test</p>'
+        config = parse_raw_config(raw_config('elife'))
+        articles = build.build_articles(jats_content, config)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].article_type, "decision-letter")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "boxed-text")
+        self.assertEqual(
+            articles[0].content_blocks[0].content[0:35],
+            "<p>In the interests of transparency")
+        self.assertEqual(articles[0].content_blocks[1].block_type, "p")
+        self.assertEqual(articles[0].content_blocks[1].content, "Test")
 
     def test_split_content_sections(self):
         sections = {

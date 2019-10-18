@@ -7,10 +7,23 @@ import elifearticle.utils as eautils
 from elifearticle.article import Article
 from letterparser import parse, utils
 from letterparser.objects import ContentBlock
+from letterparser.conf import raw_config, parse_raw_config
 
 
-def build_articles(jats_content):
+def default_preamble(config):
+    if config and config.get("preamble"):
+        return OrderedDict([
+            ("section_type", "preamble"),
+            ("content", config.get("preamble")),
+        ])
+    return None
+
+
+def build_articles(jats_content, config=None):
     sections = parse.sections(jats_content)
+
+    if not config:
+        config = parse_raw_config(raw_config(None))
 
     articles = []
     preamble_section = None
@@ -20,6 +33,10 @@ def build_articles(jats_content):
         if section.get("section_type") == "preamble":
             preamble_section = section
             continue
+
+        # set the default preamble
+        if not preamble_section:
+            preamble_section = default_preamble(config)
 
         id_value = 'sa%s' % id_count
         if section.get("section_type") == "decision_letter":
@@ -37,8 +54,11 @@ def build_articles(jats_content):
 
 def build_decision_letter(section, preamble_section=None, id_value=None):
     article = build_sub_article(section, "decision-letter", id_value)
-    # todo !!!  process the preabmle section
-
+    # process the preabmle section
+    if preamble_section:
+        preamble_section = trim_section_heading(preamble_section)
+        preamble_block = ContentBlock("boxed-text", preamble_section.get("content"))
+        article.content_blocks = [preamble_block] + article.content_blocks
     return article
 
 

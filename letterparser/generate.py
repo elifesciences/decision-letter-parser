@@ -16,17 +16,17 @@ def set_if_value(element, name, value):
         element.set(name, value)
 
 
-def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent=""):
+def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="", config=None):
     """generate JATS output from docx file_name"""
-    articles = docx_to_articles(file_name, root_tag)
+    articles = docx_to_articles(file_name, root_tag, config)
     jats_xml = generate(articles)
     return output_xml(jats_xml, pretty, indent)
 
 
-def docx_to_articles(file_name, root_tag="root"):
+def docx_to_articles(file_name, root_tag="root", config=None):
     """convert the docx file to Article objects"""
     jats_content = parse.best_jats(file_name, root_tag)
-    return build.build_articles(jats_content)
+    return build.build_articles(jats_content, config)
 
 
 def generate(articles, root_tag="root"):
