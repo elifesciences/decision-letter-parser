@@ -20,40 +20,46 @@ def pandoc_output(file_name):
         pass
 
 
-def docker_pandoc_output(file_name):
+def docker_pandoc_output(file_name, config):
+    docker_image = None
+    if config:
+        docker_image = config.get("docker_image")
+    if not docker_image:
+        # todo !! log that no docker image was specified
+        return None
     try:
-        return docker_lib.call_pandoc(file_name)
+        return docker_lib.call_pandoc(file_name, docker_image)
     except requests.exceptions.ConnectionError:
         # todo !! log exception - docker may not be running
         pass
 
 
-def parse_file(file_name):
+def parse_file(file_name, config=None):
     """issue the call to pandoc locally or via docker"""
     output = pandoc_output(file_name)
     if not output:
-        output = docker_pandoc_output(file_name)
+        output = docker_pandoc_output(file_name, config=config)
     return output
 
 
-def raw_jats(file_name, root_tag="root"):
+def raw_jats(file_name, root_tag="root", config=None):
     "convert file content to JATS"
-    output = parse_file(file_name)
+    output = parse_file(file_name, config=config)
     return "<%s>%s</%s>" % (root_tag, output, root_tag)
 
 
-def clean_jats(file_name, root_tag="root"):
+def clean_jats(file_name, root_tag="root", config=None):
     """cleaner rough JATS output from the raw_jats"""
     jats_content = ""
-    raw_jats_content = raw_jats(file_name, root_tag)
+    raw_jats_content = raw_jats(file_name, root_tag, config=config)
     jats_content = utils.collapse_newlines(raw_jats_content)
     jats_content = utils.remove_non_breaking_space(jats_content)
     return jats_content
 
 
-def best_jats(file_name, root_tag="root"):
+def best_jats(file_name, root_tag="root", config=None):
     """from file input, produce the best JATS output possible"""
-    clean_jats_content = clean_jats(file_name, root_tag)
+    clean_jats_content = clean_jats(file_name, root_tag, config=config)
     clean_jats_content = utils.remove_strike(clean_jats_content)
     jats_content = convert_break_tags(clean_jats_content, root_tag)
     # wrap in root_tag
