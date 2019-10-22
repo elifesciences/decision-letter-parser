@@ -3,13 +3,14 @@ from mock import patch
 import requests
 import pypandoc
 from letterparser import docker_lib, parse
+from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path, read_fixture
 
 
 class TestParse(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.config = parse_raw_config(raw_config('elife'))
 
     @patch.object(pypandoc, 'convert_file')
     def test_pandoc_output_exception(self, fake_convert_file):
@@ -40,26 +41,26 @@ class TestParse(unittest.TestCase):
     def test_raw_jats(self):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('raw_jats_dutzler_39122.xml')
-        jats_content = parse.raw_jats(file_name)
+        jats_content = parse.raw_jats(file_name, config=self.config)
         self.assertEqual(jats_content, expected)
 
     def test_clean_jats(self):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('clean_jats_dutzler_39122.xml')
-        jats_content = parse.clean_jats(file_name)
+        jats_content = parse.clean_jats(file_name, config=self.config)
         parse.sections(jats_content)
         self.assertEqual(jats_content, expected)
 
     def test_best_jats(self):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('best_jats_dutzler_39122.xml')
-        jats_content = parse.best_jats(file_name)
+        jats_content = parse.best_jats(file_name, config=self.config)
         self.assertEqual(jats_content, expected)
 
     def test_sections(self):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('dutzler_39122_sections.py')
-        jats_content = parse.best_jats(file_name)
+        jats_content = parse.best_jats(file_name, config=self.config)
         sections = parse.sections(jats_content)
         self.assertEqual(sections, expected)
 
