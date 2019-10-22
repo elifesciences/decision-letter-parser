@@ -4,6 +4,7 @@ import unittest
 from xml.etree.ElementTree import Element
 from letterparser import generate
 from letterparser.objects import ContentBlock
+from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path, helpers, read_fixture
 
 
@@ -53,7 +54,9 @@ class TestGenerateFromDocx(unittest.TestCase):
     def test_generate_xml_from_docx(self):
         """simple test for code coverage"""
         file_name = data_path('Dutzler 39122 edit.docx')
-        pretty_xml = generate.generate_xml_from_docx(file_name, pretty=True, indent="    ")
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_docx(
+            file_name, pretty=True, indent="    ", config=config)
         self.assertIsNotNone(pretty_xml)
 
 

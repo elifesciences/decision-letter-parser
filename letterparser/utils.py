@@ -128,3 +128,12 @@ def open_tag(tag_name):
 
 def close_tag(tag_name):
     return "</%s>" % tag_name
+
+
+def manuscript_from_file_name(file_name):
+    # todo!!!
+    # may requiring changing when final file name format is decided
+    # based on file name e.g. Dutzler 39122 edit.docx
+    if file_name:
+        return get_file_name_file(file_name).split('.')[0].split(' ')[1]
+    return None

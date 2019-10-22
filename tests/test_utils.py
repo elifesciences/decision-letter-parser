@@ -176,3 +176,25 @@ class TestFileNameFunctions(unittest.TestCase):
     def test_get_file_name_file(self):
         expected = 'file.txt'
         self.assertEqual(utils.get_file_name_file(self.file_name), expected)
+
+
+@ddt
+class TestManuscriptFromFileName(unittest.TestCase):
+
+    @data(
+        {
+            "file_name": None,
+            "expected": None
+        },
+        {
+            "file_name": "Dutzler 39122 edit.docx",
+            "expected": "39122"
+        },
+        {
+            "file_name": "folder/Dutzler 39122 edit.docx",
+            "expected": "39122"
+        },
+        )
+    def test_manuscript_from_file_name(self, test_data):
+        manuscript = utils.manuscript_from_file_name(test_data.get("file_name"))
+        self.assertEqual(manuscript, test_data.get("expected"))

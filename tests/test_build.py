@@ -5,19 +5,43 @@ from collections import OrderedDict
 from xml.etree import ElementTree
 from letterparser import build, parse
 from letterparser.generate import output_xml
+from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path
 
 
 class TestBuildArticles(unittest.TestCase):
 
+    def setUp(self):
+        self.config = parse_raw_config(raw_config('elife'))
+
     def test_build_articles(self):
         """simple test for coverage of parsing sections"""
         file_name = data_path('sections.docx')
-        jats_content = parse.best_jats(file_name)
-        articles = build.build_articles(jats_content)
+        jats_content = parse.best_jats(file_name, config=self.config)
+        articles = build.build_articles(jats_content, config=self.config)
         self.assertEqual(len(articles), 2)
         self.assertEqual(articles[0].article_type, "decision-letter")
         self.assertEqual(articles[1].article_type, "reply")
+
+    def test_build_articles_no_config(self):
+        """simple test for coverage of parsing with no config specified"""
+        file_name = data_path('sections.docx')
+        jats_content = parse.best_jats(file_name, config=None)
+        articles = build.build_articles(jats_content, config=None)
+        self.assertEqual(len(articles), 2)
+
+    def test_build_articles_default_preamble(self):
+        """build article with a default preamble"""
+        jats_content = '<p><bold>Decision letter</bold></p><p>Test</p>'
+        articles = build.build_articles(jats_content, config=self.config)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].article_type, "decision-letter")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "boxed-text")
+        self.assertEqual(
+            articles[0].content_blocks[0].content[0:35],
+            "<p>In the interests of transparency")
+        self.assertEqual(articles[0].content_blocks[1].block_type, "p")
+        self.assertEqual(articles[0].content_blocks[1].content, "Test")
 
     def test_split_content_sections(self):
         sections = {
@@ -202,3 +226,35 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[1].content, '<list-item></list-item>')
         self.assertEqual(result[2].block_type, "p")
         self.assertEqual(result[2].content, '<disp-formula></disp-formula>')
+
+
+class TestDefaultPreamble(unittest.TestCase):
+
+    def test_default_preamble_no_config(self):
+        """default preamble if no config specified"""
+        self.assertIsNone(build.default_preamble(None))
+
+
+class TestBuildDoi(unittest.TestCase):
+
+    def setUp(self):
+        self.config = parse_raw_config(raw_config('elife'))
+
+    def test_build_doi(self):
+        file_name = 'folder/Dutzler 39122 edit.docx'
+        id_value = 'sa1'
+        expected = '10.7554/eLife.39122.sa1'
+        doi = build.build_doi(file_name, id_value, self.config)
+        self.assertEqual(doi, expected)
+
+    def test_build_doi_no_file_name(self):
+        file_name = None
+        id_value = 'sa1'
+        doi = build.build_doi(file_name, id_value, self.config)
+        self.assertIsNone(doi)
+
+    def test_build_doi_no_config(self):
+        file_name = 'folder/Dutzler 39122 edit.docx'
+        id_value = 'sa1'
+        doi = build.build_doi(file_name, id_value, None)
+        self.assertIsNone(doi)

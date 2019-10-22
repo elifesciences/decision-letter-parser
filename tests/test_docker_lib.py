@@ -23,5 +23,6 @@ class TestDockerLib(unittest.TestCase):
         """simple test for coverage"""
         output = b'something'
         expected = output.decode('utf8')
+        docker_image = 'example/image_name_for_test_case'
         fake_get_docker_client.return_value = FakeClient(output)
-        self.assertEqual(docker_lib.call_pandoc('file_name'), expected)
+        self.assertEqual(docker_lib.call_pandoc('file_name', docker_image), expected)
