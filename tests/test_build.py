@@ -25,7 +25,7 @@ class TestBuildArticles(unittest.TestCase):
         """build article with a default preamble"""
         jats_content = '<p><bold>Decision letter</bold></p><p>Test</p>'
         config = parse_raw_config(raw_config('elife'))
-        articles = build.build_articles(jats_content, config)
+        articles = build.build_articles(jats_content, config=config)
         self.assertEqual(len(articles), 1)
         self.assertEqual(articles[0].article_type, "decision-letter")
         self.assertEqual(articles[0].content_blocks[0].block_type, "boxed-text")
@@ -218,3 +218,28 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[1].content, '<list-item></list-item>')
         self.assertEqual(result[2].block_type, "p")
         self.assertEqual(result[2].content, '<disp-formula></disp-formula>')
+
+
+class TestBuildDoi(unittest.TestCase):
+
+    def test_build_doi(self):
+        file_name = 'folder/Dutzler 39122 edit.docx'
+        id_value = 'sa1'
+        config = parse_raw_config(raw_config('elife'))
+        expected = '10.7554/eLife.39122.sa1'
+        doi = build.build_doi(file_name, id_value, config)
+        self.assertEqual(doi, expected)
+
+    def test_build_doi_no_file_name(self):
+        file_name = None
+        id_value = 'sa1'
+        config = parse_raw_config(raw_config('elife'))
+        doi = build.build_doi(file_name, id_value, config)
+        self.assertIsNone(doi)
+
+    def test_build_doi_no_config(self):
+        file_name = 'folder/Dutzler 39122 edit.docx'
+        id_value = 'sa1'
+        config = None
+        doi = build.build_doi(file_name, id_value, config)
+        self.assertIsNone(doi)

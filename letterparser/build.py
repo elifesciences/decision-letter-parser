@@ -19,7 +19,7 @@ def default_preamble(config):
     return None
 
 
-def build_articles(jats_content, config=None):
+def build_articles(jats_content, file_name=None, config=None):
     sections = parse.sections(jats_content)
 
     if not config:
@@ -39,10 +39,14 @@ def build_articles(jats_content, config=None):
             preamble_section = default_preamble(config)
 
         id_value = 'sa%s' % id_count
+
+        # set the DOI, if possible
+        doi = build_doi(file_name, id_value, config)
+
         if section.get("section_type") == "decision_letter":
             article = build_decision_letter(section, preamble_section, id_value)
         else:
-            article = build_sub_article(section, "reply", id_value)
+            article = build_sub_article(section, "reply", id_value, doi)
         articles.append(article)
         # reset the counter
         id_count += 1
@@ -52,8 +56,16 @@ def build_articles(jats_content, config=None):
     return articles
 
 
-def build_decision_letter(section, preamble_section=None, id_value=None):
-    article = build_sub_article(section, "decision-letter", id_value)
+def build_doi(file_name, id_value, config):
+    if file_name and config and config.get("doi_pattern"):
+        return config.get("doi_pattern").format(
+            manuscript=utils.manuscript_from_file_name(file_name),
+            id=id_value)
+    return None
+
+
+def build_decision_letter(section, preamble_section=None, id_value=None, doi=None):
+    article = build_sub_article(section, "decision-letter", id_value, doi)
     # process the preabmle section
     if preamble_section:
         preamble_section = trim_section_heading(preamble_section)
@@ -62,8 +74,8 @@ def build_decision_letter(section, preamble_section=None, id_value=None):
     return article
 
 
-def build_sub_article(section, article_type=None, id_value=None):
-    article = Article()
+def build_sub_article(section, article_type=None, id_value=None, doi=None):
+    article = Article(doi)
     article.id = id_value
     if article_type:
         article.article_type = article_type

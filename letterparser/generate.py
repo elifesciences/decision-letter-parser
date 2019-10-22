@@ -26,7 +26,7 @@ def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="", 
 def docx_to_articles(file_name, root_tag="root", config=None):
     """convert the docx file to Article objects"""
     jats_content = parse.best_jats(file_name, root_tag)
-    return build.build_articles(jats_content, config)
+    return build.build_articles(jats_content, file_name=file_name, config=config)
 
 
 def generate(articles, root_tag="root"):
