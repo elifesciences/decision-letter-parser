@@ -87,6 +87,7 @@ def allowed_tags():
         '<list>', '<list ', '</list>',
         '<list-item', '</list-item>',
         '<label>', '</label>',
+        '<title>', '</title>',
         '<caption>', '</caption>',
         '<graphic ', '</graphic>',
         '<table', '<table ', '</table>',

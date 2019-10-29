@@ -2,6 +2,7 @@
 
 import re
 from xml.etree import ElementTree
+from xml.etree.ElementTree import Element, SubElement
 from collections import OrderedDict
 import elifearticle.utils as eautils
 from elifearticle.article import Article
@@ -171,6 +172,39 @@ def clean_math_alternatives(section_xml):
     return section_xml
 
 
+def build_fig(content):
+    # todo!!! convert content into individual elements
+    fig_content = OrderedDict()
+    fig_content['label'] = 'Author response image 1.'
+    fig_content['title'] = 'Author response image 1.'
+    fig_content['content'] = 'Caption <sup>2+</sup> calculated using<disp-formula><mml:math alttext="\\alpha"><mml:mi>α</mml:mi></mml:math></disp-formula><disp-formula><mml:math alttext="\\beta"><mml:mi>β</mml:mi></mml:math></disp-formula>and those on the right panels using<disp-formula><mml:math alttext="\\gamma"><mml:mi>γ</mml:mi></mml:math></disp-formula>under symmetrical ionic conditions. The number of barriers <inline-formula><mml:math alttext="n" display="inline"><mml:mi>n</mml:mi></mml:math></inline-formula> have their usual meanings.'
+    return fig_content
+
+
+def fig_element(label, title, content):
+    """populate an XML Element for a fig"""
+    fig_tag = Element('fig')
+    label_tag = SubElement(fig_tag, 'label')
+    label_tag.text = label
+
+    caption_tag = SubElement(fig_tag, 'caption')
+    title_tag = SubElement(caption_tag, 'title')
+    title_tag.text = title
+
+    # append content as a p tag in the caption
+    utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+
+    graphic_tag = SubElement(fig_tag, 'graphic')
+    graphic_tag.set('mimetype', 'image')
+    graphic_tag.set('xlink:href', 'todo')
+    return fig_tag
+
+
+def fig_element_to_string(tag):
+    rough_string = element_to_string(tag)
+    return utils.clean_portion(rough_string, "fig")
+
+
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
@@ -179,11 +213,27 @@ def process_content_sections(content_sections):
     prev_action = None
     prev_tag_name = None
     prev_attr = None
+    prev_fig = None
+    # add a blank section for the final loop
+    content_sections.append(OrderedDict())
     for section in content_sections:
         tag_name = section.get("tag_name")
-        content, attr, action = process_content(
-            tag_name, section.get("content"), prev_content)
-        if action == "add":
+        content, tag_name, attr, action, fig = process_content(
+            tag_name, section.get("content"), prev_content, prev_fig)
+        if prev_fig and not fig:
+            # finish the fig tag content
+            appended_content = appended_content + content
+            # todo!!! format the content into the figure content block
+            fig_content = build_fig(appended_content)
+            fig_tag = fig_element(
+                fig_content.get('label'),
+                fig_content.get('title'),
+                fig_content.get('content'))
+            content_block_content = fig_element_to_string(fig_tag)
+            content_blocks.append(ContentBlock("fig", content_block_content, prev_attr))
+            prev_content = None
+            appended_content = ''
+        elif action == "add":
             if prev_action == "append":
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
             content_blocks.append(ContentBlock(tag_name, content, attr))
@@ -195,46 +245,58 @@ def process_content_sections(content_sections):
         prev_action = action
         prev_tag_name = tag_name
         prev_attr = attr
-    # finish by appending final iteration
-    if appended_content:
-        content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
+        prev_fig = fig
+
     return content_blocks
 
 
-def process_content(tag_name, content, prev_content):
+def process_content(tag_name, content, prev_content, fig=None):
     if tag_name == "list":
-        return process_list_content(content)
+        return process_list_content(content, fig)
     elif tag_name == "table":
-        return process_table_content(content), "table", "add"
+        return process_table_content(content), "table", None, "add", fig
     elif tag_name == "p":
-        return process_p_content(content, prev_content)
+        return process_p_content(content, prev_content, fig)
     elif tag_name == "disp-quote":
-        return process_disp_quote_content(content)
+        return process_disp_quote_content(content, fig)
     # default
-    return content, None, "add"
+    return content, None, None, "add", fig
 
 
 def process_table_content(content):
     return content
 
 
-def process_list_content(content):
+def process_list_content(content, fig=None):
     # simple replacement of list-type="order" with list-type="number"
     content = content.replace('<list list-type="order">', '<list list-type="number">')
     content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
-    return utils.clean_portion(content, "list"), content_xml.attrib, "add"
+    return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", fig
 
 
-def process_p_content(content, prev_content):
+def process_p_content(content, prev_content, fig=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
+    tag_name = "p"
+    if not fig:
+        fig = False
     content = utils.clean_portion(content, "p")
-    if (prev_content and not prev_content.startswith('<disp-formula') and
-            not content.startswith('<disp-formula')):
+    # author response image parsing
+    # todo!!! better string matching including non-one number in the string
+    if content == '&lt;Author response image 1&gt;':
+        fig = True
+        content = ''
+
+    if content.endswith('&lt;/Author response image 1 title/legend&gt;'):
         action = "add"
-    return content, None, action
+        fig = False
+    elif (not fig and prev_content and not prev_content.startswith('<disp-formula') and
+          not content.startswith('<disp-formula')):
+        action = "add"
+
+    return content, tag_name, None, action, fig
 
 
-def process_disp_quote_content(content):
-    return utils.clean_portion(content, "disp-quote"), None, "add"
+def process_disp_quote_content(content, fig=None):
+    return utils.clean_portion(content, "disp-quote"), "disp-quote", None, "add", fig
