@@ -11,7 +11,7 @@ EXPECTED = [
         ('tag_name', 'p'),
         ('content', (
             '<p>&lt;Author response image 1 title/legend&gt;<bold>Author response image 1.</bold>'
-            ' Caption <sup>2+</sup> calculated using</p>'))
+            ' Title up to first full stop. Caption <sup>2+</sup> calculated using</p>'))
     ]),
     OrderedDict([
         ('tag_name', 'p'),

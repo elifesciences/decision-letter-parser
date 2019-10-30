@@ -176,7 +176,7 @@ def build_fig(content):
     # todo!!! convert content into individual elements
     fig_content = OrderedDict()
     fig_content['label'] = 'Author response image 1.'
-    fig_content['title'] = 'Author response image 1.'
+    fig_content['title'] = 'Title up to first full stop.'
     fig_content['content'] = 'Caption <sup>2+</sup> calculated using<disp-formula><mml:math alttext="\\alpha"><mml:mi>α</mml:mi></mml:math></disp-formula><disp-formula><mml:math alttext="\\beta"><mml:mi>β</mml:mi></mml:math></disp-formula>and those on the right panels using<disp-formula><mml:math alttext="\\gamma"><mml:mi>γ</mml:mi></mml:math></disp-formula>under symmetrical ionic conditions. The number of barriers <inline-formula><mml:math alttext="n" display="inline"><mml:mi>n</mml:mi></mml:math></inline-formula> have their usual meanings.'
     return fig_content
 

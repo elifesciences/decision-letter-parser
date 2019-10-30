@@ -2,7 +2,7 @@
 from letterparser.objects import ContentBlock
 
 CONTENT = (
-    '<label>Author response image 1.</label><caption><title>Author response image 1.</title>'
+    '<label>Author response image 1.</label><caption><title>Title up to first full stop.</title>'
     '<p>Caption <sup>2+</sup> calculated using<disp-formula><mml:math alttext="\\alpha">'
     '<mml:mi>α</mml:mi></mml:math></disp-formula><disp-formula><mml:math alttext="\\beta">'
     '<mml:mi>β</mml:mi></mml:math></disp-formula>and those on the right panels using<disp-formula>'
