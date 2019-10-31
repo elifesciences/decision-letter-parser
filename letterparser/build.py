@@ -42,12 +42,13 @@ def build_articles(jats_content, file_name=None, config=None):
         id_value = 'sa%s' % id_count
 
         # set the DOI, if possible
+        manuscript = utils.manuscript_from_file_name(file_name)
         doi = build_doi(file_name, id_value, config)
 
         if section.get("section_type") == "decision_letter":
-            article = build_decision_letter(section, preamble_section, id_value)
+            article = build_decision_letter(section, config, preamble_section, id_value, manuscript)
         else:
-            article = build_sub_article(section, "reply", id_value, doi)
+            article = build_sub_article(section, config, "reply", id_value, doi, manuscript)
         articles.append(article)
         # reset the counter
         id_count += 1
@@ -65,8 +66,9 @@ def build_doi(file_name, id_value, config):
     return None
 
 
-def build_decision_letter(section, preamble_section=None, id_value=None, doi=None):
-    article = build_sub_article(section, "decision-letter", id_value, doi)
+def build_decision_letter(section, config, preamble_section=None, id_value=None, doi=None,
+                          manuscript=None):
+    article = build_sub_article(section, config, "decision-letter", id_value, doi, manuscript)
     # process the preabmle section
     if preamble_section:
         preamble_section = trim_section_heading(preamble_section)
@@ -75,7 +77,7 @@ def build_decision_letter(section, preamble_section=None, id_value=None, doi=Non
     return article
 
 
-def build_sub_article(section, article_type=None, id_value=None, doi=None):
+def build_sub_article(section, config, article_type=None, id_value=None, doi=None, manuscript=None):
     article = Article(doi)
     article.id = id_value
     if article_type:
@@ -84,6 +86,18 @@ def build_sub_article(section, article_type=None, id_value=None, doi=None):
     article.content_blocks = []
     set_title(article)
     set_content_blocks(article, section)
+    # set any figure file names
+    fig_num = 1
+    for content_block in article.content_blocks:
+        if content_block.block_type == 'fig':
+            image_file_name = config.get('fig_filename_pattern').format(
+                manuscript=manuscript,
+                id_value=id_value,
+                fig_num=fig_num
+            )
+            href = 'xlink:href="{image_file_name}"'.format(image_file_name=image_file_name)
+            content_block.content = re.sub(r'xlink:href=".*?"', href, content_block.content)
+            fig_num += 1
 
     return article
 
