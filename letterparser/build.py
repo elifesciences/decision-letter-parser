@@ -173,11 +173,17 @@ def clean_math_alternatives(section_xml):
 
 
 def build_fig(content):
-    # todo!!! convert content into individual elements
+    """parse content into individual elements of a figure"""
     fig_content = OrderedDict()
-    fig_content['label'] = 'Author response image 1.'
-    fig_content['title'] = 'Title up to first full stop.'
-    fig_content['content'] = 'Caption <sup>2+</sup> calculated using<disp-formula><mml:math alttext="\\alpha"><mml:mi>α</mml:mi></mml:math></disp-formula><disp-formula><mml:math alttext="\\beta"><mml:mi>β</mml:mi></mml:math></disp-formula>and those on the right panels using<disp-formula><mml:math alttext="\\gamma"><mml:mi>γ</mml:mi></mml:math></disp-formula>under symmetrical ionic conditions. The number of barriers <inline-formula><mml:math alttext="n" display="inline"><mml:mi>n</mml:mi></mml:math></inline-formula> have their usual meanings.'
+    parts_match = re.match(r'.*<bold>(.*?)</bold>(.*)', content)
+    fig_content['label'] = parts_match.group(1)
+    remainder = parts_match.group(2)
+    title_parts = remainder.split('.')
+    fig_content['title'] = title_parts[0].lstrip() + '.'
+    # strip the title / legend close tag
+    content_remainder = '.'.join(title_parts[1:])
+    content_match = re.match(r'(.*)\&lt;.*\&gt;$', content_remainder)
+    fig_content['content'] = content_match.group(1).lstrip()
     return fig_content
 
 

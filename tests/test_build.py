@@ -271,6 +271,15 @@ class TestBuildDoi(unittest.TestCase):
         self.assertIsNone(doi)
 
 
+class TestBuildFig(unittest.TestCase):
+
+    def test_build_fig(self):
+        content = read_fixture('author_response_fig_content.txt')
+        expected = read_fixture('author_response_fig_content.py')
+        fig_content = build.build_fig(content)
+        self.assertEqual(fig_content, expected)
+
+
 class TestSetContentBlocks(unittest.TestCase):
 
     def test_author_response_image(self):
