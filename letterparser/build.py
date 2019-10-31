@@ -219,26 +219,27 @@ def process_content_sections(content_sections):
     prev_action = None
     prev_tag_name = None
     prev_attr = None
-    prev_fig = None
+    prev_wrap = None
     # add a blank section for the final loop
     content_sections.append(OrderedDict())
     for section in content_sections:
         tag_name = section.get("tag_name")
-        content, tag_name, attr, action, fig = process_content(
-            tag_name, section.get("content"), prev_content, prev_fig)
-        if prev_fig and not fig:
+        content, tag_name, attr, action, wrap = process_content(
+            tag_name, section.get("content"), prev_content, prev_wrap)
+        if prev_wrap and not wrap:
             # finish the fig tag content
             appended_content = appended_content + content
-            # todo!!! format the content into the figure content block
-            fig_content = build_fig(appended_content)
-            fig_tag = fig_element(
-                fig_content.get('label'),
-                fig_content.get('title'),
-                fig_content.get('content'))
-            content_block_content = fig_element_to_string(fig_tag)
-            content_blocks.append(ContentBlock("fig", content_block_content, prev_attr))
-            prev_content = None
-            appended_content = ''
+            if prev_wrap == 'fig':
+                # format the content into the figure content block
+                fig_content = build_fig(appended_content)
+                fig_tag = fig_element(
+                    fig_content.get('label'),
+                    fig_content.get('title'),
+                    fig_content.get('content'))
+                content_block_content = fig_element_to_string(fig_tag)
+                content_blocks.append(ContentBlock("fig", content_block_content, prev_attr))
+                prev_content = None
+                appended_content = ''
         elif action == "add":
             if prev_action == "append":
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
@@ -251,58 +252,56 @@ def process_content_sections(content_sections):
         prev_action = action
         prev_tag_name = tag_name
         prev_attr = attr
-        prev_fig = fig
+        prev_wrap = wrap
 
     return content_blocks
 
 
-def process_content(tag_name, content, prev_content, fig=None):
+def process_content(tag_name, content, prev_content, wrap=None):
     if tag_name == "list":
-        return process_list_content(content, fig)
+        return process_list_content(content, wrap)
     elif tag_name == "table":
-        return process_table_content(content), "table", None, "add", fig
+        return process_table_content(content), "table", None, "add", wrap
     elif tag_name == "p":
-        return process_p_content(content, prev_content, fig)
+        return process_p_content(content, prev_content, wrap)
     elif tag_name == "disp-quote":
-        return process_disp_quote_content(content, fig)
+        return process_disp_quote_content(content, wrap)
     # default
-    return content, None, None, "add", fig
+    return content, None, None, "add", wrap
 
 
 def process_table_content(content):
     return content
 
 
-def process_list_content(content, fig=None):
+def process_list_content(content, wrap=None):
     # simple replacement of list-type="order" with list-type="number"
     content = content.replace('<list list-type="order">', '<list list-type="number">')
     content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
-    return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", fig
+    return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", wrap
 
 
-def process_p_content(content, prev_content, fig=None):
+def process_p_content(content, prev_content, wrap=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
-    if not fig:
-        fig = False
     content = utils.clean_portion(content, "p")
     # author response image parsing
     # todo!!! better string matching including non-one number in the string
     if content == '&lt;Author response image 1&gt;':
-        fig = True
+        wrap = 'fig'
         content = ''
 
     if content.endswith('&lt;/Author response image 1 title/legend&gt;'):
         action = "add"
-        fig = False
-    elif (not fig and prev_content and not prev_content.startswith('<disp-formula') and
+        wrap = None
+    elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
           not content.startswith('<disp-formula')):
         action = "add"
 
-    return content, tag_name, None, action, fig
+    return content, tag_name, None, action, wrap
 
 
-def process_disp_quote_content(content, fig=None):
-    return utils.clean_portion(content, "disp-quote"), "disp-quote", None, "add", fig
+def process_disp_quote_content(content, wrap=None):
+    return utils.clean_portion(content, "disp-quote"), "disp-quote", None, "add", wrap

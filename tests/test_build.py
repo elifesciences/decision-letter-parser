@@ -299,17 +299,28 @@ class TestProcessP(unittest.TestCase):
 
     def test_p_basic(self):
         content = '<p>Basic.</p>'
-        expected = ('Basic.', 'p', None, 'append', False)
+        expected = ('Basic.', 'p', None, 'append', None)
         self.assertEqual(build.process_p_content(content, None), expected)
 
     def test_p_add_previous(self):
         content = '<p>Basic.</p>'
         prev_content = 'Previous.'
-        expected = ('Basic.', 'p', None, 'add', False)
+        expected = ('Basic.', 'p', None, 'add', None)
         self.assertEqual(build.process_p_content(content, prev_content), expected)
 
     def test_p_append_disp_formula(self):
         content = '<p><disp-formula></disp-formula></p>'
         prev_content = '<disp-formula></disp-formula>'
-        expected = ('<disp-formula></disp-formula>', 'p', None, 'append', False)
+        expected = ('<disp-formula></disp-formula>', 'p', None, 'append', None)
         self.assertEqual(build.process_p_content(content, prev_content), expected)
+
+    def test_process_p_author_image_start(self):
+        content = '&lt;Author response image 1&gt;'
+        expected = ('', 'p', None, 'append', 'fig')
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_author_image_end(self):
+        content = 'blah blah&lt;/Author response image 1 title/legend&gt;'
+        expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
+                    'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None), expected)
