@@ -194,8 +194,7 @@ def fig_element(label, title, content):
     label_tag.text = label
 
     caption_tag = SubElement(fig_tag, 'caption')
-    title_tag = SubElement(caption_tag, 'title')
-    title_tag.text = title
+    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
     # append content as a p tag in the caption
     utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
