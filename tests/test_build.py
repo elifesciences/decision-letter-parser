@@ -324,3 +324,14 @@ class TestProcessP(unittest.TestCase):
         expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
                     'p', None, 'add', None)
         self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_decision_image_start(self):
+        content = '&lt;Decision letter image 2&gt;'
+        expected = ('', 'p', None, 'append', 'fig')
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_decision_image_end(self):
+        content = 'blah blah&lt;/Decision letter image 2 title/legend&gt;'
+        expected = ('blah blah&lt;/Decision letter image 2 title/legend&gt;',
+                    'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None), expected)

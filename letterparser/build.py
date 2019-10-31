@@ -282,18 +282,25 @@ def process_list_content(content, wrap=None):
     return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", wrap
 
 
+def match_fig_content_start(content):
+    return bool(re.match(r'\&lt;.*image [0-9]?\&gt;', content))
+
+
+def match_fig_content_title_end(content):
+    return bool(re.match(r'.*\&lt;.*image [0-9]? title\/legend\&gt;$', content))
+
+
 def process_p_content(content, prev_content, wrap=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
     content = utils.clean_portion(content, "p")
-    # author response image parsing
-    # todo!!! better string matching including non-one number in the string
-    if content == '&lt;Author response image 1&gt;':
+    # author response or decision letter image parsing
+    if match_fig_content_start(content):
         wrap = 'fig'
         content = ''
 
-    if content.endswith('&lt;/Author response image 1 title/legend&gt;'):
+    if match_fig_content_title_end(content):
         action = "add"
         wrap = None
     elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
