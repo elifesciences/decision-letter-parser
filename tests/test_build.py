@@ -3,10 +3,11 @@
 import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
+from elifearticle.article import Article
 from letterparser import build, parse
 from letterparser.generate import output_xml
 from letterparser.conf import raw_config, parse_raw_config
-from tests import data_path
+from tests import data_path, read_fixture
 
 
 class TestBuildArticles(unittest.TestCase):
@@ -77,6 +78,16 @@ class TestBuildArticles(unittest.TestCase):
         ]
         result = build.split_content_sections(sections)
         self.assertEqual(result, expected)
+
+    def test_split_content_sections_author_response_image(self):
+        """parse author response image snippet of content JATS into sections"""
+        section = OrderedDict([
+            ('section_type', 'author_response'),
+            ('content', read_fixture('author_response_image_1.txt'))
+        ])
+        expected = read_fixture('author_response_image_1_sections.py')
+        sections = build.split_content_sections(section)
+        self.assertEqual(sections, expected)
 
     def test_clean_math_alternatives(self):
         xml_string = (
@@ -258,3 +269,69 @@ class TestBuildDoi(unittest.TestCase):
         id_value = 'sa1'
         doi = build.build_doi(file_name, id_value, None)
         self.assertIsNone(doi)
+
+
+class TestBuildFig(unittest.TestCase):
+
+    def test_build_fig(self):
+        content = read_fixture('author_response_fig_content.txt')
+        expected = read_fixture('author_response_fig_content.py')
+        fig_content = build.build_fig(content)
+        self.assertEqual(fig_content, expected)
+
+
+class TestSetContentBlocks(unittest.TestCase):
+
+    def test_author_response_image(self):
+        content = read_fixture('author_response_image_1.txt')
+        section = OrderedDict([
+            ('section_type', 'author_response'),
+            ('content', content)
+        ])
+        expected = read_fixture('author_response_image_1_content_block.py')
+        article = Article()
+        build.set_content_blocks(article, section)
+        self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
+        self.assertEqual(article.content_blocks[0].content, expected.content)
+
+
+class TestProcessP(unittest.TestCase):
+
+    def test_p_basic(self):
+        content = '<p>Basic.</p>'
+        expected = ('Basic.', 'p', None, 'append', None)
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_p_add_previous(self):
+        content = '<p>Basic.</p>'
+        prev_content = 'Previous.'
+        expected = ('Basic.', 'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, prev_content), expected)
+
+    def test_p_append_disp_formula(self):
+        content = '<p><disp-formula></disp-formula></p>'
+        prev_content = '<disp-formula></disp-formula>'
+        expected = ('<disp-formula></disp-formula>', 'p', None, 'append', None)
+        self.assertEqual(build.process_p_content(content, prev_content), expected)
+
+    def test_process_p_author_image_start(self):
+        content = '&lt;Author response image 1&gt;'
+        expected = ('', 'p', None, 'append', 'fig')
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_author_image_end(self):
+        content = 'blah blah&lt;/Author response image 1 title/legend&gt;'
+        expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
+                    'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_decision_image_start(self):
+        content = '&lt;Decision letter image 2&gt;'
+        expected = ('', 'p', None, 'append', 'fig')
+        self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_decision_image_end(self):
+        content = 'blah blah&lt;/Decision letter image 2 title/legend&gt;'
+        expected = ('blah blah&lt;/Decision letter image 2 title/legend&gt;',
+                    'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None), expected)

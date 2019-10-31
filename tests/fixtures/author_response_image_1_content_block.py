@@ -1,0 +1,14 @@
+# coding=utf-8
+from letterparser.objects import ContentBlock
+
+CONTENT = (
+    '<label>Author response image 1.</label><caption><title>Title up to first full stop.</title>'
+    '<p>Caption <sup>2+</sup> calculated using<disp-formula><mml:math alttext="\\alpha">'
+    '<mml:mi>α</mml:mi></mml:math></disp-formula><disp-formula><mml:math alttext="\\beta">'
+    '<mml:mi>β</mml:mi></mml:math></disp-formula>and those on the right panels using<disp-formula>'
+    '<mml:math alttext="\\gamma"><mml:mi>γ</mml:mi></mml:math></disp-formula>under symmetrical'
+    ' ionic conditions. The number of barriers <inline-formula><mml:math alttext="n" '
+    'display="inline"><mml:mi>n</mml:mi></mml:math></inline-formula> have their usual '
+    'meanings.</p></caption><graphic mimetype="image" xlink:href="todo" />')
+
+EXPECTED = ContentBlock('fig', CONTENT)

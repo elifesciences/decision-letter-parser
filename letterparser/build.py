@@ -2,6 +2,7 @@
 
 import re
 from xml.etree import ElementTree
+from xml.etree.ElementTree import Element, SubElement
 from collections import OrderedDict
 import elifearticle.utils as eautils
 from elifearticle.article import Article
@@ -41,12 +42,13 @@ def build_articles(jats_content, file_name=None, config=None):
         id_value = 'sa%s' % id_count
 
         # set the DOI, if possible
+        manuscript = utils.manuscript_from_file_name(file_name)
         doi = build_doi(file_name, id_value, config)
 
         if section.get("section_type") == "decision_letter":
-            article = build_decision_letter(section, preamble_section, id_value)
+            article = build_decision_letter(section, config, preamble_section, id_value, manuscript)
         else:
-            article = build_sub_article(section, "reply", id_value, doi)
+            article = build_sub_article(section, config, "reply", id_value, doi, manuscript)
         articles.append(article)
         # reset the counter
         id_count += 1
@@ -64,8 +66,9 @@ def build_doi(file_name, id_value, config):
     return None
 
 
-def build_decision_letter(section, preamble_section=None, id_value=None, doi=None):
-    article = build_sub_article(section, "decision-letter", id_value, doi)
+def build_decision_letter(section, config, preamble_section=None, id_value=None, doi=None,
+                          manuscript=None):
+    article = build_sub_article(section, config, "decision-letter", id_value, doi, manuscript)
     # process the preabmle section
     if preamble_section:
         preamble_section = trim_section_heading(preamble_section)
@@ -74,7 +77,7 @@ def build_decision_letter(section, preamble_section=None, id_value=None, doi=Non
     return article
 
 
-def build_sub_article(section, article_type=None, id_value=None, doi=None):
+def build_sub_article(section, config, article_type=None, id_value=None, doi=None, manuscript=None):
     article = Article(doi)
     article.id = id_value
     if article_type:
@@ -83,6 +86,18 @@ def build_sub_article(section, article_type=None, id_value=None, doi=None):
     article.content_blocks = []
     set_title(article)
     set_content_blocks(article, section)
+    # set any figure file names
+    fig_num = 1
+    for content_block in article.content_blocks:
+        if content_block.block_type == 'fig':
+            image_file_name = config.get('fig_filename_pattern').format(
+                manuscript=manuscript,
+                id_value=id_value,
+                fig_num=fig_num
+            )
+            href = 'xlink:href="{image_file_name}"'.format(image_file_name=image_file_name)
+            content_block.content = re.sub(r'xlink:href=".*?"', href, content_block.content)
+            fig_num += 1
 
     return article
 
@@ -171,6 +186,44 @@ def clean_math_alternatives(section_xml):
     return section_xml
 
 
+def build_fig(content):
+    """parse content into individual elements of a figure"""
+    fig_content = OrderedDict()
+    parts_match = re.match(r'.*<bold>(.*?)</bold>(.*)', content)
+    fig_content['label'] = parts_match.group(1)
+    remainder = parts_match.group(2)
+    title_parts = remainder.split('.')
+    fig_content['title'] = title_parts[0].lstrip() + '.'
+    # strip the title / legend close tag
+    content_remainder = '.'.join(title_parts[1:])
+    content_match = re.match(r'(.*)\&lt;.*\&gt;$', content_remainder)
+    fig_content['content'] = content_match.group(1).lstrip()
+    return fig_content
+
+
+def fig_element(label, title, content):
+    """populate an XML Element for a fig"""
+    fig_tag = Element('fig')
+    label_tag = SubElement(fig_tag, 'label')
+    label_tag.text = label
+
+    caption_tag = SubElement(fig_tag, 'caption')
+    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+
+    # append content as a p tag in the caption
+    utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+
+    graphic_tag = SubElement(fig_tag, 'graphic')
+    graphic_tag.set('mimetype', 'image')
+    graphic_tag.set('xlink:href', 'todo')
+    return fig_tag
+
+
+def fig_element_to_string(tag):
+    rough_string = element_to_string(tag)
+    return utils.clean_portion(rough_string, "fig")
+
+
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
@@ -179,11 +232,28 @@ def process_content_sections(content_sections):
     prev_action = None
     prev_tag_name = None
     prev_attr = None
+    prev_wrap = None
+    # add a blank section for the final loop
+    content_sections.append(OrderedDict())
     for section in content_sections:
         tag_name = section.get("tag_name")
-        content, attr, action = process_content(
-            tag_name, section.get("content"), prev_content)
-        if action == "add":
+        content, tag_name, attr, action, wrap = process_content(
+            tag_name, section.get("content"), prev_content, prev_wrap)
+        if prev_wrap and not wrap:
+            # finish the fig tag content
+            appended_content = appended_content + content
+            if prev_wrap == 'fig':
+                # format the content into the figure content block
+                fig_content = build_fig(appended_content)
+                fig_tag = fig_element(
+                    fig_content.get('label'),
+                    fig_content.get('title'),
+                    fig_content.get('content'))
+                content_block_content = fig_element_to_string(fig_tag)
+                content_blocks.append(ContentBlock("fig", content_block_content, prev_attr))
+                prev_content = None
+                appended_content = ''
+        elif action == "add":
             if prev_action == "append":
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
             content_blocks.append(ContentBlock(tag_name, content, attr))
@@ -195,46 +265,63 @@ def process_content_sections(content_sections):
         prev_action = action
         prev_tag_name = tag_name
         prev_attr = attr
-    # finish by appending final iteration
-    if appended_content:
-        content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
+        prev_wrap = wrap
+
     return content_blocks
 
 
-def process_content(tag_name, content, prev_content):
+def process_content(tag_name, content, prev_content, wrap=None):
     if tag_name == "list":
-        return process_list_content(content)
+        return process_list_content(content, wrap)
     elif tag_name == "table":
-        return process_table_content(content), "table", "add"
+        return process_table_content(content), "table", None, "add", wrap
     elif tag_name == "p":
-        return process_p_content(content, prev_content)
+        return process_p_content(content, prev_content, wrap)
     elif tag_name == "disp-quote":
-        return process_disp_quote_content(content)
+        return process_disp_quote_content(content, wrap)
     # default
-    return content, None, "add"
+    return content, None, None, "add", wrap
 
 
 def process_table_content(content):
     return content
 
 
-def process_list_content(content):
+def process_list_content(content, wrap=None):
     # simple replacement of list-type="order" with list-type="number"
     content = content.replace('<list list-type="order">', '<list list-type="number">')
     content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
-    return utils.clean_portion(content, "list"), content_xml.attrib, "add"
+    return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", wrap
 
 
-def process_p_content(content, prev_content):
+def match_fig_content_start(content):
+    return bool(re.match(r'\&lt;.*image [0-9]?\&gt;', content))
+
+
+def match_fig_content_title_end(content):
+    return bool(re.match(r'.*\&lt;.*image [0-9]? title\/legend\&gt;$', content))
+
+
+def process_p_content(content, prev_content, wrap=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
+    tag_name = "p"
     content = utils.clean_portion(content, "p")
-    if (prev_content and not prev_content.startswith('<disp-formula') and
-            not content.startswith('<disp-formula')):
+    # author response or decision letter image parsing
+    if match_fig_content_start(content):
+        wrap = 'fig'
+        content = ''
+
+    if match_fig_content_title_end(content):
         action = "add"
-    return content, None, action
+        wrap = None
+    elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
+          not content.startswith('<disp-formula')):
+        action = "add"
+
+    return content, tag_name, None, action, wrap
 
 
-def process_disp_quote_content(content):
-    return utils.clean_portion(content, "disp-quote"), None, "add"
+def process_disp_quote_content(content, wrap=None):
+    return utils.clean_portion(content, "disp-quote"), "disp-quote", None, "add", wrap
