@@ -280,6 +280,16 @@ class TestBuildFig(unittest.TestCase):
         self.assertEqual(fig_content, expected)
 
 
+class TestBuildVideo(unittest.TestCase):
+
+    def test_build_fig(self):
+        content = read_fixture('author_response_video_content.txt')
+        expected = read_fixture('author_response_video_content.py')
+        # for now reusing build_fig function which satisifes the same situation
+        video_content = build.build_fig(content)
+        self.assertEqual(video_content, expected)
+
+
 class TestSetContentBlocks(unittest.TestCase):
 
     def test_author_response_image(self):
@@ -292,6 +302,19 @@ class TestSetContentBlocks(unittest.TestCase):
         article = Article()
         build.set_content_blocks(article, section)
         self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
+        self.assertEqual(article.content_blocks[0].content, expected.content)
+
+    def test_author_response_video(self):
+        content = read_fixture('author_response_video_1.txt')
+        section = OrderedDict([
+            ('section_type', 'author_response'),
+            ('content', content)
+        ])
+        expected = read_fixture('author_response_video_1_content_block.py')
+        article = Article()
+        build.set_content_blocks(article, section)
+        self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
+        self.assertEqual(article.content_blocks[0].attr, expected.attr)
         self.assertEqual(article.content_blocks[0].content, expected.content)
 
 
@@ -321,9 +344,10 @@ class TestProcessP(unittest.TestCase):
 
     def test_process_p_author_image_end(self):
         content = 'blah blah&lt;/Author response image 1 title/legend&gt;'
+        wrap = 'fig'
         expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, None, wrap), expected)
 
     def test_process_p_decision_image_start(self):
         content = '&lt;Decision letter image 2&gt;'
@@ -332,6 +356,19 @@ class TestProcessP(unittest.TestCase):
 
     def test_process_p_decision_image_end(self):
         content = 'blah blah&lt;/Decision letter image 2 title/legend&gt;'
+        wrap = 'fig'
         expected = ('blah blah&lt;/Decision letter image 2 title/legend&gt;',
                     'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+
+    def test_process_p_author_video_start(self):
+        content = '&lt;Author response video 1&gt;'
+        expected = ('', 'p', None, 'append', 'media')
         self.assertEqual(build.process_p_content(content, None), expected)
+
+    def test_process_p_author_video_end(self):
+        content = 'blah blah&lt;/Author response video 1 title/legend&gt;'
+        wrap = 'fig'
+        expected = ('blah blah&lt;/Author response video 1 title/legend&gt;',
+                    'p', None, 'add', None)
+        self.assertEqual(build.process_p_content(content, None, wrap), expected)
