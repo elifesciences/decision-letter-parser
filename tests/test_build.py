@@ -290,6 +290,34 @@ class TestBuildVideo(unittest.TestCase):
         self.assertEqual(video_content, expected)
 
 
+class TestBuildSubArticle(unittest.TestCase):
+
+    def setUp(self):
+        self.config = parse_raw_config(raw_config('elife'))
+
+    def test_build_sub_article_video(self):
+        doi = "10.7554/eLife.00666"
+        id_value = "sa2"
+        article_type = "reply"
+        manuscript = 666
+        content = read_fixture('author_response_video_1.txt')
+        section = OrderedDict([
+            ('section_type', 'author_response'),
+            ('content', content)
+        ])
+        expected_content = (
+            '<label>Author response video 1.</label><caption><title>Title up to first full stop.'
+            '</title><p>Caption <sup>2+</sup>.</p></caption>')
+        article = build.build_sub_article(
+            section, self.config, article_type, id_value, doi, manuscript)
+        self.assertEqual(article.doi, doi)
+        self.assertEqual(article.id, id_value)
+        self.assertEqual(article.article_type, article_type)
+        self.assertEqual(article.content_blocks[0].block_type, 'media')
+        self.assertEqual(article.content_blocks[0].attr['xlink:href'], 'elife-00666-sa2-video1')
+        self.assertEqual(article.content_blocks[0].content, expected_content)
+
+
 class TestSetContentBlocks(unittest.TestCase):
 
     def test_author_response_image(self):

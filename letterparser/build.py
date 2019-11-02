@@ -86,18 +86,28 @@ def build_sub_article(section, config, article_type=None, id_value=None, doi=Non
     article.content_blocks = []
     set_title(article)
     set_content_blocks(article, section)
-    # set any figure file names
+    # set any figure or video file names
     fig_num = 1
+    video_num = 1
     for content_block in article.content_blocks:
         if content_block.block_type == 'fig':
             image_file_name = config.get('fig_filename_pattern').format(
                 manuscript=manuscript,
                 id_value=id_value,
-                fig_num=fig_num
+                num=fig_num
             )
             href = 'xlink:href="{image_file_name}"'.format(image_file_name=image_file_name)
             content_block.content = re.sub(r'xlink:href=".*?"', href, content_block.content)
             fig_num += 1
+        elif content_block.block_type == 'media':
+            # set video file names
+            video_file_name = config.get('video_filename_pattern').format(
+                manuscript=manuscript,
+                id_value=id_value,
+                num=video_num
+            )
+            content_block.attr['xlink:href'] = video_file_name
+            video_num += 1
 
     return article
 
