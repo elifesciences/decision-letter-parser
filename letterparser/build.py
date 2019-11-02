@@ -86,18 +86,28 @@ def build_sub_article(section, config, article_type=None, id_value=None, doi=Non
     article.content_blocks = []
     set_title(article)
     set_content_blocks(article, section)
-    # set any figure file names
+    # set any figure or video file names
     fig_num = 1
+    video_num = 1
     for content_block in article.content_blocks:
         if content_block.block_type == 'fig':
             image_file_name = config.get('fig_filename_pattern').format(
                 manuscript=manuscript,
                 id_value=id_value,
-                fig_num=fig_num
+                num=fig_num
             )
             href = 'xlink:href="{image_file_name}"'.format(image_file_name=image_file_name)
             content_block.content = re.sub(r'xlink:href=".*?"', href, content_block.content)
             fig_num += 1
+        elif content_block.block_type == 'media':
+            # set video file names
+            video_file_name = config.get('video_filename_pattern').format(
+                manuscript=manuscript,
+                id_value=id_value,
+                num=video_num
+            )
+            content_block.attr['xlink:href'] = video_file_name
+            video_num += 1
 
     return article
 
@@ -224,6 +234,30 @@ def fig_element_to_string(tag):
     return utils.clean_portion(rough_string, "fig")
 
 
+def media_element(label, title, content, mimetype="video"):
+    """populate a media XML Element for a video"""
+    media_tag = Element('media')
+    media_tag.set('mimetype', mimetype)
+    media_tag.set('xlink:href', 'todo')
+
+    label_tag = SubElement(media_tag, 'label')
+    label_tag.text = label
+
+    caption_tag = SubElement(media_tag, 'caption')
+    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+
+    # append content as a p tag in the caption
+    if content:
+        utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+
+    return media_tag
+
+
+def media_element_to_string(tag):
+    rough_string = element_to_string(tag)
+    return utils.clean_portion(rough_string, "media")
+
+
 def process_content_sections(content_sections):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
@@ -251,6 +285,18 @@ def process_content_sections(content_sections):
                     fig_content.get('content'))
                 content_block_content = fig_element_to_string(fig_tag)
                 content_blocks.append(ContentBlock("fig", content_block_content, prev_attr))
+                prev_content = None
+                appended_content = ''
+            elif prev_wrap == 'media':
+                # format the content into the video media content block
+                video_content = build_fig(appended_content)
+                media_tag = media_element(
+                    video_content.get('label'),
+                    video_content.get('title'),
+                    video_content.get('content'))
+                content_block_content = media_element_to_string(media_tag)
+                content_blocks.append(
+                    ContentBlock("media", content_block_content, media_tag.attrib))
                 prev_content = None
                 appended_content = ''
         elif action == "add":
@@ -303,19 +349,32 @@ def match_fig_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*image [0-9]? title\/legend\&gt;$', content))
 
 
+def match_video_content_start(content):
+    return bool(re.match(r'\&lt;.*video [0-9]?\&gt;', content))
+
+
+def match_video_content_title_end(content):
+    return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
+
+
 def process_p_content(content, prev_content, wrap=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
     content = utils.clean_portion(content, "p")
     # author response or decision letter image parsing
-    if match_fig_content_start(content):
-        wrap = 'fig'
-        content = ''
+    if not wrap:
+        if match_fig_content_start(content):
+            wrap = 'fig'
+            content = ''
+        elif match_video_content_start(content):
+            wrap = 'media'
+            content = ''
 
-    if match_fig_content_title_end(content):
-        action = "add"
-        wrap = None
+    if wrap:
+        if match_fig_content_title_end(content) or match_video_content_title_end(content):
+            action = "add"
+            wrap = None
     elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
           not content.startswith('<disp-formula')):
         action = "add"
