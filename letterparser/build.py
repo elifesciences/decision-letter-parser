@@ -46,7 +46,8 @@ def build_articles(jats_content, file_name=None, config=None):
         doi = build_doi(file_name, id_value, config)
 
         if section.get("section_type") == "decision_letter":
-            article = build_decision_letter(section, config, preamble_section, id_value, manuscript)
+            article = build_decision_letter(
+                section, config, preamble_section, id_value, doi, manuscript)
         else:
             article = build_sub_article(section, config, "reply", id_value, doi, manuscript)
         articles.append(article)
