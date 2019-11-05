@@ -222,7 +222,8 @@ def fig_element(label, title, content):
     utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
     # append content as a p tag in the caption
-    utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+    if content:
+        utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
 
     graphic_tag = SubElement(fig_tag, 'graphic')
     graphic_tag.set('mimetype', 'image')
