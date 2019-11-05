@@ -204,8 +204,8 @@ def build_fig(content):
     fig_content['label'] = parts_match.group(1)
     remainder = parts_match.group(2)
     title_parts = remainder.split('.')
-    title_label_match = r'(.*)\&lt;.*\&gt;$'
-    if len(title_parts) <= 1:
+    title_label_match = r'^(.*)\&lt;.*\&gt;$'
+    if len(title_parts) == 1:
         content_match = re.match(title_label_match, title_parts[0])
         fig_content['title'] = content_match.group(1).lstrip()
     else:
@@ -250,12 +250,14 @@ def media_element(label, title, content, mimetype="video"):
     label_tag = SubElement(media_tag, 'label')
     label_tag.text = label
 
-    caption_tag = SubElement(media_tag, 'caption')
-    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+    if title or content:
+        caption_tag = SubElement(media_tag, 'caption')
+        if title:
+            utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
-    # append content as a p tag in the caption
-    if content:
-        utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+        # append content as a p tag in the caption
+        if content:
+            utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
 
     return media_tag
 
