@@ -279,6 +279,20 @@ class TestBuildFig(unittest.TestCase):
         fig_content = build.build_fig(content)
         self.assertEqual(fig_content, expected)
 
+    def test_build_fig_simple_title(self):
+        """example of a title with no full stop"""
+        content = (
+            '&lt;Author response image 1 title/legend&gt;'
+            '<bold>Label</bold>Title'
+            '&lt;/Author response image 1 title/legend&gt;'
+            )
+        expected = OrderedDict([
+            ('label', 'Label'),
+            ('title', 'Title')
+        ])
+        fig_content = build.build_fig(content)
+        self.assertEqual(fig_content, expected)
+
 
 class TestBuildVideo(unittest.TestCase):
 

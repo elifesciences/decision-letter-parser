@@ -204,10 +204,15 @@ def build_fig(content):
     fig_content['label'] = parts_match.group(1)
     remainder = parts_match.group(2)
     title_parts = remainder.split('.')
+    title_label_match = r'(.*)\&lt;.*\&gt;$'
+    if len(title_parts) <= 1:
+        content_match = re.match(title_label_match, title_parts[0])
+        fig_content['title'] = content_match.group(1).lstrip()
+    else:
     fig_content['title'] = title_parts[0].lstrip() + '.'
     # strip the title / legend close tag
     content_remainder = '.'.join(title_parts[1:])
-    content_match = re.match(r'(.*)\&lt;.*\&gt;$', content_remainder)
+        content_match = re.match(title_label_match, content_remainder)
     fig_content['content'] = content_match.group(1).lstrip()
     return fig_content
 
