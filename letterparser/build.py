@@ -209,11 +209,11 @@ def build_fig(content):
         content_match = re.match(title_label_match, title_parts[0])
         fig_content['title'] = content_match.group(1).lstrip()
     else:
-    fig_content['title'] = title_parts[0].lstrip() + '.'
-    # strip the title / legend close tag
-    content_remainder = '.'.join(title_parts[1:])
+        fig_content['title'] = title_parts[0].lstrip() + '.'
+        # strip the title / legend close tag
+        content_remainder = '.'.join(title_parts[1:])
         content_match = re.match(title_label_match, content_remainder)
-    fig_content['content'] = content_match.group(1).lstrip()
+        fig_content['content'] = content_match.group(1).lstrip()
     return fig_content
 
 
