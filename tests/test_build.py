@@ -144,13 +144,13 @@ class TestBuildArticles(unittest.TestCase):
         content_sections = [
             OrderedDict([
                 ("tag_name", "list"),
-                ("content", '<list></list>'),
+                ("content", '<list><list-item><p>Item</p></list-item></list>'),
             ])
         ]
         result = build.process_content_sections(content_sections)
         self.assertEqual(result[0].block_type, "list")
         self.assertEqual(result[0].attr, {})
-        self.assertEqual(result[0].content, '')
+        self.assertEqual(result[0].content, '<list-item><p>Item</p></list-item>')
 
     def test_process_content_sections_disp_quote(self):
         content_sections = [
@@ -381,7 +381,7 @@ class TestProcessP(unittest.TestCase):
 
     def test_process_p_author_image_start(self):
         content = '&lt;Author response image 1&gt;'
-        expected = ('', 'p', None, 'append', 'fig')
+        expected = ('', 'p', None, 'add', 'fig')
         self.assertEqual(build.process_p_content(content, None), expected)
 
     def test_process_p_author_image_end(self):
@@ -393,7 +393,7 @@ class TestProcessP(unittest.TestCase):
 
     def test_process_p_decision_image_start(self):
         content = '&lt;Decision letter image 2&gt;'
-        expected = ('', 'p', None, 'append', 'fig')
+        expected = ('', 'p', None, 'add', 'fig')
         self.assertEqual(build.process_p_content(content, None), expected)
 
     def test_process_p_decision_image_end(self):
@@ -405,7 +405,7 @@ class TestProcessP(unittest.TestCase):
 
     def test_process_p_author_video_start(self):
         content = '&lt;Author response video 1&gt;'
-        expected = ('', 'p', None, 'append', 'media')
+        expected = ('', 'p', None, 'add', 'media')
         self.assertEqual(build.process_p_content(content, None), expected)
 
     def test_process_p_author_video_end(self):

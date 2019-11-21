@@ -2,14 +2,14 @@
 <root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
     <sub-article article-type="decision-letter" id="sa1">
         <front-stub>
-            <article-id pub-id-type="doi">10.7554/eLife.00666.DL</article-id>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.sa1</article-id>
             <title-group>
                 <article-title>Decision letter</article-title>
             </title-group>
         </front-stub>
         <body>
             <boxed-text>
-                <p>In the interests of transparency, eLife includes the editorial decision letter and accompanying author responses. A lightly edited version of the letter sent to the authors after peer review is shown, indicating the most substantive concerns; minor comments are not usually included.</p>
+                <p>In the interests of transparency, eLife publishes the most substantive revision requests and the accompanying author responses.</p>
             </boxed-text>
             <p>
                 Thank you for submitting your article &quot;The eLife research article&quot; for consideration by 
@@ -29,7 +29,7 @@
     </sub-article>
     <sub-article article-type="reply" id="sa2">
         <front-stub>
-            <article-id pub-id-type="doi">10.7554/eLife.00666.AR</article-id>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.sa2</article-id>
             <title-group>
                 <article-title>Author response</article-title>
             </title-group>

@@ -309,9 +309,10 @@ def process_content_sections(content_sections):
                 prev_content = None
                 appended_content = ''
         elif action == "add":
-            if prev_action == "append":
+            if prev_action == "append" and appended_content:
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
-            content_blocks.append(ContentBlock(tag_name, content, attr))
+            if content:
+                content_blocks.append(ContentBlock(tag_name, content, attr))
             prev_content = None
             appended_content = ''
         elif action == "append":
@@ -376,9 +377,11 @@ def process_p_content(content, prev_content, wrap=None):
         if match_fig_content_start(content):
             wrap = 'fig'
             content = ''
+            action = "add"
         elif match_video_content_start(content):
             wrap = 'media'
             content = ''
+            action = "add"
 
     if wrap:
         if match_fig_content_title_end(content) or match_video_content_title_end(content):
