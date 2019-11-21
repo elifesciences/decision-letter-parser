@@ -46,7 +46,8 @@ def build_articles(jats_content, file_name=None, config=None):
         doi = build_doi(file_name, id_value, config)
 
         if section.get("section_type") == "decision_letter":
-            article = build_decision_letter(section, config, preamble_section, id_value, manuscript)
+            article = build_decision_letter(
+                section, config, preamble_section, id_value, doi, manuscript)
         else:
             article = build_sub_article(section, config, "reply", id_value, doi, manuscript)
         articles.append(article)
@@ -203,11 +204,16 @@ def build_fig(content):
     fig_content['label'] = parts_match.group(1)
     remainder = parts_match.group(2)
     title_parts = remainder.split('.')
-    fig_content['title'] = title_parts[0].lstrip() + '.'
-    # strip the title / legend close tag
-    content_remainder = '.'.join(title_parts[1:])
-    content_match = re.match(r'(.*)\&lt;.*\&gt;$', content_remainder)
-    fig_content['content'] = content_match.group(1).lstrip()
+    title_label_match = r'^(.*)\&lt;.*\&gt;$'
+    if len(title_parts) == 1:
+        content_match = re.match(title_label_match, title_parts[0])
+        fig_content['title'] = content_match.group(1).lstrip()
+    else:
+        fig_content['title'] = title_parts[0].lstrip() + '.'
+        # strip the title / legend close tag
+        content_remainder = '.'.join(title_parts[1:])
+        content_match = re.match(title_label_match, content_remainder)
+        fig_content['content'] = content_match.group(1).lstrip()
     return fig_content
 
 
@@ -221,7 +227,8 @@ def fig_element(label, title, content):
     utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
     # append content as a p tag in the caption
-    utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+    if content:
+        utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
 
     graphic_tag = SubElement(fig_tag, 'graphic')
     graphic_tag.set('mimetype', 'image')
@@ -243,12 +250,14 @@ def media_element(label, title, content, mimetype="video"):
     label_tag = SubElement(media_tag, 'label')
     label_tag.text = label
 
-    caption_tag = SubElement(media_tag, 'caption')
-    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+    if title or content:
+        caption_tag = SubElement(media_tag, 'caption')
+        if title:
+            utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
-    # append content as a p tag in the caption
-    if content:
-        utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+        # append content as a p tag in the caption
+        if content:
+            utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
 
     return media_tag
 
@@ -300,9 +309,10 @@ def process_content_sections(content_sections):
                 prev_content = None
                 appended_content = ''
         elif action == "add":
-            if prev_action == "append":
+            if prev_action == "append" and appended_content:
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
-            content_blocks.append(ContentBlock(tag_name, content, attr))
+            if content:
+                content_blocks.append(ContentBlock(tag_name, content, attr))
             prev_content = None
             appended_content = ''
         elif action == "append":
@@ -367,9 +377,11 @@ def process_p_content(content, prev_content, wrap=None):
         if match_fig_content_start(content):
             wrap = 'fig'
             content = ''
+            action = "add"
         elif match_video_content_start(content):
             wrap = 'media'
             content = ''
+            action = "add"
 
     if wrap:
         if match_fig_content_title_end(content) or match_video_content_title_end(content):

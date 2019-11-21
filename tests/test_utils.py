@@ -194,6 +194,14 @@ class TestManuscriptFromFileName(unittest.TestCase):
             "file_name": "folder/Dutzler 39122 edit.docx",
             "expected": "39122"
         },
+        {
+            "file_name": "folder/elife-00666.docx",
+            "expected": "666"
+        },
+        {
+            "file_name": "folder/elife-NaN.docx",
+            "expected": None
+        },
         )
     def test_manuscript_from_file_name(self, test_data):
         manuscript = utils.manuscript_from_file_name(test_data.get("file_name"))

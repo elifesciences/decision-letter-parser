@@ -136,5 +136,15 @@ def manuscript_from_file_name(file_name):
     # may requiring changing when final file name format is decided
     # based on file name e.g. Dutzler 39122 edit.docx
     if file_name:
-        return get_file_name_file(file_name).split('.')[0].split(' ')[1]
+        first_file_name_part = get_file_name_file(file_name).split('.')[0]
+        spaced_parts = first_file_name_part.split(' ')
+        hyphenated_parts = first_file_name_part.split('-')
+        if len(spaced_parts) > 1:
+            manuscript_string = spaced_parts[1]
+        else:
+            manuscript_string = hyphenated_parts[1]
+        try:
+            return str(int(manuscript_string))
+        except ValueError:
+            return None
     return None
