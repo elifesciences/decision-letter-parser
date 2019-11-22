@@ -6,6 +6,9 @@ from letterparser import docker_lib, utils
 from letterparser.conf import raw_config, parse_raw_config
 
 
+DEFAULT_DOCKER_IMAGE = "pandoc/core:2.6"
+
+
 SECTION_MAP = {
     "preamble": "<p><bold>Preamble</bold></p>",
     "decision_letter": "<p><bold>Decision letter</bold></p>",
@@ -33,8 +36,8 @@ def docker_pandoc_output(file_name, config):
     if config:
         docker_image = config.get("docker_image")
     if not docker_image:
-        # todo !! log that no docker image was specified
-        return None
+        # todo !! log that default docker image was used
+        docker_image = DEFAULT_DOCKER_IMAGE
     try:
         return docker_lib.call_pandoc(file_name, docker_image)
     except requests.exceptions.ConnectionError:
