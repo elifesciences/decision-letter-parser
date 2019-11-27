@@ -299,9 +299,9 @@ def process_content_sections(content_sections):
             tag_name, section.get("content"), prev_content, prev_wrap)
         if prev_wrap and not wrap:
             # finish the fig tag content
-            appended_content = appended_content + content
             if prev_wrap == 'fig':
                 # format the content into the figure content block
+                appended_content = appended_content + content
                 fig_content = build_fig(appended_content)
                 fig_tag = fig_element(
                     fig_content.get('label'),
@@ -313,6 +313,7 @@ def process_content_sections(content_sections):
                 appended_content = ''
             elif prev_wrap == 'media':
                 # format the content into the video media content block
+                appended_content = appended_content + content
                 video_content = build_fig(appended_content)
                 media_tag = media_element(
                     video_content.get('label'),
@@ -323,16 +324,30 @@ def process_content_sections(content_sections):
                     ContentBlock("media", content_block_content, media_tag.attrib))
                 prev_content = None
                 appended_content = ''
+            elif prev_wrap == 'disp-quote':
+                disp_quote_tag = disp_quote_element(appended_content)
+                content_block_content = disp_quote_element_to_string(disp_quote_tag)
+                tag_attr = {'content-type': 'editor-comment'}
+                content_blocks.append(
+                    ContentBlock("disp-quote", content_block_content, tag_attr))
+                prev_content = content
+                appended_content = content
         elif action == "add":
-            if prev_action == "append" and appended_content:
+            if prev_action == "append":
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
-            if content:
+                appended_content = ''
+            if content and not wrap:
                 content_blocks.append(ContentBlock(tag_name, content, attr))
-            prev_content = None
-            appended_content = ''
+                prev_content = None
+                appended_content = ''
+            elif content:
+                appended_content = appended_content + content
+                prev_content = content
+
         elif action == "append":
             appended_content = appended_content + content
             prev_content = content
+
         prev_action = action
         prev_tag_name = tag_name
         prev_attr = attr
@@ -382,11 +397,26 @@ def match_video_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
 
 
+def match_disp_quote_content(content):
+    return bool(re.match(r'^<italic>.*<\/italic>$', content))
+
+
+def p_wrap(content):
+    """wrap string in a <p> tag"""
+    return '<p>%s</p>' % content
+
+
+def clean_italic_p(content):
+    """remove italic and wrap in p tag"""
+    return p_wrap(utils.clean_portion(content, "italic"))
+
+
 def process_p_content(content, prev_content, wrap=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
     content = utils.clean_portion(content, "p")
+    new_wrap = False
     # author response or decision letter image parsing
     if not wrap:
         if match_fig_content_start(content):
@@ -397,15 +427,24 @@ def process_p_content(content, prev_content, wrap=None):
             wrap = 'media'
             content = ''
             action = "add"
+        elif match_disp_quote_content(content):
+            wrap = 'disp-quote'
+            action = "add"
+            content = clean_italic_p(content)
+            new_wrap = True
 
-    if wrap:
+    if wrap and wrap != 'disp-quote':
         if match_fig_content_title_end(content) or match_video_content_title_end(content):
             action = "add"
             wrap = None
+    elif wrap == 'disp-quote' and not new_wrap:
+        if not match_disp_quote_content(content):
+            wrap = None
+        else:
+            content = clean_italic_p(content)
     elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
           not content.startswith('<disp-formula')):
         action = "add"
-
     return content, tag_name, None, action, wrap
 
 

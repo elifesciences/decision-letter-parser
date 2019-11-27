@@ -238,6 +238,36 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[2].block_type, "p")
         self.assertEqual(result[2].content, '<disp-formula></disp-formula>')
 
+    def test_process_content_sections_p_italic(self):
+        """test case for italic p"""
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Regular paragraph.</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><italic>First quoted paragraph.</italic></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><italic>Second quoted paragraph.</italic></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Response paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'p')
+        self.assertEqual(result[0].content, 'Regular paragraph.')
+        self.assertEqual(result[1].block_type, 'disp-quote')
+        self.assertEqual(result[1].attr.get('content-type'), 'editor-comment')
+        self.assertEqual(
+            result[1].content, '<p>First quoted paragraph.</p><p>Second quoted paragraph.</p>')
+        self.assertEqual(result[2].block_type, 'p')
+        self.assertEqual(result[2].content, 'Response paragraph.')
+
 
 class TestDefaultPreamble(unittest.TestCase):
 
