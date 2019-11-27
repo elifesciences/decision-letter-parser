@@ -304,6 +304,16 @@ class TestBuildVideo(unittest.TestCase):
         self.assertEqual(video_content, expected)
 
 
+class TestBuildDispQuote(unittest.TestCase):
+
+    def test_disp_quote_element(self):
+        content = '<p>One.</p><p>Two.</p>'
+        expected = b'<disp-quote><p>One.</p><p>Two.</p></disp-quote>'
+        tag_content = build.disp_quote_element(content)
+        tag_xml = ElementTree.tostring(tag_content)
+        self.assertEqual(tag_xml, expected)
+
+
 class TestBuildSubArticle(unittest.TestCase):
 
     def setUp(self):

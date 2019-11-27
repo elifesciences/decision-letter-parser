@@ -262,9 +262,24 @@ def media_element(label, title, content, mimetype="video"):
     return media_tag
 
 
+def disp_quote_element(content):
+    """wrap non-italicised content into disp-quote tag"""
+    root_tag = Element('disp-quote')
+
+    if content:
+        utils.append_to_parent_tag(root_tag, 'disp-quote', content, utils.XML_NAMESPACE_MAP)
+
+    return root_tag[0]
+
+
 def media_element_to_string(tag):
     rough_string = element_to_string(tag)
     return utils.clean_portion(rough_string, "media")
+
+
+def disp_quote_element_to_string(tag):
+    rough_string = element_to_string(tag)
+    return utils.clean_portion(rough_string, "disp-quote")
 
 
 def process_content_sections(content_sections):
