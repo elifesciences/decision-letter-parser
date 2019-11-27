@@ -333,7 +333,7 @@ def process_content_sections(content_sections):
                 prev_content = content
                 appended_content = content
         elif action == "add":
-            if prev_action == "append":
+            if prev_action == "append" and appended_content:
                 content_blocks.append(ContentBlock(prev_tag_name, appended_content, prev_attr))
                 appended_content = ''
             if content and not wrap:
