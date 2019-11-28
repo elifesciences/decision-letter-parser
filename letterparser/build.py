@@ -299,8 +299,7 @@ def process_content_sections(content_sections):
 def process_content_section(section, content_blocks, appended_content, prev):
     """profile and format the section content adding content blocks"""
     tag_name = section.get("tag_name")
-    content, tag_name, attr, action, wrap = process_content(
-        tag_name, section.get("content"), prev.get('content'), prev.get('wrap'))
+    content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
     if prev.get('wrap') and not wrap:
         # finish the fig tag content
         if prev.get('wrap') == 'fig':
@@ -361,29 +360,32 @@ def process_content_section(section, content_blocks, appended_content, prev):
     return content_blocks, appended_content, prev
 
 
-def process_content(tag_name, content, prev_content, wrap=None):
+def process_content(tag_name, content, prev):
     if tag_name == "list":
-        return process_list_content(content, wrap)
+        return process_list_content(content, prev)
     elif tag_name == "table":
-        return process_table_content(content), "table", None, "add", wrap
+        return process_table_content(content), "table", None, "add", prev.get('wrap')
     elif tag_name == "p":
-        return process_p_content(content, prev_content, wrap)
+        return process_p_content(content, prev)
     elif tag_name == "disp-quote":
-        return process_disp_quote_content(content, wrap)
+        return process_disp_quote_content(content, prev)
     # default
-    return content, None, None, "add", wrap
+    return content, None, None, "add", prev.get('wrap')
 
 
 def process_table_content(content):
     return content
 
 
-def process_list_content(content, wrap=None):
+def process_list_content(content, prev=None):
     # simple replacement of list-type="order" with list-type="number"
+    if not prev:
+        prev = {}
     content = content.replace('<list list-type="order">', '<list list-type="number">')
     content = eautils.remove_tag("disp-quote", content)
     content_xml = ElementTree.fromstring(content)
-    return utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", wrap
+    return (
+        utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", prev.get('wrap'))
 
 
 def match_fig_content_start(content):
@@ -416,14 +418,15 @@ def clean_italic_p(content):
     return p_wrap(utils.clean_portion(content, "italic"))
 
 
-def process_p_content(content, prev_content, wrap=None):
+def process_p_content(content, prev):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
     content = utils.clean_portion(content, "p")
-    new_wrap = False
+    wrap = prev.get('wrap')
+
     # author response or decision letter image parsing
-    if not wrap:
+    if not prev.get('wrap'):
         if match_fig_content_start(content):
             wrap = 'fig'
             content = ''
@@ -436,22 +439,24 @@ def process_p_content(content, prev_content, wrap=None):
             wrap = 'disp-quote'
             action = "add"
             content = clean_italic_p(content)
-            new_wrap = True
 
     if wrap and wrap != 'disp-quote':
         if match_fig_content_title_end(content) or match_video_content_title_end(content):
             action = "add"
             wrap = None
-    elif wrap == 'disp-quote' and not new_wrap:
+    elif wrap == 'disp-quote' and prev.get('wrap') == 'disp-quote':
         if not match_disp_quote_content(content):
             wrap = None
         else:
             content = clean_italic_p(content)
-    elif (not wrap and prev_content and not prev_content.startswith('<disp-formula') and
+    elif (not wrap and prev.get('content') and
+          not prev.get('content').startswith('<disp-formula') and
           not content.startswith('<disp-formula')):
         action = "add"
+
     return content, tag_name, None, action, wrap
 
 
-def process_disp_quote_content(content, wrap=None):
-    return utils.clean_portion(content, "disp-quote"), "disp-quote", None, "add", wrap
+def process_disp_quote_content(content, prev):
+    return utils.clean_portion(
+        content, "disp-quote"), "disp-quote", None, "add", prev.get('wrap')

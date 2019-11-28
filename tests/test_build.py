@@ -404,53 +404,57 @@ class TestProcessP(unittest.TestCase):
 
     def test_p_basic(self):
         content = '<p>Basic.</p>'
+        prev = {}
         expected = ('Basic.', 'p', None, 'append', None)
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_p_add_previous(self):
         content = '<p>Basic.</p>'
-        prev_content = 'Previous.'
+        prev = {'content': 'Previous.'}
         expected = ('Basic.', 'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, prev_content), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_p_append_disp_formula(self):
         content = '<p><disp-formula></disp-formula></p>'
-        prev_content = '<disp-formula></disp-formula>'
+        prev = {'content': '<disp-formula></disp-formula>'}
         expected = ('<disp-formula></disp-formula>', 'p', None, 'append', None)
-        self.assertEqual(build.process_p_content(content, prev_content), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_image_start(self):
         content = '&lt;Author response image 1&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'fig')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_image_end(self):
         content = 'blah blah&lt;/Author response image 1 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_decision_image_start(self):
         content = '&lt;Decision letter image 2&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'fig')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_decision_image_end(self):
         content = 'blah blah&lt;/Decision letter image 2 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Decision letter image 2 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_video_start(self):
         content = '&lt;Author response video 1&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'media')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_video_end(self):
         content = 'blah blah&lt;/Author response video 1 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Author response video 1 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
