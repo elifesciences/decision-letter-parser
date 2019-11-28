@@ -238,6 +238,36 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[2].block_type, "p")
         self.assertEqual(result[2].content, '<disp-formula></disp-formula>')
 
+    def test_process_content_sections_p_italic(self):
+        """test case for italic p"""
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Regular paragraph.</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><italic>First quoted paragraph.</italic></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><italic>Second quoted paragraph.</italic></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Response paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'p')
+        self.assertEqual(result[0].content, 'Regular paragraph.')
+        self.assertEqual(result[1].block_type, 'disp-quote')
+        self.assertEqual(result[1].attr.get('content-type'), 'editor-comment')
+        self.assertEqual(
+            result[1].content, '<p>First quoted paragraph.</p><p>Second quoted paragraph.</p>')
+        self.assertEqual(result[2].block_type, 'p')
+        self.assertEqual(result[2].content, 'Response paragraph.')
+
 
 class TestDefaultPreamble(unittest.TestCase):
 
@@ -304,6 +334,16 @@ class TestBuildVideo(unittest.TestCase):
         self.assertEqual(video_content, expected)
 
 
+class TestBuildDispQuote(unittest.TestCase):
+
+    def test_disp_quote_element(self):
+        content = '<p>One.</p><p>Two.</p>'
+        expected = b'<disp-quote><p>One.</p><p>Two.</p></disp-quote>'
+        tag_content = build.disp_quote_element(content)
+        tag_xml = ElementTree.tostring(tag_content)
+        self.assertEqual(tag_xml, expected)
+
+
 class TestBuildSubArticle(unittest.TestCase):
 
     def setUp(self):
@@ -364,53 +404,57 @@ class TestProcessP(unittest.TestCase):
 
     def test_p_basic(self):
         content = '<p>Basic.</p>'
+        prev = {}
         expected = ('Basic.', 'p', None, 'append', None)
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_p_add_previous(self):
         content = '<p>Basic.</p>'
-        prev_content = 'Previous.'
+        prev = {'content': 'Previous.'}
         expected = ('Basic.', 'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, prev_content), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_p_append_disp_formula(self):
         content = '<p><disp-formula></disp-formula></p>'
-        prev_content = '<disp-formula></disp-formula>'
+        prev = {'content': '<disp-formula></disp-formula>'}
         expected = ('<disp-formula></disp-formula>', 'p', None, 'append', None)
-        self.assertEqual(build.process_p_content(content, prev_content), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_image_start(self):
         content = '&lt;Author response image 1&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'fig')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_image_end(self):
         content = 'blah blah&lt;/Author response image 1 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Author response image 1 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_decision_image_start(self):
         content = '&lt;Decision letter image 2&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'fig')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_decision_image_end(self):
         content = 'blah blah&lt;/Decision letter image 2 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Decision letter image 2 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_video_start(self):
         content = '&lt;Author response video 1&gt;'
+        prev = {}
         expected = ('', 'p', None, 'add', 'media')
-        self.assertEqual(build.process_p_content(content, None), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_video_end(self):
         content = 'blah blah&lt;/Author response video 1 title/legend&gt;'
-        wrap = 'fig'
+        prev = {'wrap': 'fig'}
         expected = ('blah blah&lt;/Author response video 1 title/legend&gt;',
                     'p', None, 'add', None)
-        self.assertEqual(build.process_p_content(content, None, wrap), expected)
+        self.assertEqual(build.process_p_content(content, prev), expected)
