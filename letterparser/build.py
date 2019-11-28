@@ -300,41 +300,11 @@ def process_content_section(section, content_blocks, appended_content, prev):
     """profile and format the section content adding content blocks"""
     tag_name = section.get("tag_name")
     content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
+
     if prev.get('wrap') and not wrap:
-        # finish the fig tag content
-        if prev.get('wrap') == 'fig':
-            # format the content into the figure content block
-            appended_content = appended_content + content
-            fig_content = build_fig(appended_content)
-            fig_tag = fig_element(
-                fig_content.get('label'),
-                fig_content.get('title'),
-                fig_content.get('content'))
-            content_block_content = fig_element_to_string(fig_tag)
-            content_blocks.append(ContentBlock("fig", content_block_content, prev.get('attr')))
-            prev['content'] = None
-            appended_content = ''
-        elif prev.get('wrap') == 'media':
-            # format the content into the video media content block
-            appended_content = appended_content + content
-            video_content = build_fig(appended_content)
-            media_tag = media_element(
-                video_content.get('label'),
-                video_content.get('title'),
-                video_content.get('content'))
-            content_block_content = media_element_to_string(media_tag)
-            content_blocks.append(
-                ContentBlock("media", content_block_content, media_tag.attrib))
-            prev['content'] = None
-            appended_content = ''
-        elif prev.get('wrap') == 'disp-quote':
-            disp_quote_tag = disp_quote_element(appended_content)
-            content_block_content = disp_quote_element_to_string(disp_quote_tag)
-            tag_attr = {'content-type': 'editor-comment'}
-            content_blocks.append(
-                ContentBlock("disp-quote", content_block_content, tag_attr))
-            prev['content'] = content
-            appended_content = content
+        content_blocks, appended_content, prev = finish_wrap(
+            content_blocks, content, appended_content, prev)
+
     elif action == "add":
         if prev.get('action') == "append" and appended_content:
             content_blocks.append(
@@ -356,6 +326,46 @@ def process_content_section(section, content_blocks, appended_content, prev):
     prev['tag_name'] = tag_name
     prev['attr'] = attr
     prev['wrap'] = wrap
+
+    return content_blocks, appended_content, prev
+
+
+def finish_wrap(content_blocks, content, appended_content, prev):
+    """add appended content to a wrap"""
+    # finish the fig tag content
+    if prev.get('wrap') == 'fig':
+        # format the content into the figure content block
+        appended_content = appended_content + content
+        fig_content = build_fig(appended_content)
+        fig_tag = fig_element(
+            fig_content.get('label'),
+            fig_content.get('title'),
+            fig_content.get('content'))
+        content_block_content = fig_element_to_string(fig_tag)
+        content_blocks.append(ContentBlock("fig", content_block_content, prev.get('attr')))
+        prev['content'] = None
+        appended_content = ''
+    elif prev.get('wrap') == 'media':
+        # format the content into the video media content block
+        appended_content = appended_content + content
+        video_content = build_fig(appended_content)
+        media_tag = media_element(
+            video_content.get('label'),
+            video_content.get('title'),
+            video_content.get('content'))
+        content_block_content = media_element_to_string(media_tag)
+        content_blocks.append(
+            ContentBlock("media", content_block_content, media_tag.attrib))
+        prev['content'] = None
+        appended_content = ''
+    elif prev.get('wrap') == 'disp-quote':
+        disp_quote_tag = disp_quote_element(appended_content)
+        content_block_content = disp_quote_element_to_string(disp_quote_tag)
+        tag_attr = {'content-type': 'editor-comment'}
+        content_blocks.append(
+            ContentBlock("disp-quote", content_block_content, tag_attr))
+        prev['content'] = content
+        appended_content = content
 
     return content_blocks, appended_content, prev
 
