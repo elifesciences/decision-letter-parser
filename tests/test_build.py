@@ -140,6 +140,30 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[0].block_type, "table")
         self.assertEqual(result[0].content, '<table></table>')
 
+    def test_process_content_sections_table_with_caption(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<bold>Author response Table 1.</bold>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '&lt;Author response table 1 title/legend&gt;Author response table'
+                    '&lt;/Author response table 1 title/legend&gt;')),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table></table>'),
+            ])
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "table-wrap")
+        self.assertEqual(result[0].content, (
+            '<label>Author response Table 1.</label>'
+            '<caption><title>Author response table</title></caption>'
+            '<table frame="hsides" rules="groups" />'))
+
     def test_process_content_sections_list(self):
         content_sections = [
             OrderedDict([
@@ -318,7 +342,8 @@ class TestBuildFig(unittest.TestCase):
             )
         expected = OrderedDict([
             ('label', 'Label'),
-            ('title', 'Title')
+            ('title', 'Title'),
+            ('content', None)
         ])
         fig_content = build.build_fig(content)
         self.assertEqual(fig_content, expected)
@@ -340,6 +365,45 @@ class TestBuildDispQuote(unittest.TestCase):
         content = '<p>One.</p><p>Two.</p>'
         expected = b'<disp-quote><p>One.</p><p>Two.</p></disp-quote>'
         tag_content = build.disp_quote_element(content)
+        tag_xml = ElementTree.tostring(tag_content)
+        self.assertEqual(tag_xml, expected)
+
+
+class TestBuildTableWrap(unittest.TestCase):
+
+    def test_build_table(self):
+        """example of a title"""
+        content = (
+            '<bold>Author response Table 1.</bold>'
+            '&lt;Author response table 1 title/legend&gt;'
+            'Author response table'
+            '&lt;/Author response table 1 title/legend&gt;'
+            '<table></table>'
+            )
+        expected = OrderedDict([
+            ('table', '<table></table>'),
+            ('label', 'Author response Table 1.'),
+            ('title', 'Author response table'),
+            ('content', None)
+        ])
+        table_content = build.build_table_wrap(content)
+        self.assertEqual(table_content, expected)
+
+
+class TestBuildTableWrapElement(unittest.TestCase):
+
+    def test_table_wrap_element(self):
+        label = 'Author response Table 1.'
+        title = 'Author response table'
+        content = 'Optional caption.'
+        table = '<table></table>'
+        expected = (
+            b'<table-wrap><label>Author response Table 1.</label>'
+            b'<caption><title>Author response table</title>'
+            b'<p>Optional caption.</p></caption>'
+            b'<table frame="hsides" rules="groups" /></table-wrap>'
+            )
+        tag_content = build.table_wrap_element(label, title, content, table)
         tag_xml = ElementTree.tostring(tag_content)
         self.assertEqual(tag_xml, expected)
 

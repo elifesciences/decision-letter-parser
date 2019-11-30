@@ -197,24 +197,33 @@ def clean_math_alternatives(section_xml):
     return section_xml
 
 
-def build_fig(content):
-    """parse content into individual elements of a figure"""
-    fig_content = OrderedDict()
+def extract_label_title_content(content):
+    title_content = None
+    content_content = None
+
     parts_match = re.match(r'.*<bold>(.*?)</bold>(.*)', content)
-    fig_content['label'] = parts_match.group(1)
+    label_content = parts_match.group(1)
     remainder = parts_match.group(2)
     title_parts = remainder.split('.')
     title_label_match = r'^(.*)\&lt;.*\&gt;$'
     if len(title_parts) == 1:
         content_match = re.match(title_label_match, title_parts[0])
-        fig_content['title'] = content_match.group(1).lstrip()
+        title_content = content_match.group(1).lstrip()
     else:
-        fig_content['title'] = title_parts[0].lstrip() + '.'
+        title_content = title_parts[0].lstrip() + '.'
         # strip the title / legend close tag
         content_remainder = '.'.join(title_parts[1:])
         content_match = re.match(title_label_match, content_remainder)
-        fig_content['content'] = content_match.group(1).lstrip()
-    return fig_content
+        content_content = content_match.group(1).lstrip()
+
+    return label_content, title_content, content_content
+
+
+def build_fig(content):
+    """parse content into individual elements of a figure"""
+    fig_c = OrderedDict()
+    fig_c['label'], fig_c['title'], fig_c['content'] = extract_label_title_content(content)
+    return fig_c
 
 
 def fig_element(label, title, content):
@@ -280,6 +289,61 @@ def media_element_to_string(tag):
 def disp_quote_element_to_string(tag):
     rough_string = element_to_string(tag)
     return utils.clean_portion(rough_string, "disp-quote")
+
+
+def table_wrap_element_to_string(tag):
+    rough_string = element_to_string(tag)
+    return utils.clean_portion(rough_string, "table-wrap")
+
+
+def build_table_wrap(content):
+    """parse table content into table-wrap tag"""
+    table = OrderedDict()
+    parts_match = re.match(r'(.*)(<table>.*)', content)
+    title_content = parts_match.group(1)
+    table['table'] = parts_match.group(2)
+    # strip &lt; open tag from the title_content
+    title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)'
+    parts_match = re.match(title_content_match, title_content)
+    altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
+    (table['label'], table['title'],
+     table['content']) = extract_label_title_content(altered_title_content)
+    return table
+
+
+def table_content(content):
+    """convert and clean table XML"""
+    # remove <col> tags
+    content = re.sub(r'<col .*?\/>', '', content)
+    # strip parent <table> tag
+    return utils.clean_portion(content, "table")
+
+
+def table_wrap_element(label, title, content, table):
+    """populate a table-wrap element"""
+    table_wrap_tag = Element('table-wrap')
+
+    label_tag = SubElement(table_wrap_tag, 'label')
+    label_tag.text = label
+
+    if title or content:
+        caption_tag = SubElement(table_wrap_tag, 'caption')
+        if title:
+            utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+
+        # append content as a p tag in the caption
+        if content:
+            utils.append_to_parent_tag(caption_tag, 'p', content, utils.XML_NAMESPACE_MAP)
+
+    if table:
+        clean_table = table_content(table)
+        utils.append_to_parent_tag(table_wrap_tag, 'table', clean_table, utils.XML_NAMESPACE_MAP)
+        # add attributes to the table tag
+        table_tag = table_wrap_tag[-1]
+        table_tag.set('frame', 'hsides')
+        table_tag.set('rules', 'groups')
+
+    return table_wrap_tag
 
 
 def process_content_sections(content_sections):
@@ -366,6 +430,20 @@ def finish_wrap(content_blocks, content, appended_content, prev):
             ContentBlock("disp-quote", content_block_content, tag_attr))
         prev['content'] = content
         appended_content = content
+    elif prev.get('wrap') == 'table-wrap':
+        appended_content = appended_content + content
+        table_content = build_table_wrap(appended_content)
+        table_wrap_tag = table_wrap_element(
+            table_content.get('label'),
+            table_content.get('title'),
+            table_content.get('content'),
+            table_content.get('table')
+        )
+        content_block_content = table_wrap_element_to_string(table_wrap_tag)
+        content_blocks.append(
+            ContentBlock("table-wrap", content_block_content, table_wrap_tag.attrib))
+        prev['content'] = None
+        appended_content = ''
 
     return content_blocks, appended_content, prev
 
@@ -374,7 +452,7 @@ def process_content(tag_name, content, prev):
     if tag_name == "list":
         return process_list_content(content, prev)
     elif tag_name == "table":
-        return process_table_content(content), "table", None, "add", prev.get('wrap')
+        return process_table_content(content)
     elif tag_name == "p":
         return process_p_content(content, prev)
     elif tag_name == "disp-quote":
@@ -384,7 +462,9 @@ def process_content(tag_name, content, prev):
 
 
 def process_table_content(content):
-    return content
+    """once a table tag is discovered close the wrapping element"""
+    wrap = None
+    return content, "table", None, "add", wrap
 
 
 def process_list_content(content, prev=None):
@@ -412,6 +492,10 @@ def match_video_content_start(content):
 
 def match_video_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
+
+
+def match_table_content_start(content):
+    return bool(re.match(r'^<bold>.*[tT]able [0-9]?\.<\/bold>$', content))
 
 
 def match_disp_quote_content(content):
@@ -445,13 +529,17 @@ def process_p_content(content, prev):
             wrap = 'media'
             content = ''
             action = "add"
+        elif match_table_content_start(content):
+            wrap = 'table-wrap'
+            action = "add"
         elif match_disp_quote_content(content):
             wrap = 'disp-quote'
             action = "add"
             content = clean_italic_p(content)
 
     if wrap and wrap != 'disp-quote':
-        if match_fig_content_title_end(content) or match_video_content_title_end(content):
+        if (match_fig_content_title_end(content) or
+                match_video_content_title_end(content)):
             action = "add"
             wrap = None
     elif wrap == 'disp-quote' and prev.get('wrap') == 'disp-quote':
