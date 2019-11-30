@@ -338,6 +338,10 @@ def table_wrap_element(label, title, content, table):
     if table:
         clean_table = table_content(table)
         utils.append_to_parent_tag(table_wrap_tag, 'table', clean_table, utils.XML_NAMESPACE_MAP)
+        # add attributes to the table tag
+        table_tag = table_wrap_tag[-1]
+        table_tag.set('frame', 'hsides')
+        table_tag.set('rules', 'groups')
 
     return table_wrap_tag
 

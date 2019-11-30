@@ -162,7 +162,7 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[0].content, (
             '<label>Author response Table 1.</label>'
             '<caption><title>Author response table</title></caption>'
-            '<table />'))
+            '<table frame="hsides" rules="groups" />'))
 
     def test_process_content_sections_list(self):
         content_sections = [
@@ -401,7 +401,7 @@ class TestBuildTableWrapElement(unittest.TestCase):
             b'<table-wrap><label>Author response Table 1.</label>'
             b'<caption><title>Author response table</title>'
             b'<p>Optional caption.</p></caption>'
-            b'<table /></table-wrap>'
+            b'<table frame="hsides" rules="groups" /></table-wrap>'
             )
         tag_content = build.table_wrap_element(label, title, content, table)
         tag_xml = ElementTree.tostring(tag_content)
