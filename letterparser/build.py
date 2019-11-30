@@ -494,14 +494,6 @@ def match_table_content_start(content):
     return bool(re.match(r'^<bold>.*[tT]able [0-9]?\.<\/bold>$', content))
 
 
-def match_table_content_title_start(content):
-    return bool(re.match(r'.*\&lt;[A-Z].*table [0-9]? title\/legend\&gt;$', content))
-
-
-def match_table_content_title_end(content):
-    return bool(re.match(r'.*\&lt;\/.*table [0-9]? title\/legend\&gt;$', content))
-
-
 def match_disp_quote_content(content):
     return bool(re.match(r'^<italic>.*<\/italic>$', content))
 

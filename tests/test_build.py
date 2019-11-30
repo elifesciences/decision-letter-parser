@@ -140,6 +140,30 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(result[0].block_type, "table")
         self.assertEqual(result[0].content, '<table></table>')
 
+    def test_process_content_sections_table_with_caption(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<bold>Author response Table 1.</bold>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '&lt;Author response table 1 title/legend&gt;Author response table'
+                    '&lt;/Author response table 1 title/legend&gt;')),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table></table>'),
+            ])
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "table-wrap")
+        self.assertEqual(result[0].content, (
+            '<label>Author response Table 1.</label>'
+            '<caption><title>Author response table</title></caption>'
+            '<table />'))
+
     def test_process_content_sections_list(self):
         content_sections = [
             OrderedDict([
