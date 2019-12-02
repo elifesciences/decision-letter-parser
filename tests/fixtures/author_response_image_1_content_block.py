@@ -1,5 +1,5 @@
 # coding=utf-8
-from letterparser.objects import ContentBlock
+from elifearticle.article import ContentBlock
 
 CONTENT = (
     '<label>Author response image 1.</label><caption><title>Title up to first full stop.</title>'
