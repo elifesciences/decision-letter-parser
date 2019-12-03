@@ -5,9 +5,8 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 from collections import OrderedDict
 import elifearticle.utils as eautils
-from elifearticle.article import Article
+from elifearticle.article import Article, ContentBlock
 from letterparser import parse, utils
-from letterparser.objects import ContentBlock
 from letterparser.conf import raw_config, parse_raw_config
 
 

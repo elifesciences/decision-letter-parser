@@ -1,5 +1,5 @@
 # coding=utf-8
-from letterparser.objects import ContentBlock
+from elifearticle.article import ContentBlock
 
 
 CONTENT = (

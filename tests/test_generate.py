@@ -2,8 +2,8 @@
 
 import unittest
 from xml.etree.ElementTree import Element
+from elifearticle.article import ContentBlock
 from letterparser import generate
-from letterparser.objects import ContentBlock
 from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path, helpers, read_fixture
 

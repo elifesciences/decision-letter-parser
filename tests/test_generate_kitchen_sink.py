@@ -1,8 +1,8 @@
 # coding=utf-8
 
 import unittest
+from elifearticle.article import ContentBlock
 from letterparser import generate
-from letterparser.objects import ContentBlock
 from tests import helpers, read_fixture
 
 
