@@ -6,7 +6,7 @@ from letterparser import docker_lib, utils
 from letterparser.conf import raw_config, parse_raw_config
 
 
-DEFAULT_DOCKER_IMAGE = "pandoc/core:2.6"
+DEFAULT_DOCKER_IMAGE = "pandoc/core:2.7"
 
 
 SECTION_MAP = {

@@ -5,8 +5,8 @@ matrix:
     - python: 3.5
       env: TOXENV=py35
 before_install:
-  - wget https://github.com/jgm/pandoc/releases/download/2.5/pandoc-2.5-1-amd64.deb
-  - sudo dpkg -i pandoc-2.5-1-amd64.deb
+  - wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb
+  - sudo dpkg -i pandoc-2.7-1-amd64.deb
 install: ./travis-install.sh
 script: ./travis-test.sh
 after_success: coveralls
