@@ -206,3 +206,17 @@ class TestManuscriptFromFileName(unittest.TestCase):
     def test_manuscript_from_file_name(self, test_data):
         manuscript = utils.manuscript_from_file_name(test_data.get("file_name"))
         self.assertEqual(manuscript, test_data.get("expected"))
+
+
+class TestOpenTag(unittest.TestCase):
+
+    def test_open_tag(self):
+        tag_name = 'italic'
+        expected = '<italic>'
+        self.assertEqual(utils.open_tag(tag_name), expected)
+
+    def test_open_tag_with_attr(self):
+        tag_name = 'xref'
+        attr = {'id': 'sa2fig1', 'ref-type': 'fig'}
+        expected = '<xref id="sa2fig1" ref-type="fig">'
+        self.assertEqual(utils.open_tag(tag_name, attr), expected)
