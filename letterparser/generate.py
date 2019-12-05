@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from collections import OrderedDict
 from xml.dom import minidom
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
@@ -113,6 +114,26 @@ def set_content_blocks(parent, content_blocks, level=1):
         if block_tag is not None and block.content_blocks:
             # recursion
             set_content_blocks(block_tag, block.content_blocks, level+1)
+
+
+def labels(root):
+    """find label values from assets"""
+    asset_labels = []
+    name_type_map = OrderedDict([
+        ('fig', 'fig'),
+        ('media', 'video'),
+        ('table-wrap', 'table')
+    ])
+    for tag_name in list(name_type_map):
+        for block_tag in root.findall(".//" + tag_name):
+            label_tags = block_tag.findall(".//label")
+            if block_tag.get("id") and label_tags:
+                asset_label = OrderedDict()
+                asset_label["id"] = block_tag.get("id")
+                asset_label["type"] = name_type_map.get(tag_name)
+                asset_label["text"] = label_tags[0].text
+                asset_labels.append(asset_label)
+    return asset_labels
 
 
 def output_xml(root, pretty=False, indent=""):
