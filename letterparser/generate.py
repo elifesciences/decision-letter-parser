@@ -1,5 +1,7 @@
 # coding=utf-8
 
+import re
+from collections import OrderedDict
 from xml.dom import minidom
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
@@ -49,6 +51,8 @@ def generate(articles, root_tag="root"):
         set_id_attributes(sub_article_tag, "fig", article.id)
         set_id_attributes(sub_article_tag, "table-wrap", article.id)
         set_id_attributes(sub_article_tag, "media", article.id)
+        # highlight mentions of fig, media, table with an xref tag
+        asset_xref_tags(sub_article_tag)
     return root
 
 
@@ -113,6 +117,61 @@ def set_content_blocks(parent, content_blocks, level=1):
         if block_tag is not None and block.content_blocks:
             # recursion
             set_content_blocks(block_tag, block.content_blocks, level+1)
+
+
+def labels(root):
+    """find label values from assets"""
+    asset_labels = []
+    name_type_map = OrderedDict([
+        ('fig', 'fig'),
+        ('media', 'video'),
+        ('table-wrap', 'table')
+    ])
+    for tag_name in list(name_type_map):
+        for block_tag in root.findall(".//" + tag_name):
+            label_tags = block_tag.findall(".//label")
+            if block_tag.get("id") and label_tags:
+                asset_label = OrderedDict()
+                asset_label["id"] = block_tag.get("id")
+                asset_label["type"] = name_type_map.get(tag_name)
+                asset_label["text"] = label_tags[0].text
+                asset_labels.append(asset_label)
+    return asset_labels
+
+
+def asset_xref_tags(root):
+    """
+    wrap mentions of asset labels in paragraphs with an <xref> tag
+    method to replace tags in an ElementTree it will remove the old one and insert the new
+    which requires to know the p tag parent and index of the p tag inside that parent
+    """
+    asset_labels = labels(root)
+    # look for tags that have a p tag in them
+    for p_tag_parent in root.findall('.//p/..'):
+        # loop through the p tags in this parent tag, keeping track of the p tag index
+        for tag_index, p_tag in enumerate(p_tag_parent.iter('p')):
+            tag_string = build.element_to_string(p_tag)
+            modified = False
+            for asset_label in asset_labels:
+                # look for the label in the text but not preceeded by a > char
+                if re.match('.*[^>]' + asset_label.get('text') + '.*', str(tag_string)):
+                    attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
+                    xref_open_tag = utils.open_tag('xref', attr)
+                    xref_close_tag = utils.close_tag('xref')
+                    tag_string = re.sub(
+                        str(asset_label.get('text')),
+                        '%s%s%s' % (xref_open_tag, str(asset_label.get('text')), xref_close_tag),
+                        str(tag_string))
+                    modified = True
+            if modified:
+                # add namespaces before parsing again
+                p_tag_string = '<p %s>' % utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP)
+                tag_string = re.sub(r'^<p>', p_tag_string, str(tag_string))
+                new_p_tag = ElementTree.fromstring(tag_string)
+                # remove old tag
+                p_tag_parent.remove(p_tag)
+                # insert the new tag
+                p_tag_parent.insert(tag_index, new_p_tag)
 
 
 def output_xml(root, pretty=False, indent=""):

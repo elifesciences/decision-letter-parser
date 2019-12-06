@@ -123,8 +123,13 @@ def get_file_name_file(file_name):
     return file_name.split(os.sep)[-1]
 
 
-def open_tag(tag_name):
-    return "<%s>" % tag_name
+def open_tag(tag_name, attr=None):
+    if not attr:
+        return "<%s>" % tag_name
+    attr_values = []
+    for name, value in sorted(attr.items()):
+        attr_values.append('%s="%s"' % (name, value))
+    return "<%s %s>" % (tag_name, ' '.join(attr_values))
 
 
 def close_tag(tag_name):

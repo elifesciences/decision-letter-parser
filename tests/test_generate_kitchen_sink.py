@@ -68,7 +68,7 @@ def kitchen_sink_author_response():
         ' mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>')))
 
     sub_article.content_blocks.append(ContentBlock("table-wrap", (
-        "<label>Author response Table 1.</label><caption><p>Author response table</p></caption>" +
+        "<label>Author response table 1.</label><caption><p>Author response table</p></caption>" +
         '<table frame="hsides" rules="groups"><thead>' +
         '<tr><th>Sample</th><th>Same</th><th>Difference more than 10%</th></tr>' +
         '</thead><tbody>' +
