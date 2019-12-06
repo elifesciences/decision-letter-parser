@@ -114,6 +114,29 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(asset_labels, expected)
 
 
+class TestAssetXrefTags(unittest.TestCase):
+
+    def test_asset_xref_tags(self):
+        xml_string = (
+            '<body>'
+            '<p>First paragraph.</p>'
+            '<p>An Author response video 1.</p>'
+            '<media id="sa2video1"><label>Author response video 1</label></media>'
+            '</body>'
+        )
+        expected = (
+            b'<body>'
+            b'<p>First paragraph.</p>'
+            b'<p>An <xref ref-type="video" rid="sa2video1">Author response video 1</xref>.</p>'
+            b'<media id="sa2video1"><label>Author response video 1</label></media>'
+            b'</body>'
+        )
+        article_xml = ElementTree.fromstring(xml_string)
+        generate.asset_xref_tags(article_xml)
+        article_xml_string = ElementTree.tostring(article_xml)
+        self.assertEqual(article_xml_string, expected)
+
+
 class TestGenerateMaxLevel(unittest.TestCase):
 
     def test_generate_max_level(self):
