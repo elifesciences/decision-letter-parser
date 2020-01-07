@@ -5,7 +5,7 @@ from collections import OrderedDict
 from xml.dom import minidom
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
-from letterparser import build, parse, utils
+from letterparser import build, parse, utils, zip_lib
 
 
 # max level of recursion adding content blocks supported
@@ -18,7 +18,41 @@ def set_if_value(element, name, value):
         element.set(name, value)
 
 
-def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="", config=None):
+def generate_xml_from_file(file_name, root_tag="root", pretty=False, indent="",
+                           config=None, temp_dir='tmp'):
+    """from file input, generate from zip or docx based on the file extension"""
+    if re.match(r'.*\.[Zz][Ii][Pp]$', file_name):
+        return generate_xml_from_zip(
+            file_name,
+            root_tag=root_tag,
+            pretty=pretty,
+            indent=indent,
+            config=config,
+            temp_dir=temp_dir)
+    return generate_xml_from_docx(
+        file_name,
+        root_tag=root_tag,
+        pretty=pretty,
+        indent=indent,
+        config=config,
+        temp_dir=temp_dir)
+
+
+def generate_xml_from_zip(file_name, root_tag="root", pretty=False, indent="",
+                          config=None, temp_dir='tmp'):
+    """generate JATS output from zip file"""
+    docx_file_name, asset_file_names = zip_lib.unzip_zip(file_name, temp_dir)
+    return generate_xml_from_docx(
+        docx_file_name,
+        root_tag=root_tag,
+        pretty=pretty,
+        indent=indent,
+        config=config,
+        temp_dir=temp_dir)
+
+
+def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="",
+                           config=None, temp_dir='tmp'):
     """generate JATS output from docx file_name"""
     articles = docx_to_articles(file_name, root_tag, config)
     jats_xml = generate(articles)
