@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import os
 import re
 from collections import OrderedDict
 from xml.dom import minidom
@@ -55,7 +56,7 @@ def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="",
                            config=None, temp_dir='tmp'):
     """generate JATS output from docx file_name"""
     articles = docx_to_articles(file_name, root_tag, config)
-    jats_xml = generate(articles)
+    jats_xml = generate(articles, root_tag, temp_dir)
     return output_xml(jats_xml, pretty, indent)
 
 
@@ -65,7 +66,7 @@ def docx_to_articles(file_name, root_tag="root", config=None):
     return build.build_articles(jats_content, file_name=file_name, config=config)
 
 
-def generate(articles, root_tag="root"):
+def generate(articles, root_tag="root", temp_dir="tmp"):
     """from jats_content generate final JATS output"""
     # Create the root XML node
     root = Element(root_tag)
@@ -87,7 +88,27 @@ def generate(articles, root_tag="root"):
         set_id_attributes(sub_article_tag, "media", article.id)
         # highlight mentions of fig, media, table with an xref tag
         asset_xref_tags(sub_article_tag)
+        # rename asset files in the XML
+        rename_assets(root, temp_dir)
     return root
+
+
+def rename_assets(root, temp_dir="tmp"):
+    """rename xlink:link values if matches the file names in the temp_dir"""
+    # profile the image file names in the tmp folder
+    file_names = sorted(os.listdir(temp_dir))
+    file_name_map = OrderedDict()
+    for file_name in file_names:
+        file_name_name = utils.get_file_name_file(file_name).split('.')[0]
+        if file_name_name:
+            file_name_map[file_name_name] = file_name
+    # search for tags and rewrite the xlink:href values
+    xpath_list = ['.//graphic', './/media']
+    for xpath in xpath_list:
+        for tag in root.findall(xpath):
+            href = tag.get('xlink:href')
+            if href and href in file_name_map:
+                tag.set('xlink:href', file_name_map.get(href))
 
 
 def id_prefix(tag_name):
