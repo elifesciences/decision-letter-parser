@@ -19,6 +19,8 @@ def profile_zip(file_name):
             else:
                 # assume figure or video file
                 zip_asset_infos.append(zipfile_info)
+    # sort by file name
+    zip_asset_infos = sorted(zip_asset_infos, key=lambda asset: asset.filename)
     return zip_docx_info, zip_asset_infos
 
 
