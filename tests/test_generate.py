@@ -51,6 +51,36 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(pretty_xml, expected)
 
 
+class TestGenerateFromFile(unittest.TestCase):
+
+    def test_generate_xml_from_file_zip(self):
+        """simple test for code coverage"""
+        file_name = data_path('elife-39122.zip')
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_file(
+            file_name, pretty=True, indent="    ", config=config)
+        self.assertIsNotNone(pretty_xml)
+
+    def test_generate_xml_from_file_docx(self):
+        """simple test for code coverage"""
+        file_name = data_path('Dutzler 39122 edit.docx')
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_file(
+            file_name, pretty=True, indent="    ", config=config)
+        self.assertIsNotNone(pretty_xml)
+
+
+class TestGenerateFromZip(unittest.TestCase):
+
+    def test_generate_xml_from_zip(self):
+        """simple test for code coverage"""
+        file_name = data_path('elife-39122.zip')
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_zip(
+            file_name, pretty=True, indent="    ", config=config)
+        self.assertIsNotNone(pretty_xml)
+
+
 class TestGenerateFromDocx(unittest.TestCase):
 
     def test_generate_xml_from_docx(self):
