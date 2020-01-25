@@ -80,6 +80,7 @@ def build_decision_letter(section, config, preamble_section=None, id_value=None,
 def build_sub_article(section, config, article_type=None, id_value=None, doi=None, manuscript=None):
     article = Article(doi)
     article.id = id_value
+    article.manuscript = manuscript
     if article_type:
         article.article_type = article_type
     # add the content
