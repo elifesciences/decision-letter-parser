@@ -430,6 +430,7 @@ class TestBuildSubArticle(unittest.TestCase):
             section, self.config, article_type, id_value, doi, manuscript)
         self.assertEqual(article.doi, doi)
         self.assertEqual(article.id, id_value)
+        self.assertEqual(article.manuscript, manuscript)
         self.assertEqual(article.article_type, article_type)
         self.assertEqual(article.content_blocks[0].block_type, 'media')
         self.assertEqual(article.content_blocks[0].attr['xlink:href'], 'elife-00666-sa2-video1')
