@@ -25,7 +25,7 @@ def ensure_config(config):
 
 def pandoc_output(file_name):
     try:
-        return pypandoc.convert_file(file_name, "jats")
+        return pypandoc.convert_file(file_name, to="jats", extra_args=["--wrap=none"])
     except OSError:
         # todo!! log exception pandoc is probably not installed locally
         pass
