@@ -51,11 +51,11 @@ def new_line_replace_with(line_one, line_two):
     else:
         if not line_one.startswith('<p>'):
             if not line_two.rstrip().startswith('<') and line_two.rstrip().endswith('</p>'):
-                return "</p><p>"
+                return "<break /><break />"
             elif not line_two.rstrip().endswith('</p>') and not line_one.startswith('<'):
-                return "</p><p>"
+                return"<break /><break />"
         elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
-            return "</p><p>"
+            return "<break /><break />"
     return ""
 
 

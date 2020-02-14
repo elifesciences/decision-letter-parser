@@ -69,13 +69,13 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "comment": "strings only",
             "line_one": "one",
             "line_two": "two",
-            "expected": "</p><p>"
+            "expected": "<break /><break />"
         },
         {
             "comment": "string and tag",
             "line_one": "higher precision than",
             "line_two": "<italic>σ<sub>h</sub></italic>.",
-            "expected": "</p><p>"
+            "expected": "<break /><break />"
         },
         {
             "comment": "both have tags",
@@ -105,7 +105,7 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "comment": "continued italic tag",
             "line_one": "detailed below. ",
             "line_two": "<italic>Reviewer #1: ",
-            "expected": "</p><p>"
+            "expected": "<break /><break />"
         },
         {
             "comment": "split italic tag",
@@ -117,7 +117,13 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "comment": "finished paragraph",
             "line_one": "revised submission. ",
             "line_two": "Summary:</p>",
-            "expected": "</p><p>"
+            "expected": "<break /><break />"
+        },
+        {
+            "comment": "italic paragraph",
+            "line_one": "<p><italic>Reviewer #1:",
+            "line_two": "In this manuscript, ....",
+            "expected": "<break /><break />"
         },
         )
     def test_new_line_replace_with(self, test_data):
@@ -143,7 +149,7 @@ class TestCollapseNewlines(unittest.TestCase):
         {
             "comment": "No tags around new line character",
             "string": "K<sub>M</sub> of chloride\nconduction between 300-400 mM",
-            "expected": "K<sub>M</sub> of chloride</p><p>conduction between 300-400 mM"
+            "expected": "K<sub>M</sub> of chloride<break /><break />conduction between 300-400 mM"
         },
         {
             "comment": "Tags before and after new line character",
