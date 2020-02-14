@@ -44,15 +44,19 @@ def remove_strike(string):
 
 def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
-    if line_one is None or (line_one.rstrip().endswith('>') and line_two.startswith('<')):
+    if line_one is None:
         return ""
-    elif line_one.rstrip().endswith('>') and not line_two.startswith('<'):
+    if line_one.rstrip().endswith('>') and line_two.startswith('<'):
         return ""
-    elif not line_one.rstrip().endswith('>') and line_two.startswith('<'):
-        return ""
-    elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
-        return "</p><p>"
-    return " "
+    else:
+        if not line_one.startswith('<p>'):
+            if not line_two.rstrip().startswith('<') and line_two.rstrip().endswith('</p>'):
+                return "</p><p>"
+            elif not line_two.rstrip().endswith('</p>') and not line_one.startswith('<'):
+                return "</p><p>"
+        elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
+            return "</p><p>"
+    return ""
 
 
 def collapse_newlines(string):

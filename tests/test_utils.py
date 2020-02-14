@@ -75,7 +75,7 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "comment": "string and tag",
             "line_one": "higher precision than",
             "line_two": "<italic>σ<sub>h</sub></italic>.",
-            "expected": ""
+            "expected": "</p><p>"
         },
         {
             "comment": "both have tags",
@@ -90,7 +90,7 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "expected": ""
         },
         {
-            "comment": "continued italic tag",
+            "comment": "continued italic paragraph",
             "line_one": "... rectification observed. ",
             "line_two": "</italic></p>",
             "expected": ""
@@ -100,6 +100,24 @@ class TestNewLineReplaceWith(unittest.TestCase):
             "line_one": "</italic></p>",
             "line_two": "<p>In our analysis...",
             "expected": ""
+        },
+        {
+            "comment": "continued italic tag",
+            "line_one": "detailed below. ",
+            "line_two": "<italic>Reviewer #1: ",
+            "expected": "</p><p>"
+        },
+        {
+            "comment": "split italic tag",
+            "line_one": "<italic>Reviewer #1: ",
+            "line_two": "</italic>",
+            "expected": ""
+        },
+        {
+            "comment": "finished paragraph",
+            "line_one": "revised submission. ",
+            "line_two": "Summary:</p>",
+            "expected": "</p><p>"
         },
         )
     def test_new_line_replace_with(self, test_data):
