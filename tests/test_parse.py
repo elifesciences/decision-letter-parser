@@ -48,7 +48,6 @@ class TestParse(unittest.TestCase):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('clean_jats_dutzler_39122.xml')
         jats_content = parse.clean_jats(file_name, config=self.config)
-        parse.sections(jats_content)
         self.assertEqual(jats_content, expected)
 
     def test_best_jats(self):
