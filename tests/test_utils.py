@@ -107,7 +107,7 @@ class TestCollapseNewlines(unittest.TestCase):
         {
             "comment": "No tags around new line character",
             "string": "K<sub>M</sub> of chloride\nconduction between 300-400 mM",
-            "expected": "K<sub>M</sub> of chloride conduction between 300-400 mM"
+            "expected": "K<sub>M</sub> of chlorideconduction between 300-400 mM"
         },
         {
             "comment": "Tags before and after new line character",
