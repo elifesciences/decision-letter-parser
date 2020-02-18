@@ -509,7 +509,7 @@ def p_wrap(content):
 
 def clean_italic_p(content):
     """remove italic and wrap in p tag"""
-    return p_wrap(utils.clean_portion(content, "italic"))
+    return p_wrap(eautils.remove_tag("italic", content))
 
 
 def process_p_content(content, prev):

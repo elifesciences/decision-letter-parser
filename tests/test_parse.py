@@ -103,3 +103,17 @@ class TestConvertBreakTags(unittest.TestCase):
         expected = '<p>Bread.</p><p><italic>Cheese.</italic></p>'
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
+
+    def test_convert_break_tags_two_italic_tags(self):
+        jats_content = (
+            '<p><bold>Author response</bold></p><break /><break /><p><italic>A series of'
+            ' important changes is requested before the manuscript could be</italic> <italic>'
+            'considered for publication in eLife.<break /><break />1) The authors need to do....'
+            '</italic></p><break /><break /><p>Plain paragraph.</p>')
+        expected = (
+            '<p><bold>Author response</bold></p><p><italic>A series of important changes is'
+            ' requested before the manuscript could be</italic> <italic>considered for'
+            ' publication in eLife.</italic></p><p><italic>1) The authors need to do....'
+            '</italic></p><p>Plain paragraph.</p>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)

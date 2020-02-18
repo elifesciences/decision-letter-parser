@@ -44,6 +44,21 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(articles[0].content_blocks[1].block_type, "p")
         self.assertEqual(articles[0].content_blocks[1].content, "Test")
 
+    def test_build_articles_disp_quote_italic(self):
+        """buggy situation where two italic tags are in a disp-quote content p"""
+        jats_content = (
+            '<p><bold>Author response</bold></p><p><italic>A series of important changes is'
+            ' requested before the manuscript could be</italic> <italic>considered for'
+            ' publication in eLife.</italic></p><p><italic>1) The authors need to do'
+            ' .....</italic></p>')
+        articles = build.build_articles(jats_content, config=self.config)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].article_type, "reply")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "p")
+        self.assertEqual(
+            articles[0].content_blocks[0].content[0:52],
+            "<p>A series of important changes is requested before")
+
     def test_split_content_sections(self):
         sections = {
             "content": (
