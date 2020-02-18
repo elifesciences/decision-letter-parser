@@ -4,19 +4,25 @@
 <p>...</p>
 <list list-type="order">
   <list-item>
-    <disp-quote>
-      <p>Ordered list item 1</p>
-    </disp-quote>
+    <p specific-use="wrapper">
+      <disp-quote>
+        <p>Ordered list item 1</p>
+      </disp-quote>
+    </p>
     <list list-type="order">
       <list-item>
-        <disp-quote>
-          <p>Nested ordered list item 1</p>
-        </disp-quote>
+        <p specific-use="wrapper">
+          <disp-quote>
+            <p>Nested ordered list item 1</p>
+          </disp-quote>
+        </p>
       </list-item>
       <list-item>
-        <disp-quote>
-          <p>Nested ordered list item 2</p>
-        </disp-quote>
+        <p specific-use="wrapper">
+          <disp-quote>
+            <p>Nested ordered list item 2</p>
+          </disp-quote>
+        </p>
       </list-item>
     </list>
   </list-item>

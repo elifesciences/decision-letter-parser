@@ -48,7 +48,6 @@ class TestParse(unittest.TestCase):
         file_name = data_path('Dutzler 39122 edit.docx')
         expected = read_fixture('clean_jats_dutzler_39122.xml')
         jats_content = parse.clean_jats(file_name, config=self.config)
-        parse.sections(jats_content)
         self.assertEqual(jats_content, expected)
 
     def test_best_jats(self):
@@ -102,5 +101,19 @@ class TestConvertBreakTags(unittest.TestCase):
     def test_convert_break_tags_italic_sandwich(self):
         jats_content = '<p>Bread.<break /><italic><break />Cheese.</italic></p>'
         expected = '<p>Bread.</p><p><italic>Cheese.</italic></p>'
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
+
+    def test_convert_break_tags_two_italic_tags(self):
+        jats_content = (
+            '<p><bold>Author response</bold></p><break /><break /><p><italic>A series of'
+            ' important changes is requested before the manuscript could be</italic> <italic>'
+            'considered for publication in eLife.<break /><break />1) The authors need to do....'
+            '</italic></p><break /><break /><p>Plain paragraph.</p>')
+        expected = (
+            '<p><bold>Author response</bold></p><p><italic>A series of important changes is'
+            ' requested before the manuscript could be</italic> <italic>considered for'
+            ' publication in eLife.</italic></p><p><italic>1) The authors need to do....'
+            '</italic></p><p>Plain paragraph.</p>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)

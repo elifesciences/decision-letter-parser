@@ -44,9 +44,19 @@ def remove_strike(string):
 
 def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
-    if line_one is None or (line_one.endswith('>') and line_two.startswith('<')):
+    if line_one is None:
         return ""
-    return " "
+    if line_one.rstrip().endswith('>') and line_two.startswith('<'):
+        return ""
+    else:
+        if not line_one.startswith('<p>'):
+            if not line_two.rstrip().startswith('<') and line_two.rstrip().endswith('</p>'):
+                return "<break /><break />"
+            elif not line_two.rstrip().endswith('</p>') and not line_one.startswith('<'):
+                return"<break /><break />"
+        elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
+            return "<break /><break />"
+    return ""
 
 
 def collapse_newlines(string):
@@ -55,8 +65,7 @@ def collapse_newlines(string):
     new_string = ""
     prev_line = None
     for line in string.split("\n"):
-        # replace_with = new_line_replace_with(prev_line, line.lstrip())
-        replace_with = ""
+        replace_with = new_line_replace_with(prev_line, line.lstrip())
         new_string += replace_with + line.lstrip()
         prev_line = line
     return new_string
@@ -112,6 +121,21 @@ def append_to_parent_tag(parent, tag_name, original_string,
         tag_name, tag_converted_string, namespaces_string, attributes_text)
     xmlio.append_minidom_xml_to_elementtree_xml(
         parent, minidom_tag, attributes=attributes, child_attributes=True)
+
+
+def xml_string_fix_namespaces(xml_string):
+    """due to some bug with ElementTree.tostring, remove duplicate namespace attributes"""
+    # remove duplicate xmlns:mml="http://www.w3.org/1998/Math/MathML
+    return xml_string.replace(
+        (
+            b'<root xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:ali="http://www.niso.org/schemas/ali/1.0/"'
+            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:xlink="http://www.w3.org/1999/xlink">'),
+        (
+            b'<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" '
+            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:xlink="http://www.w3.org/1999/xlink">'))
 
 
 def get_file_name_path(file_name):

@@ -210,11 +210,25 @@ def extract_label_title_content(content):
         content_match = re.match(title_label_match, title_parts[0])
         title_content = content_match.group(1).lstrip()
     else:
-        title_content = title_parts[0].lstrip() + '.'
+        # check for nested italic tags
+        title_content = ''
+        content_remainders = []
+        for title_part in title_parts:
+            if not title_content:
+                title_content += title_part + '.'
+                continue
+            open_tag_count = title_content.count(utils.open_tag('italic'))
+            close_tag_count = title_content.count(utils.close_tag('italic'))
+            if open_tag_count != close_tag_count:
+                title_content += title_part + '.'
+            else:
+                content_remainders.append(title_part)
+        title_content = title_content.lstrip()
+        content_remainder = '.'.join(content_remainders)
         # strip the title / legend close tag
-        content_remainder = '.'.join(title_parts[1:])
         content_match = re.match(title_label_match, content_remainder)
-        content_content = content_match.group(1).lstrip()
+        if content_match:
+            content_content = content_match.group(1).lstrip()
 
     return label_content, title_content, content_content
 
@@ -509,7 +523,7 @@ def p_wrap(content):
 
 def clean_italic_p(content):
     """remove italic and wrap in p tag"""
-    return p_wrap(utils.clean_portion(content, "italic"))
+    return p_wrap(eautils.remove_tag("italic", content))
 
 
 def process_p_content(content, prev):

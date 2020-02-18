@@ -6,7 +6,7 @@ from letterparser import docker_lib, utils
 from letterparser.conf import raw_config, parse_raw_config
 
 
-DEFAULT_DOCKER_IMAGE = "pandoc/core:2.7"
+DEFAULT_DOCKER_IMAGE = "pandoc/core:2.9.1.1"
 
 
 SECTION_MAP = {
@@ -92,18 +92,20 @@ def convert_break_tags(jats_content, root_tag="root"):
     break_section_match = "<break /><break />"
     break_section_map = {"": break_section_match}
     break_sections = sections(jats_content, root_tag, break_section_map)
+    # add blank content to the end for last iteration
+    break_sections.append({"content": ''})
     # hanging tags could possibly be still open across <break /><break /> dividers
     hanging_tags = ["italic", "bold"]
     open_tags = set()
     for i, break_section in enumerate(break_sections):
         content = break_section.get("content")
         content = content.replace(break_section_match, "")
-        if i != 0:
-            converted_jats_content += "<p>"
-            for tag_name in open_tags:
-                converted_jats_content += utils.open_tag(tag_name)
 
-        converted_jats_content += content
+        if i > 0 and i < len(break_sections)-1:
+            for tag_name in open_tags:
+                content = utils.open_tag(tag_name) + content
+            if not content.startswith("<p>"):
+                content = "<p>" + content
 
         if i < len(break_sections)-1:
             # detect and close any open tags
@@ -112,20 +114,26 @@ def convert_break_tags(jats_content, root_tag="root"):
                 close_tag_count = content.count(utils.close_tag(tag_name))
                 first_close_tag_index = content.find(utils.close_tag(tag_name))
                 first_open_tag_index = content.find(utils.open_tag(tag_name))
-                if open_tag_count > close_tag_count:
-                    converted_jats_content += utils.close_tag(tag_name)
+                if open_tag_count == close_tag_count and tag_name in open_tags:
+                    open_tags.remove(tag_name)
+
+                if open_tag_count > close_tag_count and tag_name not in open_tags:
+                    content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
                 elif (first_close_tag_index and first_open_tag_index and
                       first_close_tag_index < first_open_tag_index):
                     # do the same if tag counts equal but close tag comes before the open tag
-                    converted_jats_content += utils.close_tag(tag_name)
+                    content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
                 elif tag_name in open_tags:
                     # there are open tags from previous section
-                    converted_jats_content += utils.close_tag(tag_name)
+                    content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
 
-            converted_jats_content += "</p>"
+            if not content.endswith("</p>"):
+                content += "</p>"
+
+        converted_jats_content += content
 
     # remove other break tags
     return converted_jats_content.replace("<break />", "")

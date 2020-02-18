@@ -14,12 +14,17 @@
   <thead>
     <tr>
       <th><bold>Tumor Type</bold></th>
-      <th><bold>MSS/MSI<break />status</bold></th>
+      <th><bold>MSS/MSI
+      status</bold></th>
       <th><bold>Cell line</bold></th>
-      <th><bold>NSC 617145<break />IC<sub>50</sub> [µM]</bold></th>
-      <th><bold>NSC 19630<break />IC<sub>50</sub> [µM]</bold></th>
-      <th><bold>ML-216<break />IC<sub>50</sub> [µM]</bold></th>
-      <th><bold>Panobinostat<break />IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>NSC 617145
+      IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>NSC 19630
+      IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>ML-216
+      IC<sub>50</sub> [µM]</bold></th>
+      <th><bold>Panobinostat
+      IC<sub>50</sub> [µM]</bold></th>
     </tr>
   </thead>
   <tbody>
@@ -87,7 +92,8 @@
       <td>0.044</td>
     </tr>
     <tr>
-      <td>Endometrial<break />carcinoma</td>
+      <td>Endometrial
+      carcinoma</td>
       <td>MSS</td>
       <td>MFE-280</td>
       <td>4.54</td>
