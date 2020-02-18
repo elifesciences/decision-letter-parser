@@ -340,6 +340,25 @@ class TestBuildDoi(unittest.TestCase):
         self.assertIsNone(doi)
 
 
+class TestExtractLabelTitleContent(unittest.TestCase):
+
+    def test_simple_title(self):
+        content = '<bold>Label</bold>Title. Caption.&lt;/Legend&gt;'
+        label, title, caption = build.extract_label_title_content(content)
+        self.assertEqual(label, 'Label')
+        self.assertEqual(title, 'Title.')
+        self.assertEqual(caption, 'Caption.')
+
+    def test_organism_title(self):
+        content = (
+            '<bold>Label</bold>In <italic>B. subtilis</italic>, the title.'
+            ' Caption.&lt;/Legend&gt;')
+        label, title, caption = build.extract_label_title_content(content)
+        self.assertEqual(label, 'Label')
+        self.assertEqual(title, 'In <italic>B. subtilis</italic>, the title.')
+        self.assertEqual(caption, 'Caption.')
+
+
 class TestBuildFig(unittest.TestCase):
 
     def test_build_fig(self):
