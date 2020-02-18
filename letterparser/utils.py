@@ -123,6 +123,21 @@ def append_to_parent_tag(parent, tag_name, original_string,
         parent, minidom_tag, attributes=attributes, child_attributes=True)
 
 
+def xml_string_fix_namespaces(xml_string):
+    """due to some bug with ElementTree.tostring, remove duplicate namespace attributes"""
+    # remove duplicate xmlns:mml="http://www.w3.org/1998/Math/MathML
+    return xml_string.replace(
+        (
+            b'<root xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:ali="http://www.niso.org/schemas/ali/1.0/"'
+            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:xlink="http://www.w3.org/1999/xlink">'),
+        (
+            b'<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" '
+            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
+            b' xmlns:xlink="http://www.w3.org/1999/xlink">'))
+
+
 def get_file_name_path(file_name):
     """return the folder path to a file excluding the file name itself"""
     return os.sep.join(file_name.split(os.sep)[0:-1])
