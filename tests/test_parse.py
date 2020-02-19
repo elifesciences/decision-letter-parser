@@ -117,3 +117,13 @@ class TestConvertBreakTags(unittest.TestCase):
             '</italic></p><p>Plain paragraph.</p>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
+
+    def test_convert_break_tags_table_td(self):
+        jats_content = (
+            '<table><tr><td>BI-167107 (agonist)<break /><break />'
+            'G<sub>s</sub> (G protein)</td></tr></table>')
+        expected = (
+            '<table><tr><td>BI-167107 (agonist)<break />'
+            'G<sub>s</sub> (G protein)</td></tr></table>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
