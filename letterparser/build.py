@@ -313,7 +313,7 @@ def table_wrap_element_to_string(tag):
 def build_table_wrap(content):
     """parse table content into table-wrap tag"""
     table = OrderedDict()
-    parts_match = re.match(r'(.*)(<table>.*)', content)
+    parts_match = re.match(r'(.*)(<table.*)', content)
     title_content = parts_match.group(1)
     table['table'] = parts_match.group(2)
     # strip &lt; open tag from the title_content
