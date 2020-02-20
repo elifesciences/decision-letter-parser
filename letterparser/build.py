@@ -379,7 +379,7 @@ def process_content_section(section, content_blocks, appended_content, prev):
     tag_name = section.get("tag_name")
     content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
 
-    if prev.get('wrap') and not wrap:
+    if ((prev.get('wrap') and not wrap) or (prev.get('wrap') and not content)):
         content_blocks, appended_content, prev = finish_wrap(
             content_blocks, content, appended_content, prev)
 
@@ -512,6 +512,10 @@ def match_table_content_start(content):
     return bool(re.match(r'^<bold>.*[tT]able [0-9]?\.<\/bold>$', content))
 
 
+def match_table_content_title_end(content):
+    return bool(re.match(r'.*\&lt;.*[tT]able [0-9]? title\/legend\&gt;$', content))
+
+
 def match_disp_quote_content(content):
     return bool(re.match(r'^<italic>.*<\/italic>$', content))
 
@@ -533,8 +537,14 @@ def process_p_content(content, prev):
     content = utils.clean_portion(content, "p")
     wrap = prev.get('wrap')
 
+    # clear previous table-wrap wrap
+    if (wrap == 'table-wrap'
+            and not match_table_content_start(content)
+            and not match_table_content_title_end(content)):
+        wrap = None
+
     # author response or decision letter image parsing
-    if not prev.get('wrap'):
+    if not wrap:
         if match_fig_content_start(content):
             wrap = 'fig'
             content = ''
@@ -543,9 +553,9 @@ def process_p_content(content, prev):
             wrap = 'media'
             content = ''
             action = "add"
-        elif match_table_content_start(content):
+        elif match_table_content_start(content) or match_table_content_title_end(content):
             wrap = 'table-wrap'
-            action = "add"
+            action = "append"
         elif match_disp_quote_content(content):
             wrap = 'disp-quote'
             action = "add"
