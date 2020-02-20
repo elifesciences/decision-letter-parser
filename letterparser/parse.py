@@ -99,7 +99,14 @@ def convert_break_tags(jats_content, root_tag="root"):
     open_tags = set()
     for i, break_section in enumerate(break_sections):
         content = break_section.get("content")
-        content = content.replace(break_section_match, "")
+
+        if '<td>' in content or '</td>' in content:
+            # if table content replace with a break tag and do not process further
+            content = content.replace(break_section_match, "<break />")
+            converted_jats_content += content
+            continue
+        else:
+            content = content.replace(break_section_match, "")
 
         if i > 0 and i < len(break_sections)-1:
             for tag_name in open_tags:
@@ -136,7 +143,7 @@ def convert_break_tags(jats_content, root_tag="root"):
         converted_jats_content += content
 
     # remove other break tags
-    return converted_jats_content.replace("<break />", "")
+    return converted_jats_content
 
 
 def section_type(jats_content, section_map):

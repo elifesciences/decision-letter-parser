@@ -92,6 +92,23 @@ class TestGenerateFromDocx(unittest.TestCase):
         self.assertIsNotNone(pretty_xml)
 
 
+class TestGenerateArticlesForTables(unittest.TestCase):
+
+    def test_generate_table_35684(self):
+        file_name = data_path('table-35684.docx')
+        config = parse_raw_config(raw_config('elife'))
+        articles = generate.docx_to_articles(file_name, config=config)
+        self.assertEqual(len(articles), 2)
+        table_wrap_blocks = [
+            block for block in articles[1].content_blocks if block.block_type == 'table-wrap']
+        self.assertEqual(len(table_wrap_blocks), 4)
+        self.assertTrue(table_wrap_blocks[0].content.startswith(
+            '<label>Author response table 1.</label><caption><title>Expression values excluding'
+            ' sex-bias FC&gt;2 (ancestry not considered).</title></caption><table frame="hsides"'
+            ' rules="groups"><thead><tr><th /><th><p><italic>S. japonicum</italic></p>'
+            '<p>schistosomula</p></th>'))
+
+
 class TestLabels(unittest.TestCase):
 
     def test_labels_kitchen_sink(self):

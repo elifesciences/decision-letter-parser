@@ -54,7 +54,7 @@ class TestBuildArticles(unittest.TestCase):
         articles = build.build_articles(jats_content, config=self.config)
         self.assertEqual(len(articles), 1)
         self.assertEqual(articles[0].article_type, "reply")
-        self.assertEqual(articles[0].content_blocks[0].block_type, "p")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "disp-quote")
         self.assertEqual(
             articles[0].content_blocks[0].content[0:52],
             "<p>A series of important changes is requested before")
@@ -159,6 +159,14 @@ class TestBuildArticles(unittest.TestCase):
         content_sections = [
             OrderedDict([
                 ("tag_name", "p"),
+                ("content", '<italic>Italic paragraph.</italic>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<italic>Previous paragraph.</italic>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
                 ("content", '<bold>Author response Table 1.</bold>'),
             ]),
             OrderedDict([
@@ -169,12 +177,50 @@ class TestBuildArticles(unittest.TestCase):
             ]),
             OrderedDict([
                 ("tag_name", "table"),
-                ("content", '<table></table>'),
+                ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<italic>Next paragraph.</italic>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "disp-quote")
+        self.assertEqual(result[0].content, '<p>Italic paragraph.</p><p>Previous paragraph.</p>')
+        self.assertEqual(result[1].block_type, "table-wrap")
+        self.assertEqual(result[1].content, (
+            '<label>Author response Table 1.</label>'
+            '<caption><title>Author response table</title></caption>'
+            '<table frame="hsides" rules="groups" />'))
+        self.assertEqual(result[2].block_type, "disp-quote")
+        self.assertEqual(result[2].content, '<p>Next paragraph.</p>')
+
+    def test_process_content_sections_table_disp_quote(self):
+        """test for previous block is a disp-quote type"""
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<italic>Paragraph.</italic>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<bold>Author response Table 1.</bold>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '&lt;Author response table 1 title/legend&gt;Author response table'
+                    '&lt;/Author response table 1 title/legend&gt;')),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
             ])
         ]
         result = build.process_content_sections(content_sections)
-        self.assertEqual(result[0].block_type, "table-wrap")
-        self.assertEqual(result[0].content, (
+        self.assertEqual(result[0].block_type, "disp-quote")
+        self.assertEqual(result[1].block_type, "table-wrap")
+        self.assertEqual(result[1].content, (
             '<label>Author response Table 1.</label>'
             '<caption><title>Author response table</title></caption>'
             '<table frame="hsides" rules="groups" />'))

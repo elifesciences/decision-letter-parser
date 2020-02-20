@@ -313,7 +313,7 @@ def table_wrap_element_to_string(tag):
 def build_table_wrap(content):
     """parse table content into table-wrap tag"""
     table = OrderedDict()
-    parts_match = re.match(r'(.*)(<table>.*)', content)
+    parts_match = re.match(r'(.*)(<table.*)', content)
     title_content = parts_match.group(1)
     table['table'] = parts_match.group(2)
     # strip &lt; open tag from the title_content
@@ -379,7 +379,9 @@ def process_content_section(section, content_blocks, appended_content, prev):
     tag_name = section.get("tag_name")
     content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
 
-    if prev.get('wrap') and not wrap:
+    if ((prev.get('wrap') and not wrap) or
+            (wrap and prev.get('wrap') and prev.get('wrap') != wrap) or
+            (prev.get('wrap') and not content)):
         content_blocks, appended_content, prev = finish_wrap(
             content_blocks, content, appended_content, prev)
 
@@ -509,7 +511,7 @@ def match_video_content_title_end(content):
 
 
 def match_table_content_start(content):
-    return bool(re.match(r'^<bold>.*[tT]able [0-9]?\.<\/bold>$', content))
+    return bool(re.match(r'^<bold>.*[tT]able [0-9]?.*<\/bold>$', content))
 
 
 def match_disp_quote_content(content):
@@ -534,7 +536,7 @@ def process_p_content(content, prev):
     wrap = prev.get('wrap')
 
     # author response or decision letter image parsing
-    if not prev.get('wrap'):
+    if not wrap:
         if match_fig_content_start(content):
             wrap = 'fig'
             content = ''
@@ -556,11 +558,14 @@ def process_p_content(content, prev):
                 match_video_content_title_end(content)):
             action = "add"
             wrap = None
-    elif wrap == 'disp-quote' and prev.get('wrap') == 'disp-quote':
-        if not match_disp_quote_content(content):
-            wrap = None
-        else:
-            content = clean_italic_p(content)
+    elif wrap == 'disp-quote':
+        if match_table_content_start(content):
+            wrap = 'table-wrap'
+        elif prev.get('wrap') == 'disp-quote':
+            if not match_disp_quote_content(content):
+                wrap = None
+            else:
+                content = clean_italic_p(content)
     elif (not wrap and prev.get('content') and
           not prev.get('content').startswith('<disp-formula') and
           not content.startswith('<disp-formula')):

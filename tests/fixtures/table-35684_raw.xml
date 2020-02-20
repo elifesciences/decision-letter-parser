@@ -3,7 +3,8 @@
 <p><bold>Author response</bold></p>
 <p><italic>
 ...</italic></p>
-<p><bold>Author response table 1.</bold> Expression values excluding sex-bias FC&gt;2 (ancestry not considered).</p>
+<p><bold>Author response table 1.</bold></p>
+<p>&lt;Author response table 1 title/legend&gt;Expression values excluding sex-bias FC&gt;2 (ancestry not considered).&lt;/Author response table 1 title/legend&gt;</p>
 <table>
   <col align="left" />
   <col align="left" />
@@ -75,7 +76,8 @@
     </tr>
   </tbody>
 </table>
-<p><bold>Author response table 2.</bold> Expression values excluding sex-bias FC&gt;2 (considering ancestry).</p>
+<p><bold>Author response table 2.</bold></p>
+<p>&lt;Author response table 2 title/legend&gt;Expression values excluding sex-bias FC&gt;2 (considering ancestry).&lt;/Author response table 2 title/legend&gt;</p>
 <table>
   <col align="left" />
   <col align="left" />
@@ -144,8 +146,9 @@
   </tbody>
 </table>
 <p>...</p>
-<p><bold>Author response table 3.</bold> Ratio of expression values, with minimum threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We did not account for ancestry. Level of significance (Wilcoxon test): *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001,</p>
-<p>N.S. P-value&gt;0.05.</p>
+<p><bold>Author response table 3.</bold></p>
+<p>&lt;Author response table 3 title/legend&gt;Ratio of expression values, with minimum threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We did not account for ancestry. Level of significance (Wilcoxon test): *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001,</p>
+<p>N.S. P-value&gt;0.05.&lt;/Author response table 3 title/legend&gt;</p>
 <table>
   <col align="left" />
   <col align="left" />
@@ -217,7 +220,8 @@
     </tr>
   </tbody>
 </table>
-<p><bold>Author response table 4.</bold> Ratio of expression values, with minimum expression threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We normalized by the ancestral state of expression. Level of significance (Wilcoxon test *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001, N.S. P-value&gt;0.05.</p>
+<p><bold>Author response table 4.</bold></p>
+<p>&lt;Author response table 4 title/legend&gt;Ratio of expression values, with minimum expression threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We normalized by the ancestral state of expression. Level of significance (Wilcoxon test *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001, N.S. P-value&gt;0.05.&lt;/Author response table 4 title/legend&gt;</p>
 <table>
   <col align="left" />
   <col align="left" />
