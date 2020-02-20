@@ -104,7 +104,7 @@ def allowed_tags():
         '<thead>', '</thead>',
         '<tbody>', '</tbody>',
         '<tr>', '</tr>',
-        '<th>', '</th>',
+        '<th>', '<th', '</th>',
         '<td>', '<td ', '</td>',
         '<xref ', '</xref>'
     )
