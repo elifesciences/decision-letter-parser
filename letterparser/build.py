@@ -379,7 +379,9 @@ def process_content_section(section, content_blocks, appended_content, prev):
     tag_name = section.get("tag_name")
     content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
 
-    if ((prev.get('wrap') and not wrap) or (prev.get('wrap') and not content)):
+    if ((prev.get('wrap') and not wrap) or
+            (wrap and prev.get('wrap') and prev.get('wrap') != wrap) or
+            (prev.get('wrap') and not content)):
         content_blocks, appended_content, prev = finish_wrap(
             content_blocks, content, appended_content, prev)
 
@@ -509,11 +511,7 @@ def match_video_content_title_end(content):
 
 
 def match_table_content_start(content):
-    return bool(re.match(r'^<bold>.*[tT]able [0-9]?\.<\/bold>$', content))
-
-
-def match_table_content_title_end(content):
-    return bool(re.match(r'.*\&lt;.*[tT]able [0-9]? title\/legend\&gt;$', content))
+    return bool(re.match(r'^<bold>.*[tT]able [0-9]?.*<\/bold>$', content))
 
 
 def match_disp_quote_content(content):
@@ -537,12 +535,6 @@ def process_p_content(content, prev):
     content = utils.clean_portion(content, "p")
     wrap = prev.get('wrap')
 
-    # clear previous table-wrap wrap
-    if (wrap == 'table-wrap'
-            and not match_table_content_start(content)
-            and not match_table_content_title_end(content)):
-        wrap = None
-
     # author response or decision letter image parsing
     if not wrap:
         if match_fig_content_start(content):
@@ -553,9 +545,9 @@ def process_p_content(content, prev):
             wrap = 'media'
             content = ''
             action = "add"
-        elif match_table_content_start(content) or match_table_content_title_end(content):
+        elif match_table_content_start(content):
             wrap = 'table-wrap'
-            action = "append"
+            action = "add"
         elif match_disp_quote_content(content):
             wrap = 'disp-quote'
             action = "add"
@@ -566,11 +558,14 @@ def process_p_content(content, prev):
                 match_video_content_title_end(content)):
             action = "add"
             wrap = None
-    elif wrap == 'disp-quote' and prev.get('wrap') == 'disp-quote':
-        if not match_disp_quote_content(content):
-            wrap = None
-        else:
-            content = clean_italic_p(content)
+    elif wrap == 'disp-quote':
+        if match_table_content_start(content):
+            wrap = 'table-wrap'
+        elif prev.get('wrap') == 'disp-quote':
+            if not match_disp_quote_content(content):
+                wrap = None
+            else:
+                content = clean_italic_p(content)
     elif (not wrap and prev.get('content') and
           not prev.get('content').startswith('<disp-formula') and
           not content.startswith('<disp-formula')):
