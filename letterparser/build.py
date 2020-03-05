@@ -511,7 +511,7 @@ def match_video_content_title_end(content):
 
 
 def match_table_content_start(content):
-    return bool(re.match(r'^<bold>.*[tT]able [0-9]?.*<\/bold>$', content))
+    return bool(re.match(r'^<bold>.*[tT]able [0-9]?.?<\/bold>$', content))
 
 
 def match_disp_quote_content(content):
