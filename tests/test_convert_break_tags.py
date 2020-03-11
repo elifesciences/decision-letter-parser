@@ -18,7 +18,7 @@ class TestConvertBreakTags(unittest.TestCase):
 
     def test_convert_break_tags_even_tag_count(self):
         jats_content = (
-            '<p><italic>One.<break /><break />A </italic><italic>half. ' +
+            '<p><italic>One.<break /><break />A </italic><italic>half.' +
             '<break /><break />Two.</italic></p>')
         expected = (
             '<p><italic>One.</italic></p><p><italic>A </italic><italic>half.</italic></p>' +
@@ -63,5 +63,20 @@ class TestConvertBreakTags(unittest.TestCase):
         expected = (
             '<table><tr><td>BI-167107 (agonist)<break />'
             'G<sub>s</sub> (G protein)</td></tr></table>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
+
+    def test_convert_break_tags_italic_table_edge_case(self):
+        jats_content = (
+            '<p>We have plotted ....</p><p><italic>2) The end of ....<break /><break />'
+            '&quot;if the overlap ....&quot;</italic></p><p><italic>However, green dashed '
+            'line ....</italic></p><p>We agree with ....</p>'
+            '<table><tbody><tr><td></td></tr></tbody></table>')
+        expected = (
+            '<p>We have plotted ....</p><p><italic>2) The end of ....</italic></p>'
+            '<p><italic>&quot;if the overlap ....&quot;</italic></p>'
+            '<p><italic>However, green dashed line ....</italic></p>'
+            '<p>We agree with ....</p>'
+            '<table><tbody><tr><td></td></tr></tbody></table>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
