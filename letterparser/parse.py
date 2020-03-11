@@ -88,6 +88,13 @@ def convert_break_tags(jats_content, root_tag="root"):
     converted_jats_content = ""
     # simple fix for italic sandwich
     jats_content = jats_content.replace("<break /><italic><break />", "</p><p><italic>")
+
+    # replace break tags in tables first
+    jats_content = re.sub(
+        r'<td(.*?)<break /><break />(.*?)</td>', r'<td\1<break />\2</td>', jats_content)
+    jats_content = re.sub(
+        r'<th(.*?)<break /><break />(.*?)</th>', r'<th\1<break />\2</th>', jats_content)
+
     # collapse double break tags into paragraph tags
     break_section_match = "<break /><break />"
     break_section_map = {"": break_section_match}
@@ -100,13 +107,7 @@ def convert_break_tags(jats_content, root_tag="root"):
     for i, break_section in enumerate(break_sections):
         content = break_section.get("content")
 
-        if '<td>' in content or '</td>' in content:
-            # if table content replace with a break tag and do not process further
-            content = content.replace(break_section_match, "<break />")
-            converted_jats_content += content
-            continue
-        else:
-            content = content.replace(break_section_match, "")
+        content = content.replace(break_section_match, "")
 
         if i > 0 and i < len(break_sections)-1:
             for tag_name in open_tags:
@@ -137,7 +138,7 @@ def convert_break_tags(jats_content, root_tag="root"):
                     content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
 
-            if not content.endswith("</p>"):
+            if not content.endswith("</p>") and not content.endswith("</table>"):
                 content += "</p>"
 
         converted_jats_content += content
