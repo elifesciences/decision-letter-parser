@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sub-article article-type="decision-letter" id="sa1">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.99999.sa1</article-id>
+            <title-group>
+                <article-title>Decision letter</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <boxed-text>
+                <p>In the interests of transparency, eLife publishes the most substantive revision requests and the accompanying author responses.</p>
+            </boxed-text>
+            <p>Content.</p>
+        </body>
+    </sub-article>
+    <sub-article article-type="reply" id="sa2">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.99999.sa2</article-id>
+            <title-group>
+                <article-title>Author response</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <disp-quote content-type="editor-comment">
+                <p>This is a normal italic paragraph</p>
+            </disp-quote>
+            <p>Plain text but is set bold for complex scripts.</p>
+            <disp-quote content-type="editor-comment">
+                <p>Italic paragraph and also bold for complex scripts</p>
+            </disp-quote>
+            <p>Plain text, also bold and italic for complex scripts.</p>
+        </body>
+    </sub-article>
+</root>

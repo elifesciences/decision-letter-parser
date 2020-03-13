@@ -2,6 +2,9 @@
 
 import zipfile
 import os
+import re
+import shutil
+from letterparser import utils
 
 
 def profile_zip(file_name):
@@ -46,3 +49,29 @@ def unzip_zip(file_name, temp_dir):
             unzip_file(open_zipfile, zip_asset_info, asset_file_name)
             asset_file_names.append(asset_file_name)
     return docx_file_name, asset_file_names
+
+
+def copy_fix_complex_scripts_styles(file_name, temp_dir="tmp"):
+    """copy the docx file and fix complex scripts style tags"""
+    new_zip_file_name = os.path.join(temp_dir, 'temp.docx')
+    new_file_name = os.path.join(temp_dir, utils.get_file_name_file(file_name))
+    # create a new zip file with altered word/document.xml file contents
+    with zipfile.ZipFile(file_name, 'r', zipfile.ZIP_DEFLATED, allowZip64=True) as open_zip:
+        with zipfile.ZipFile(new_zip_file_name, 'w', zipfile.ZIP_DEFLATED,
+                             allowZip64=True) as new_open_zip:
+            for zip_file_name in open_zip.namelist():
+                if zip_file_name == 'word/document.xml':
+                    with open_zip.open(zip_file_name) as open_file:
+                        document_xml = open_file.read()
+                        # remove complex scripts bold style tags
+                        document_xml = re.sub(rb'<w:bCs.*?/>', b'', document_xml)
+                        # remove complex scripts italic style tags
+                        document_xml = re.sub(rb'<w:iCs.*?/>', b'', document_xml)
+                        # write the altered string to the new zip file
+                        new_open_zip.writestr(zip_file_name, document_xml)
+                else:
+                    # copy the file into the new zip
+                    new_open_zip.writestr(zip_file_name, open_zip.read(zip_file_name))
+    # copy the new zip overtop of existing docx, if present
+    shutil.move(new_zip_file_name, new_file_name)
+    return new_file_name
