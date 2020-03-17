@@ -273,3 +273,9 @@ class TestRemoveComplexScriptsStyles(unittest.TestCase):
         expected = read_fixture('complex_scripts_document_expected.xml', mode='rb')
         xml_string = utils.remove_complex_scripts_styles(xml_string)
         self.assertEqual(xml_string, expected)
+
+    def test_remove_complex_scripts_style_edge_cases(self):
+        xml_string = b'<w:iCs/><w:bCs><w:iCs w:val="false"/>'
+        expected = b''
+        xml_string = utils.remove_complex_scripts_styles(xml_string)
+        self.assertEqual(xml_string, expected)
