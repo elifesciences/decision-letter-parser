@@ -178,3 +178,12 @@ def manuscript_from_file_name(file_name):
         except ValueError:
             return None
     return None
+
+
+def remove_complex_scripts_styles(document_xml):
+    """given docx document.xml contents remove complex scripts style tags"""
+    # remove complex scripts bold style tags
+    document_xml = re.sub(rb'<w:bCs.*?/>', b'', document_xml)
+    # remove complex scripts italic style tags
+    document_xml = re.sub(rb'<w:iCs.*?/>', b'', document_xml)
+    return document_xml

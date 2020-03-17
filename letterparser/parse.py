@@ -48,7 +48,7 @@ def docker_pandoc_output(file_name, config):
 def parse_file(file_name, config=None, temp_dir="tmp"):
     """issue the call to pandoc locally or via docker"""
     # make a copy of the file and fix complex scripts styles inside the docx
-    new_file_name = zip_lib.copy_fix_complex_scripts_styles(file_name, temp_dir)
+    new_file_name = zip_lib.fix_complex_scripts_styles(file_name, temp_dir)
     output = pandoc_output(new_file_name)
     if not output:
         output = docker_pandoc_output(new_file_name, config)
