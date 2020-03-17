@@ -35,7 +35,7 @@ class TestParse(unittest.TestCase):
     def test_parse_file_no_pandoc(self, fake_pandoc_output, fake_docker_pandoc_output):
         fake_pandoc_output.return_value = None
         fake_docker_pandoc_output.return_value = None
-        output = parse.parse_file('file_name')
+        output = parse.parse_file(data_path('Dutzler 39122 edit.docx'))
         self.assertIsNone(output)
 
     def test_raw_jats(self):

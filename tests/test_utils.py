@@ -3,6 +3,7 @@
 import unittest
 from ddt import ddt, data
 from letterparser import utils
+from tests import data_path, read_fixture
 
 
 @ddt
@@ -262,3 +263,19 @@ class TestOpenTag(unittest.TestCase):
         attr = {'id': 'sa2fig1', 'ref-type': 'fig'}
         expected = '<xref id="sa2fig1" ref-type="fig">'
         self.assertEqual(utils.open_tag(tag_name, attr), expected)
+
+
+class TestRemoveComplexScriptsStyles(unittest.TestCase):
+
+    def test_remove_complex_scripts_styles(self):
+        with open(data_path('complex_scripts_document.xml'), 'rb') as open_file:
+            xml_string = open_file.read()
+        expected = read_fixture('complex_scripts_document_expected.xml', mode='rb')
+        xml_string = utils.remove_complex_scripts_styles(xml_string)
+        self.assertEqual(xml_string, expected)
+
+    def test_remove_complex_scripts_style_edge_cases(self):
+        xml_string = b'<w:iCs/><w:bCs><w:iCs w:val="false"/>'
+        expected = b''
+        xml_string = utils.remove_complex_scripts_styles(xml_string)
+        self.assertEqual(xml_string, expected)

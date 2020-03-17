@@ -55,14 +55,14 @@ def generate_xml_from_zip(file_name, root_tag="root", pretty=False, indent="",
 def generate_xml_from_docx(file_name, root_tag="root", pretty=False, indent="",
                            config=None, temp_dir='tmp'):
     """generate JATS output from docx file_name"""
-    articles = docx_to_articles(file_name, root_tag, config)
+    articles = docx_to_articles(file_name, root_tag, config, temp_dir)
     jats_xml = generate(articles, root_tag, temp_dir)
     return output_xml(jats_xml, pretty, indent)
 
 
-def docx_to_articles(file_name, root_tag="root", config=None):
+def docx_to_articles(file_name, root_tag="root", config=None, temp_dir="tmp"):
     """convert the docx file to Article objects"""
-    jats_content = parse.best_jats(file_name, root_tag, config=config)
+    jats_content = parse.best_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     return build.build_articles(jats_content, file_name=file_name, config=config)
 
 

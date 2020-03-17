@@ -2,7 +2,7 @@ import re
 from collections import OrderedDict
 import pypandoc
 import requests
-from letterparser import docker_lib, utils
+from letterparser import docker_lib, utils, zip_lib
 from letterparser.conf import raw_config, parse_raw_config
 
 
@@ -45,35 +45,37 @@ def docker_pandoc_output(file_name, config):
         pass
 
 
-def parse_file(file_name, config=None):
+def parse_file(file_name, config=None, temp_dir="tmp"):
     """issue the call to pandoc locally or via docker"""
-    output = pandoc_output(file_name)
+    # make a copy of the file and fix complex scripts styles inside the docx
+    new_file_name = zip_lib.fix_complex_scripts_styles(file_name, temp_dir)
+    output = pandoc_output(new_file_name)
     if not output:
-        output = docker_pandoc_output(file_name, config)
+        output = docker_pandoc_output(new_file_name, config)
     return output
 
 
-def raw_jats(file_name, root_tag="root", config=None):
+def raw_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     "convert file content to JATS"
     config = ensure_config(config)
-    output = parse_file(file_name, config=config)
+    output = parse_file(file_name, config=config, temp_dir=temp_dir)
     return "<%s>%s</%s>" % (root_tag, output, root_tag)
 
 
-def clean_jats(file_name, root_tag="root", config=None):
+def clean_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     """cleaner rough JATS output from the raw_jats"""
     config = ensure_config(config)
     jats_content = ""
-    raw_jats_content = raw_jats(file_name, root_tag, config=config)
+    raw_jats_content = raw_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     jats_content = utils.collapse_newlines(raw_jats_content)
     jats_content = utils.remove_non_breaking_space(jats_content)
     return jats_content
 
 
-def best_jats(file_name, root_tag="root", config=None):
+def best_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     """from file input, produce the best JATS output possible"""
     config = ensure_config(config)
-    clean_jats_content = clean_jats(file_name, root_tag, config=config)
+    clean_jats_content = clean_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     clean_jats_content = utils.remove_strike(clean_jats_content)
     jats_content = convert_break_tags(clean_jats_content, root_tag)
     # wrap in root_tag
