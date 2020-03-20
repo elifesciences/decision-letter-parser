@@ -132,12 +132,16 @@ def trim_section_heading(section):
 
 def set_content_blocks(article, section):
     """set the body content blocks"""
+    # set prefs based on the section type
+    prefs = OrderedDict()
+    prefs['italic_to_disp_quote'] = bool(section.get('section_type') == 'author_response')
+
     # trim away the section heading
     section = trim_section_heading(section)
     # split into content sections
     content_sections = split_content_sections(section)
     # profile and process into content blocks
-    content_blocks = process_content_sections(content_sections)
+    content_blocks = process_content_sections(content_sections, prefs)
     # add to the article
     article.content_blocks = content_blocks
 
@@ -360,7 +364,7 @@ def table_wrap_element(label, title, content, table):
     return table_wrap_tag
 
 
-def process_content_sections(content_sections):
+def process_content_sections(content_sections, prefs=None):
     """profile each paragraph and add as an appropriate content block"""
     content_blocks = []
     appended_content = ''
@@ -369,15 +373,16 @@ def process_content_sections(content_sections):
     content_sections.append(OrderedDict())
     for section in content_sections:
         content_blocks, appended_content, prev = process_content_section(
-            section, content_blocks, appended_content, prev)
+            section, content_blocks, appended_content, prev, prefs)
 
     return content_blocks
 
 
-def process_content_section(section, content_blocks, appended_content, prev):
+def process_content_section(section, content_blocks, appended_content, prev, prefs=None):
     """profile and format the section content adding content blocks"""
     tag_name = section.get("tag_name")
-    content, tag_name, attr, action, wrap = process_content(tag_name, section.get("content"), prev)
+    content, tag_name, attr, action, wrap = process_content(
+        tag_name, section.get("content"), prev, prefs)
 
     if ((prev.get('wrap') and not wrap) or
             (wrap and prev.get('wrap') and prev.get('wrap') != wrap) or
@@ -464,13 +469,13 @@ def finish_wrap(content_blocks, content, appended_content, prev):
     return content_blocks, appended_content, prev
 
 
-def process_content(tag_name, content, prev):
+def process_content(tag_name, content, prev, prefs=None):
     if tag_name == "list":
         return process_list_content(content, prev)
     elif tag_name == "table":
         return process_table_content(content)
     elif tag_name == "p":
-        return process_p_content(content, prev)
+        return process_p_content(content, prev, prefs)
     elif tag_name == "disp-quote":
         return process_disp_quote_content(content, prev)
     # default
@@ -528,7 +533,7 @@ def clean_italic_p(content):
     return p_wrap(eautils.remove_tag("italic", content))
 
 
-def process_p_content(content, prev):
+def process_p_content(content, prev, prefs=None):
     """set paragraph content and decide to append or add to previous paragraph content"""
     action = "append"
     tag_name = "p"
@@ -549,9 +554,10 @@ def process_p_content(content, prev):
             wrap = 'table-wrap'
             action = "add"
         elif match_disp_quote_content(content):
-            wrap = 'disp-quote'
-            action = "add"
-            content = clean_italic_p(content)
+            if prefs and prefs.get('italic_to_disp_quote'):
+                wrap = 'disp-quote'
+                content = clean_italic_p(content)
+                action = "add"
 
     if wrap and wrap != 'disp-quote':
         if (match_fig_content_title_end(content) or
