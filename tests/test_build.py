@@ -3,7 +3,7 @@
 import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
-from elifearticle.article import Article
+from elifearticle.article import Article, ContentBlock
 from letterparser import build, parse
 from letterparser.generate import output_xml
 from letterparser.conf import raw_config, parse_raw_config
@@ -14,6 +14,9 @@ class TestBuildArticles(unittest.TestCase):
 
     def setUp(self):
         self.config = parse_raw_config(raw_config('elife'))
+        # prefs for author_response sections
+        self.prefs = OrderedDict()
+        self.prefs['italic_to_disp_quote'] = True
 
     def test_build_articles(self):
         """simple test for coverage of parsing sections"""
@@ -184,7 +187,7 @@ class TestBuildArticles(unittest.TestCase):
                 ("content", '<italic>Next paragraph.</italic>'),
             ]),
         ]
-        result = build.process_content_sections(content_sections)
+        result = build.process_content_sections(content_sections, self.prefs)
         self.assertEqual(result[0].block_type, "disp-quote")
         self.assertEqual(result[0].content, '<p>Italic paragraph.</p><p>Previous paragraph.</p>')
         self.assertEqual(result[1].block_type, "table-wrap")
@@ -217,7 +220,7 @@ class TestBuildArticles(unittest.TestCase):
                 ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
             ])
         ]
-        result = build.process_content_sections(content_sections)
+        result = build.process_content_sections(content_sections, self.prefs)
         self.assertEqual(result[0].block_type, "disp-quote")
         self.assertEqual(result[1].block_type, "table-wrap")
         self.assertEqual(result[1].content, (
@@ -343,7 +346,7 @@ class TestBuildArticles(unittest.TestCase):
                 ("content", '<p>Response paragraph.</p>'),
             ]),
         ]
-        result = build.process_content_sections(content_sections)
+        result = build.process_content_sections(content_sections, self.prefs)
         self.assertEqual(result[0].block_type, 'p')
         self.assertEqual(result[0].content, 'Regular paragraph.')
         self.assertEqual(result[1].block_type, 'disp-quote')
@@ -538,6 +541,36 @@ class TestSetContentBlocks(unittest.TestCase):
             ('content', content)
         ])
         expected = read_fixture('author_response_video_1_content_block.py')
+        article = Article()
+        build.set_content_blocks(article, section)
+        self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
+        self.assertEqual(article.content_blocks[0].attr, expected.attr)
+        self.assertEqual(article.content_blocks[0].content, expected.content)
+
+    def test_decision_letter_italic_disp_quote(self):
+        """non-author_response will not have italic paragraphs converted to disp-quote"""
+        content = '<italic>Italic paragraph.</italic>'
+        section_content = '<p>%s</p>' % content
+        section = OrderedDict([
+            ('section_type', 'decision_letter'),
+            ('content', section_content)
+        ])
+        expected = ContentBlock('p', content)
+        article = Article()
+        build.set_content_blocks(article, section)
+        self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
+        self.assertEqual(article.content_blocks[0].content, expected.content)
+
+    def test_author_response_italic_disp_quote(self):
+        """author_response will get italic paragraphs converted to disp-quote"""
+        content = 'Italic paragraph.'
+        section_content = '<p><italic>%s</italic></p>' % content
+        expected_content = '<p>%s</p>' % content
+        section = OrderedDict([
+            ('section_type', 'author_response'),
+            ('content', section_content)
+        ])
+        expected = ContentBlock('disp-quote', expected_content, {'content-type': 'editor-comment'})
         article = Article()
         build.set_content_blocks(article, section)
         self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
