@@ -601,7 +601,7 @@ class TestProcessP(unittest.TestCase):
     def test_process_p_author_image_start(self):
         content = '&lt;Author response image 1&gt;'
         prev = {}
-        expected = ('', 'p', None, 'add', 'fig')
+        expected = ('&lt;Author response image 1&gt;', 'p', None, 'add', 'fig')
         self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_author_image_end(self):
@@ -614,7 +614,7 @@ class TestProcessP(unittest.TestCase):
     def test_process_p_decision_image_start(self):
         content = '&lt;Decision letter image 2&gt;'
         prev = {}
-        expected = ('', 'p', None, 'add', 'fig')
+        expected = ('&lt;Decision letter image 2&gt;', 'p', None, 'add', 'fig')
         self.assertEqual(build.process_p_content(content, prev), expected)
 
     def test_process_p_decision_image_end(self):
