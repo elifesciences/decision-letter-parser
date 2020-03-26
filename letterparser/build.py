@@ -330,12 +330,18 @@ def build_table_wrap(content):
     parts_match = re.match(r'(.*)(<table.*)', content)
     title_content = parts_match.group(1)
     table['table'] = parts_match.group(2)
-    # strip &lt; open tag from the title_content
-    title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)'
-    parts_match = re.match(title_content_match, title_content)
-    altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
-    (table['label'], table['title'],
-     table['content']) = extract_label_title_content(altered_title_content)
+
+    # check for table label only
+    if not re.match(r'<bold>(.*)<\/bold>\&lt;', title_content):
+        label_content_match = re.match(r'<bold>(.*)<\/bold>', title_content)
+        table['label'] = label_content_match.group(1)
+    else:
+        # strip &lt; open tag from the title_content
+        title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)?'
+        parts_match = re.match(title_content_match, title_content)
+        altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
+        (table['label'], table['title'],
+         table['content']) = extract_label_title_content(altered_title_content)
     return table
 
 
@@ -414,7 +420,10 @@ def process_content_section(section, content_blocks, appended_content, prev, pre
             prev['content'] = content
 
     elif action == "append":
-        appended_content = appended_content + content
+        if appended_content:
+            appended_content = appended_content + content
+        else:
+            appended_content = content
         prev['content'] = content
 
     prev['action'] = action
@@ -470,7 +479,8 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         prev['content'] = content
         appended_content = content
     elif prev.get('wrap') == 'table-wrap':
-        appended_content = appended_content + content
+        if content and match_table_content_end(content):
+            appended_content = appended_content + content
         table_content = build_table_wrap(appended_content)
         table_wrap_tag = table_wrap_element(
             table_content.get('label'),
@@ -482,7 +492,7 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_blocks.append(
             ContentBlock("table-wrap", content_block_content, table_wrap_tag.attrib))
         prev['content'] = None
-        appended_content = ''
+        appended_content = content
 
     return content_blocks, appended_content, prev
 
@@ -543,6 +553,10 @@ def match_video_content_title_end(content):
 
 def match_table_content_start(content):
     return bool(re.match(r'^<bold>.*[tT]able [0-9]?.?<\/bold>$', content))
+
+
+def match_table_content_end(content):
+    return bool(re.match(r'.*</table>$', content))
 
 
 def match_disp_quote_content(content):
