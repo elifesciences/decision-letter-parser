@@ -446,7 +446,8 @@ def finish_wrap(content_blocks, content, appended_content, prev):
             appended_content = content
     elif prev.get('wrap') == 'media':
         # format the content into the video media content block
-        appended_content = appended_content + content
+        if content and match_video_content_title_end(content):
+            appended_content = appended_content + content
         video_content = build_fig(appended_content)
         media_tag = media_element(
             video_content.get('label'),
@@ -456,7 +457,10 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_blocks.append(
             ContentBlock("media", content_block_content, media_tag.attrib))
         prev['content'] = None
-        appended_content = ''
+        if content and match_video_content_title_end(content):
+            appended_content = None
+        else:
+            appended_content = content
     elif prev.get('wrap') == 'disp-quote':
         disp_quote_tag = disp_quote_element(appended_content)
         content_block_content = disp_quote_element_to_string(disp_quote_tag)
@@ -529,6 +533,10 @@ def match_video_content_start(content):
     return bool(re.match(r'\&lt;.*video [0-9]?\&gt;', content))
 
 
+def match_video_content_title_start(content):
+    return bool(re.match(r'^&lt;.*video [0-9]? title\/legend\&gt;', content))
+
+
 def match_video_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
 
@@ -565,7 +573,6 @@ def process_p_content(content, prev, prefs=None):
             action = "add"
         elif match_video_content_start(content):
             wrap = 'media'
-            content = ''
             action = "add"
         elif match_table_content_start(content):
             wrap = 'table-wrap'
@@ -584,6 +591,10 @@ def process_p_content(content, prev, prefs=None):
         elif (wrap == 'fig' and prev.get('content')
               and match_fig_content_start(prev.get('content'))
               and not match_fig_content_title_start(content)):
+            wrap = None
+        elif (wrap == 'media' and prev.get('content')
+              and match_video_content_start(prev.get('content'))
+              and not match_video_content_title_start(content)):
             wrap = None
     elif wrap == 'disp-quote':
         if match_table_content_start(content):
