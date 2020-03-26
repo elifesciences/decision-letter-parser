@@ -205,7 +205,14 @@ def extract_label_title_content(content):
     title_content = None
     content_content = None
 
-    parts_match = re.match(r'.*<bold>(.*?)</bold>(.*)', content)
+    # possibly only label provided
+    bracket_matches = content.count('&lt;')
+    if content.startswith('&lt;') and bracket_matches == 1:
+        label_parts_match = re.match(r'^\&lt;(.*?)\&gt;$', content)
+        label_content = label_parts_match.group(1)
+        return label_content, '', ''
+
+    parts_match = re.match(r'.*<bold>(.*?)</bold>(.*?)$', content)
     label_content = parts_match.group(1)
     remainder = parts_match.group(2)
     title_parts = remainder.split('.')
@@ -250,8 +257,11 @@ def fig_element(label, title, content):
     label_tag = SubElement(fig_tag, 'label')
     label_tag.text = label
 
-    caption_tag = SubElement(fig_tag, 'caption')
-    utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
+    if title or content:
+        caption_tag = SubElement(fig_tag, 'caption')
+
+    if title:
+        utils.append_to_parent_tag(caption_tag, 'title', title, utils.XML_NAMESPACE_MAP)
 
     # append content as a p tag in the caption
     if content:
@@ -320,12 +330,18 @@ def build_table_wrap(content):
     parts_match = re.match(r'(.*)(<table.*)', content)
     title_content = parts_match.group(1)
     table['table'] = parts_match.group(2)
-    # strip &lt; open tag from the title_content
-    title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)'
-    parts_match = re.match(title_content_match, title_content)
-    altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
-    (table['label'], table['title'],
-     table['content']) = extract_label_title_content(altered_title_content)
+
+    # check for table label only
+    if not re.match(r'<bold>(.*)<\/bold>\&lt;', title_content):
+        label_content_match = re.match(r'<bold>(.*)<\/bold>', title_content)
+        table['label'] = label_content_match.group(1)
+    else:
+        # strip &lt; open tag from the title_content
+        title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)?'
+        parts_match = re.match(title_content_match, title_content)
+        altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
+        (table['label'], table['title'],
+         table['content']) = extract_label_title_content(altered_title_content)
     return table
 
 
@@ -400,11 +416,14 @@ def process_content_section(section, content_blocks, appended_content, prev, pre
             prev['content'] = None
             appended_content = ''
         elif content:
-            appended_content = appended_content + content
+            appended_content = content
             prev['content'] = content
 
     elif action == "append":
-        appended_content = appended_content + content
+        if appended_content:
+            appended_content = appended_content + content
+        else:
+            appended_content = content
         prev['content'] = content
 
     prev['action'] = action
@@ -420,7 +439,8 @@ def finish_wrap(content_blocks, content, appended_content, prev):
     # finish the fig tag content
     if prev.get('wrap') == 'fig':
         # format the content into the figure content block
-        appended_content = appended_content + content
+        if content and match_fig_content_title_end(content):
+            appended_content = appended_content + content
         fig_content = build_fig(appended_content)
         fig_tag = fig_element(
             fig_content.get('label'),
@@ -429,10 +449,14 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_block_content = fig_element_to_string(fig_tag)
         content_blocks.append(ContentBlock("fig", content_block_content, prev.get('attr')))
         prev['content'] = None
-        appended_content = ''
+        if content and match_fig_content_title_end(content):
+            appended_content = None
+        else:
+            appended_content = content
     elif prev.get('wrap') == 'media':
         # format the content into the video media content block
-        appended_content = appended_content + content
+        if content and match_video_content_title_end(content):
+            appended_content = appended_content + content
         video_content = build_fig(appended_content)
         media_tag = media_element(
             video_content.get('label'),
@@ -442,7 +466,10 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_blocks.append(
             ContentBlock("media", content_block_content, media_tag.attrib))
         prev['content'] = None
-        appended_content = ''
+        if content and match_video_content_title_end(content):
+            appended_content = None
+        else:
+            appended_content = content
     elif prev.get('wrap') == 'disp-quote':
         disp_quote_tag = disp_quote_element(appended_content)
         content_block_content = disp_quote_element_to_string(disp_quote_tag)
@@ -452,7 +479,8 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         prev['content'] = content
         appended_content = content
     elif prev.get('wrap') == 'table-wrap':
-        appended_content = appended_content + content
+        if content and match_table_content_end(content):
+            appended_content = appended_content + content
         table_content = build_table_wrap(appended_content)
         table_wrap_tag = table_wrap_element(
             table_content.get('label'),
@@ -464,7 +492,7 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_blocks.append(
             ContentBlock("table-wrap", content_block_content, table_wrap_tag.attrib))
         prev['content'] = None
-        appended_content = ''
+        appended_content = content
 
     return content_blocks, appended_content, prev
 
@@ -503,6 +531,10 @@ def match_fig_content_start(content):
     return bool(re.match(r'\&lt;.*image [0-9]?\&gt;', content))
 
 
+def match_fig_content_title_start(content):
+    return bool(re.match(r'^&lt;.*image [0-9]? title\/legend\&gt;', content))
+
+
 def match_fig_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*image [0-9]? title\/legend\&gt;$', content))
 
@@ -511,12 +543,20 @@ def match_video_content_start(content):
     return bool(re.match(r'\&lt;.*video [0-9]?\&gt;', content))
 
 
+def match_video_content_title_start(content):
+    return bool(re.match(r'^&lt;.*video [0-9]? title\/legend\&gt;', content))
+
+
 def match_video_content_title_end(content):
     return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
 
 
 def match_table_content_start(content):
     return bool(re.match(r'^<bold>.*[tT]able [0-9]?.?<\/bold>$', content))
+
+
+def match_table_content_end(content):
+    return bool(re.match(r'.*</table>$', content))
 
 
 def match_disp_quote_content(content):
@@ -544,11 +584,9 @@ def process_p_content(content, prev, prefs=None):
     if not wrap:
         if match_fig_content_start(content):
             wrap = 'fig'
-            content = ''
             action = "add"
         elif match_video_content_start(content):
             wrap = 'media'
-            content = ''
             action = "add"
         elif match_table_content_start(content):
             wrap = 'table-wrap'
@@ -563,6 +601,14 @@ def process_p_content(content, prev, prefs=None):
         if (match_fig_content_title_end(content) or
                 match_video_content_title_end(content)):
             action = "add"
+            wrap = None
+        elif (wrap == 'fig' and prev.get('content')
+              and match_fig_content_start(prev.get('content'))
+              and not match_fig_content_title_start(content)):
+            wrap = None
+        elif (wrap == 'media' and prev.get('content')
+              and match_video_content_start(prev.get('content'))
+              and not match_video_content_title_start(content)):
             wrap = None
     elif wrap == 'disp-quote':
         if match_table_content_start(content):
