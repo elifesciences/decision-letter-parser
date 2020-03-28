@@ -204,8 +204,10 @@ def asset_xref_tags(root):
     # look for tags that have a p tag in them
     for p_tag_parent in root.findall('.//p/..'):
         # loop through the p tags in this parent tag, keeping track of the p tag index
-        for tag_index, p_tag in enumerate(p_tag_parent.iter('p')):
-            tag_string = build.element_to_string(p_tag)
+        for tag_index, child_tag in enumerate(p_tag_parent.iterfind('*')):
+            if not child_tag.tag == 'p':
+                continue
+            tag_string = build.element_to_string(child_tag)
             modified = False
             for asset_label in asset_labels:
                 # look for the label in the text but not preceeded by a > char
@@ -224,7 +226,7 @@ def asset_xref_tags(root):
                 tag_string = re.sub(r'^<p>', p_tag_string, str(tag_string))
                 new_p_tag = ElementTree.fromstring(tag_string)
                 # remove old tag
-                p_tag_parent.remove(p_tag)
+                p_tag_parent.remove(child_tag)
                 # insert the new tag
                 p_tag_parent.insert(tag_index, new_p_tag)
 
