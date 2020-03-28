@@ -4,60 +4,16 @@ import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
 from elifearticle.article import Article, ContentBlock
-from letterparser import build, parse
+from letterparser import build
 from letterparser.generate import output_xml
 from letterparser.conf import raw_config, parse_raw_config
-from tests import data_path, read_fixture
+from tests import read_fixture
 
 
-class TestBuildArticles(unittest.TestCase):
+class TestSplitContentSections(unittest.TestCase):
 
     def setUp(self):
         self.config = parse_raw_config(raw_config('elife'))
-
-    def test_build_articles(self):
-        """simple test for coverage of parsing sections"""
-        file_name = data_path('sections.docx')
-        jats_content = parse.best_jats(file_name, config=self.config)
-        articles = build.build_articles(jats_content, config=self.config)
-        self.assertEqual(len(articles), 2)
-        self.assertEqual(articles[0].article_type, "decision-letter")
-        self.assertEqual(articles[1].article_type, "reply")
-
-    def test_build_articles_no_config(self):
-        """simple test for coverage of parsing with no config specified"""
-        file_name = data_path('sections.docx')
-        jats_content = parse.best_jats(file_name, config=None)
-        articles = build.build_articles(jats_content, config=None)
-        self.assertEqual(len(articles), 2)
-
-    def test_build_articles_default_preamble(self):
-        """build article with a default preamble"""
-        jats_content = '<p><bold>Decision letter</bold></p><p>Test</p>'
-        articles = build.build_articles(jats_content, config=self.config)
-        self.assertEqual(len(articles), 1)
-        self.assertEqual(articles[0].article_type, "decision-letter")
-        self.assertEqual(articles[0].content_blocks[0].block_type, "boxed-text")
-        self.assertEqual(
-            articles[0].content_blocks[0].content[0:35],
-            "<p>In the interests of transparency")
-        self.assertEqual(articles[0].content_blocks[1].block_type, "p")
-        self.assertEqual(articles[0].content_blocks[1].content, "Test")
-
-    def test_build_articles_disp_quote_italic(self):
-        """buggy situation where two italic tags are in a disp-quote content p"""
-        jats_content = (
-            '<p><bold>Author response</bold></p><p><italic>A series of important changes is'
-            ' requested before the manuscript could be</italic> <italic>considered for'
-            ' publication in eLife.</italic></p><p><italic>1) The authors need to do'
-            ' .....</italic></p>')
-        articles = build.build_articles(jats_content, config=self.config)
-        self.assertEqual(len(articles), 1)
-        self.assertEqual(articles[0].article_type, "reply")
-        self.assertEqual(articles[0].content_blocks[0].block_type, "disp-quote")
-        self.assertEqual(
-            articles[0].content_blocks[0].content[0:52],
-            "<p>A series of important changes is requested before")
 
     def test_split_content_sections(self):
         sections = {
@@ -103,6 +59,9 @@ class TestBuildArticles(unittest.TestCase):
         expected = read_fixture('author_response_image_1_sections.py')
         sections = build.split_content_sections(section)
         self.assertEqual(sections, expected)
+
+
+class TestCleanMath(unittest.TestCase):
 
     def test_clean_math_alternatives(self):
         xml_string = (

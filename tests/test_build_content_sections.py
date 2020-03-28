@@ -243,6 +243,48 @@ class TestProcessContentSections(unittest.TestCase):
         self.assertEqual(result[2].block_type, 'p')
         self.assertEqual(result[2].content, 'Response paragraph.')
 
+    def test_process_content_sections_image(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "disp-quote"),
+                ("content", '<p>First editor comment.</p><p>An extra paragraph</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>First <italic>paragraph</italic>.</p>'),
+            ]),
+            OrderedDict([
+                ('tag_name', 'p'),
+                ('content', '<p>&lt;Author response image 1&gt;</p>')
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '<p>&lt;Author response image 1 title/legend&gt;'
+                    '<bold>Author response image 1.</bold>'
+                    ' Title up to first full stop. Caption <sup>2+</sup> calculated using'
+                    '&lt;/Author response image 1 title/legend&gt;</p>')),
+            ]),
+            OrderedDict([
+                ("tag_name", "disp-quote"),
+                ("content", '<p>Editor comment paragraph.</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections, prefs=self.prefs)
+        self.assertEqual(result[0].block_type, 'disp-quote')
+        self.assertEqual(result[1].block_type, 'p')
+        self.assertEqual(result[2].block_type, 'fig')
+        self.assertEqual(result[2].content, (
+            '<label>Author response image 1.</label>'
+            '<caption><title>Title up to first full stop.</title>'
+            '<p>Caption <sup>2+</sup> calculated using</p></caption>'
+            '<graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[3].block_type, 'disp-quote')
+
     def test_process_content_sections_image_no_title(self):
         content_sections = [
             OrderedDict([
