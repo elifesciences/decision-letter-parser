@@ -183,6 +183,43 @@ class TestAssetXrefTags(unittest.TestCase):
         article_xml_string = ElementTree.tostring(article_xml)
         self.assertEqual(article_xml_string, expected)
 
+    def test_asset_xref_tags_fig(self):
+        """test fix highlight also where the paragraph is after the graphic tag"""
+        xml_string = (
+            '<body xmlns:xlink="http://www.w3.org/1999/xlink">'
+            '<p>First paragraph.</p>'
+            '<p>Another paragraph.</p>'
+            '<p>An Author response image 1.</p>'
+            '<fig id="sa2fig1"><label>Author response image 1.</label>'
+            '<graphic mimetype="image" xlink:href="elife-00002-sa2-fig1.jpg"/>'
+            '</fig>'
+            '<media id="sa2video1"><label>Author response video 1</label></media>'
+            '<p>2nd Author response image 1.</p>'
+            '<p>Next paragraph.</p>'
+            '<p>3rd Author response image 1.</p>'
+            '<p>4th Author response image 1.</p>'
+            '</body>'
+        )
+        expected = (
+            b'<body xmlns:xlink="http://www.w3.org/1999/xlink">'
+            b'<p>First paragraph.</p>'
+            b'<p>Another paragraph.</p>'
+            b'<p>An <xref ref-type="fig" rid="sa2fig1">Author response image 1.</xref></p>'
+            b'<fig id="sa2fig1"><label>Author response image 1.</label>'
+            b'<graphic mimetype="image" xlink:href="elife-00002-sa2-fig1.jpg" />'
+            b'</fig>'
+            b'<media id="sa2video1"><label>Author response video 1</label></media>'
+            b'<p>2nd <xref ref-type="fig" rid="sa2fig1">Author response image 1.</xref></p>'
+            b'<p>Next paragraph.</p>'
+            b'<p>3rd <xref ref-type="fig" rid="sa2fig1">Author response image 1.</xref></p>'
+            b'<p>4th <xref ref-type="fig" rid="sa2fig1">Author response image 1.</xref></p>'
+            b'</body>'
+        )
+        article_xml = ElementTree.fromstring(xml_string)
+        generate.asset_xref_tags(article_xml)
+        article_xml_string = ElementTree.tostring(article_xml)
+        self.assertEqual(article_xml_string, expected)
+
 
 class TestGenerateMaxLevel(unittest.TestCase):
 
