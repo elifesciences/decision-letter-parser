@@ -115,6 +115,43 @@ class TestProcessContentSections(unittest.TestCase):
             '<caption><title>Author response table</title></caption>'
             '<table frame="hsides" rules="groups" />'))
 
+    def test_process_content_sections_table_paragraph_sandwich(self):
+        """test for edge case of table with regular paragraphs on either side"""
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", 'Paragraph before.'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<bold>Author response Table 1.</bold>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '&lt;Author response table 1 title/legend&gt;Author response table'
+                    '&lt;/Author response table 1 title/legend&gt;')),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", 'Paragraph after.'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections, self.prefs)
+        self.assertEqual(result[0].block_type, "p")
+        self.assertEqual(result[0].content, "Paragraph before.")
+        self.assertEqual(result[1].block_type, "table-wrap")
+        self.assertEqual(result[1].content, (
+            '<label>Author response Table 1.</label>'
+            '<caption><title>Author response table</title></caption>'
+            '<table frame="hsides" rules="groups" />'))
+        self.assertEqual(result[2].block_type, "p")
+        self.assertEqual(result[2].content, "Paragraph after.")
+
     def test_process_content_sections_list(self):
         content_sections = [
             OrderedDict([

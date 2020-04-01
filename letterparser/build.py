@@ -492,7 +492,8 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         content_blocks.append(
             ContentBlock("table-wrap", content_block_content, table_wrap_tag.attrib))
         prev['content'] = None
-        appended_content = content
+        if content and match_table_content_end(content):
+            appended_content = None
 
     return content_blocks, appended_content, prev
 
