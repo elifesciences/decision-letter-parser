@@ -201,6 +201,10 @@ def asset_xref_tags(root):
     which requires to know the p tag parent and index of the p tag inside that parent
     """
     asset_labels = labels(root)
+    # strip full stop at end of label if present
+    for label in asset_labels:
+        if label.get('text'):
+            label['text'] = label.get('text').rstrip('.')
     # look for tags that have a p tag in them
     for p_tag_parent in root.findall('.//p/..'):
         # loop through the p tags in this parent tag, keeping track of the p tag index
