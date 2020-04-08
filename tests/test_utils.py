@@ -156,6 +156,14 @@ class TestCollapseNewlines(unittest.TestCase):
             "comment": "Tags before and after new line character",
             "string": "were calculated using</p>\n<p><disp-formula><alternatives>\n<tex-math>",
             "expected": "were calculated using</p><p><disp-formula><alternatives><tex-math>"
+        },
+        {
+            "comment": "New line after Author response section",
+            "string": (
+                "<p><bold>Author response</bold><italic>\nEssential revisions: ...</italic></p>"),
+            "expected": (
+                "<p><bold>Author response</bold><break /><break />"
+                "<italic>Essential revisions: ...</italic></p>")
         }
         )
     def test_collapse_newlines(self, test_data):
