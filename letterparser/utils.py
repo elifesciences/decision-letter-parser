@@ -142,6 +142,23 @@ def xml_string_fix_namespaces(xml_string):
             b' xmlns:xlink="http://www.w3.org/1999/xlink">'))
 
 
+def replace_character_entities(xml_string):
+    """replace standard XML character entities with hexadecimal replacements"""
+    char_map = {
+        b'&amp;': b'&#x0026;',
+        b'&gt;': b'&#x003E;',
+        b'&lt;': b'&#x003C;',
+        b'&quot;': b'&#x0022;',
+    }
+    for from_char, to_char in char_map.items():
+        try:
+            xml_string = xml_string.replace(from_char, to_char)
+        except TypeError:
+            # convert string to bytes if required
+            xml_string = xml_string.encode('utf8').replace(from_char, to_char)
+    return xml_string
+
+
 def get_file_name_path(file_name):
     """return the folder path to a file excluding the file name itself"""
     return os.sep.join(file_name.split(os.sep)[0:-1])

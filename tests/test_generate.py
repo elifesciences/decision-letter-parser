@@ -39,6 +39,31 @@ class TestGenerateOutputXML(unittest.TestCase):
         expected = b'<?xml version="1.0" encoding="utf-8"?><root/>'
         self.assertEqual(generate.output_xml(root), expected)
 
+    def test_output_xml_character_entities(self):
+        """test non-pretty output of a simple ElementTree object"""
+        root = Element("root")
+        root.text = '&<>"'
+        expected = b'<?xml version="1.0" encoding="utf-8"?><root>&amp;&lt;&gt;&quot;</root>'
+        self.assertEqual(generate.output_xml(root), expected)
+
+
+class TestGenerateOutputXMLEscaped(unittest.TestCase):
+
+    def test_output_xml(self):
+        """test non-pretty output of a simple ElementTree object"""
+        root = Element("root")
+        expected = b'<?xml version="1.0" encoding="utf-8"?><root/>'
+        self.assertEqual(generate.output_xml_escaped(root), expected)
+
+    def test_output_xml_character_entities(self):
+        """test non-pretty output of a simple ElementTree object"""
+        root = Element("root")
+        root.text = '&<>"'
+        expected = (
+            b'<?xml version="1.0" encoding="utf-8"?><root>'
+            b'&#x0026;&#x003C;&#x003E;&#x0022;</root>')
+        self.assertEqual(generate.output_xml_escaped(root), expected)
+
 
 class TestGenerate(unittest.TestCase):
 

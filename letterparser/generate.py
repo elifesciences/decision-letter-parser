@@ -245,3 +245,8 @@ def output_xml(root, pretty=False, indent=""):
     if pretty is True:
         return reparsed.toprettyxml(indent, encoding=encoding)
     return reparsed.toxml(encoding=encoding)
+
+
+def output_xml_escaped(root, pretty=False, indent=""):
+    """output root XML Element to a string with character entities replaced"""
+    return utils.replace_character_entities(output_xml(root, pretty, indent))
