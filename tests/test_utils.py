@@ -287,3 +287,18 @@ class TestRemoveComplexScriptsStyles(unittest.TestCase):
         expected = b''
         xml_string = utils.remove_complex_scripts_styles(xml_string)
         self.assertEqual(xml_string, expected)
+
+
+class TestReplaceCharacterEntities(unittest.TestCase):
+
+    def test_replace_character_entities(self):
+        xml_string = b'&quot;Test&quot; &amp; &lt;&gt;'
+        expected = b'&#x0022;Test&#x0022; &#x0026; &#x003C;&#x003E;'
+        xml_string = utils.replace_character_entities(xml_string)
+        self.assertEqual(xml_string, expected)
+
+    def test_replace_character_entities_string(self):
+        xml_string = '&quot;Test&quot; &amp; &lt;&gt;'
+        expected = b'&#x0022;Test&#x0022; &#x0026; &#x003C;&#x003E;'
+        xml_string = utils.replace_character_entities(xml_string)
+        self.assertEqual(xml_string, expected)
