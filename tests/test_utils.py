@@ -164,7 +164,17 @@ class TestCollapseNewlines(unittest.TestCase):
             "expected": (
                 "<p><bold>Author response</bold><break /><break />"
                 "<italic>Essential revisions: ...</italic></p>")
-        }
+        },
+        {
+            "comment": "New line after italic tag and before italic close tag",
+            "string": "<p>One<italic>\nTwo\n</italic></p>",
+            "expected": "<p>One<break /><break /><italic>Two</italic></p>"
+        },
+        {
+            "comment": "Italic paragraph with new line at beginning",
+            "string": "<p><italic> \nParagraph \n</italic></p>",
+            "expected": "<p><italic> Paragraph </italic></p>"
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
