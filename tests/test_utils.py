@@ -175,6 +175,11 @@ class TestCollapseNewlines(unittest.TestCase):
             "string": "<p><italic> \nParagraph \n</italic></p>",
             "expected": "<p><italic> Paragraph </italic></p>"
         },
+        {
+            "comment": "New line prior to bold section heading",
+            "string": "<p>Previous paragraph\n<bold>Author response</bold></p>",
+            "expected": "<p>Previous paragraph<break /><break /><bold>Author response</bold></p>"
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
