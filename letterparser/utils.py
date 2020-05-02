@@ -61,6 +61,11 @@ def new_line_replace_with(line_one, line_two):
             return "</italic><break /><break /><italic>"
         elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
             return "<break /><break />"
+        elif (
+                not line_one.rstrip().endswith('>')
+                and line_two.startswith('<bold>')
+                and line_two.endswith('</p>')):
+            return "<break /><break />"
     return ""
 
 
