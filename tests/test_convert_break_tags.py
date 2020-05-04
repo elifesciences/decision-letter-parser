@@ -86,7 +86,7 @@ class TestConvertBreakTags(unittest.TestCase):
             '<p><italic>Italic paragraph</italic></p>'
             '<disp-quote><p>Disp quote paragraph.</p></disp-quote>')
         expected = (
-            '<p><italic>Italic paragraph</italic></p><disp-quote>'
-            '<p>Disp quote paragraph.</p></disp-quote>')
+            '<p><italic>Italic paragraph</italic></p>'
+            '<disp-quote><p>Disp quote paragraph.</p></disp-quote>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
