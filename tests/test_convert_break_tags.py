@@ -80,3 +80,13 @@ class TestConvertBreakTags(unittest.TestCase):
             '<table><tbody><tr><td></td></tr></tbody></table>')
         result = parse.convert_break_tags(jats_content)
         self.assertEqual(result, expected)
+
+    def test_convert_break_tags_disp_quote_edge_case(self):
+        jats_content = (
+            '<p><italic>Italic paragraph</italic></p>'
+            '<disp-quote><p>Disp quote paragraph.</p></disp-quote>')
+        expected = (
+            '<p><italic>Italic paragraph</italic></p><disp-quote>'
+            '<p>Disp quote paragraph.</p></disp-quote>')
+        result = parse.convert_break_tags(jats_content)
+        self.assertEqual(result, expected)
