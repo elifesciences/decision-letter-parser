@@ -441,13 +441,26 @@ def finish_wrap(content_blocks, content, appended_content, prev):
         # format the content into the figure content block
         if content and match_fig_content_title_end(content):
             appended_content = appended_content + content
-        fig_content = build_fig(appended_content)
-        fig_tag = fig_element(
-            fig_content.get('label'),
-            fig_content.get('title'),
-            fig_content.get('content'))
-        content_block_content = fig_element_to_string(fig_tag)
-        content_blocks.append(ContentBlock("fig", content_block_content, prev.get('attr')))
+
+        # potentially multiple figs, parse and add to fig_content_list
+        fig_content_list = []
+        matches = re.finditer(FIG_CONTENT_START_PATTERN, appended_content)
+        prev_start = None
+        for match in matches:
+            start = match.start()
+            if prev_start is not None:
+                fig_content_list.append(appended_content[prev_start:start])
+            prev_start = start
+        fig_content_list.append(appended_content[prev_start:])
+
+        for fig_block_content in fig_content_list:
+            fig_content = build_fig(fig_block_content)
+            fig_tag = fig_element(
+                fig_content.get('label'),
+                fig_content.get('title'),
+                fig_content.get('content'))
+            content_block_content = fig_element_to_string(fig_tag)
+            content_blocks.append(ContentBlock("fig", content_block_content, prev.get('attr')))
         prev['content'] = None
         if content and match_fig_content_title_end(content):
             appended_content = None
@@ -528,8 +541,11 @@ def process_list_content(content, prev=None):
         utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", prev.get('wrap'))
 
 
+FIG_CONTENT_START_PATTERN = r'\&lt;[A-Za-z ]+ image [0-9]?\&gt;'
+
+
 def match_fig_content_start(content):
-    return bool(re.match(r'\&lt;.*image [0-9]?\&gt;', content))
+    return bool(re.match(FIG_CONTENT_START_PATTERN, content))
 
 
 def match_fig_content_title_start(content):
@@ -606,7 +622,12 @@ def process_p_content(content, prev, prefs=None):
         elif (wrap == 'fig' and prev.get('content')
               and match_fig_content_start(prev.get('content'))
               and not match_fig_content_title_start(content)):
-            wrap = None
+            if match_fig_content_start(content):
+                # append content if two figs are listed in succession
+                content = '%s%s' % (prev.get('content'), content)
+                action = 'add'
+            else:
+                wrap = None
         elif (wrap == 'media' and prev.get('content')
               and match_video_content_start(prev.get('content'))
               and not match_video_content_title_start(content)):

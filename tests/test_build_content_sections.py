@@ -380,3 +380,58 @@ class TestProcessContentSections(unittest.TestCase):
         self.assertEqual(result[0].content, (
             '<label>Author response Table 1.</label><table frame="hsides" rules="groups" />'))
         self.assertEqual(result[1].block_type, 'p')
+
+    def test_process_content_sections_many_images_no_title(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 1&gt;</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 2&gt;</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 3&gt;</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'fig')
+        self.assertEqual(result[0].content, (
+            '<label>Author response image 1</label><graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[1].block_type, 'fig')
+        self.assertEqual(result[1].content, (
+            '<label>Author response image 2</label><graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[2].block_type, 'fig')
+        self.assertEqual(result[2].content, (
+            '<label>Author response image 3</label><graphic mimetype="image" xlink:href="todo" />'))
+
+    def test_process_content_sections_two_images(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 1&gt;</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '<p>&lt;Author response image 1 title/legend&gt;'
+                    '<bold>Author response image 1.</bold>'
+                    ' Title up to first full stop. Caption <sup>2+</sup> calculated.'
+                    '&lt;/Author response image 1 title/legend&gt;</p>')),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 2&gt;</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'fig')
+        self.assertEqual(result[0].content, (
+            '<label>Author response image 1.</label><caption><title>Title up to first full stop.'
+            '</title><p>Caption <sup>2+</sup> calculated.</p></caption>'
+            '<graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[1].block_type, 'fig')
+        self.assertEqual(result[1].content, (
+            '<label>Author response image 2</label><graphic mimetype="image" xlink:href="todo" />'))
