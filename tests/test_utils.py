@@ -227,7 +227,16 @@ class TestCollapseNewlines(unittest.TestCase):
                 "<italic>- Subsection ....</italic><break /><break />"
                 "We have modified ....</p><break /><break />")
         },
-
+        {
+            "comment": "disp-quote example",
+            "string": (
+                "\n<disp-quote>\n  <p>Normal.</p>\n  "
+                "<p><italic>\nItalic.\n  </italic></p>\n  "
+                "<p>Normal again.</p>\n</disp-quote>"),
+            "expected": (
+                "<break /><break /><disp-quote><p>Normal.</p>"
+                "<p><italic>Italic.</italic></p><p>Normal again.</p></disp-quote>")
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
