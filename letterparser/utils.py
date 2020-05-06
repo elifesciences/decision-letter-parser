@@ -46,23 +46,34 @@ def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
     if line_one is None:
         return ""
-    if line_one.rstrip().endswith('>') and line_two.startswith('<'):
+
+    # strip spaces before comparisons
+    line_one = line_one.lstrip().rstrip()
+    line_two = line_two.lstrip().rstrip()
+
+    if line_one.endswith('>') and line_two.startswith('<'):
         return ""
     else:
         if not line_one.startswith('<p>'):
-            if not line_two.rstrip().startswith('<') and line_two.rstrip().endswith('</p>'):
+            if line_one.endswith('</italic>'):
                 return "<break /><break />"
-            elif not line_two.rstrip().endswith('</p>') and not line_one.startswith('<'):
+            elif not line_two.startswith('<') and line_two.endswith('</p>'):
                 return "<break /><break />"
-        elif (
-                line_one.rstrip() != '<p><italic>'
-                and line_one.rstrip().endswith('<italic>')
-                and not line_two.startswith('<')):
-            return "</italic><break /><break /><italic>"
-        elif not line_one.rstrip().endswith('>') and not line_two.startswith('<'):
+            elif not line_two.endswith('</p>') and not line_one.startswith('<'):
+                return "<break /><break />"
+        elif line_two == '<italic>':
+            return "<break /><break />"
+        elif not line_one.endswith('>') and line_two.startswith('<italic>'):
             return "<break /><break />"
         elif (
-                not line_one.rstrip().endswith('>')
+                line_one != '<p><italic>'
+                and line_one.endswith('<italic>')
+                and not line_two.startswith('<')):
+            return "</italic><break /><break /><italic>"
+        elif not line_one.endswith('>') and not line_two.startswith('<'):
+            return "<break /><break />"
+        elif (
+                not line_one.endswith('>')
                 and line_two.startswith('<bold>')
                 and line_two.endswith('</p>')):
             return "<break /><break />"
@@ -78,7 +89,10 @@ def collapse_newlines(string):
         replace_with = new_line_replace_with(prev_line, line.lstrip())
         new_string += replace_with + line.lstrip()
         prev_line = line
-    # remove meaningless italic tags due to and edge case fix
+    # remove meaningless break and italic tags due to and edge case fix
+    new_string = new_string.replace(
+        '<break /><break /></italic><break /><break />',
+        '</italic><break /><break />')
     new_string = new_string.replace('<italic></italic>', '')
     return new_string
 
