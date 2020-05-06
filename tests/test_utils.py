@@ -180,6 +180,54 @@ class TestCollapseNewlines(unittest.TestCase):
             "string": "<p>Previous paragraph\n<bold>Author response</bold></p>",
             "expected": "<p>Previous paragraph<break /><break /><bold>Author response</bold></p>"
         },
+        {
+            "comment": "Italic close tag on its own line",
+            "string": (
+                "<p><italic>\nReviewer #2:\nThe manuscript ....\n</italic>\nTo minimize ....."
+                "</p>\n<p><italic>"),
+            "expected": (
+                "<p><italic>Reviewer #2:<break /><break />The manuscript ...."
+                "</italic><break /><break />To minimize .....</p><p><italic>")
+        },
+        {
+            "comment": "Italic open tag on its own line",
+            "string": "<p>Paragraph\n<italic>\nItalic content</italic></p>",
+            "expected": (
+                "<p>Paragraph<break /><break /><italic><break /><break />"
+                "Italic content</italic></p>")
+        },
+        {
+            "comment": "Simple italic new line",
+            "string": "Previous.\n<italic>Reviewer #1:\n</italic>Next paragraph\n",
+            "expected": "Previous.<break /><break /><italic>Reviewer #1:</italic>Next paragraph"
+        },
+        {
+            "comment": "Italic paragraph with new line inside",
+            "string": (
+                "<p><italic>We have <italic>provided</italic> ....\n"
+                "10) Figure 1: The authors assume ....\n</italic></p>"),
+            "expected": (
+                "<p><italic>We have <italic>provided</italic> ....<break /><break />"
+                "10) Figure 1: The authors assume ....</italic></p>")
+        },
+        {
+            "comment": "Another example of new line inside italic paragraph",
+            "string": "<p>We have provided ....\n<italic>10) Figure 1: ....\n</italic></p>",
+            "expected": (
+                "<p>We have provided ....<break /><break /><italic>"
+                "10) Figure 1: ....</italic></p>")
+        },
+        {
+            "comment": "More complicated example",
+            "string": (
+                "\nTo minimize ....</p>\n<p><italic>\n- Subsection ....\n</italic>\n"
+                "We have modified ....</p>\n"),
+            "expected": (
+                "<break /><break />To minimize ....</p><p>"
+                "<italic>- Subsection ....</italic><break /><break />"
+                "We have modified ....</p><break /><break />")
+        },
+
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
