@@ -93,6 +93,9 @@ def collapse_newlines(string):
     new_string = new_string.replace(
         '<break /><break /></italic><break /><break />',
         '</italic><break /><break />')
+    new_string = new_string.replace(
+        '<break /><break /><italic><break /><break />',
+        '<break /><break /><italic>')
     new_string = new_string.replace('<italic></italic>', '')
     return new_string
 

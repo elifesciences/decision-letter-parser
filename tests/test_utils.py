@@ -193,7 +193,7 @@ class TestCollapseNewlines(unittest.TestCase):
             "comment": "Italic open tag on its own line",
             "string": "<p>Paragraph\n<italic>\nItalic content</italic></p>",
             "expected": (
-                "<p>Paragraph<break /><break /><italic><break /><break />"
+                "<p>Paragraph<break /><break /><italic>"
                 "Italic content</italic></p>")
         },
         {
