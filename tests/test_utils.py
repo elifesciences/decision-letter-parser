@@ -237,6 +237,20 @@ class TestCollapseNewlines(unittest.TestCase):
                 "<break /><break /><disp-quote><p>Normal.</p>"
                 "<p><italic>Italic.</italic></p><p>Normal again.</p></disp-quote>")
         },
+        {
+            "comment": "italic close tag after a new line",
+            "string": (
+                "<p><italic>- How are the levels ....</p>\n"
+                "</italic>We include eosinophil numbers ....</p>\n"
+                "<p><italic>\n"
+                "I agree ....\n"
+                "</italic>We discuss our <italic>in vivo</italic> results ....</p>"),
+            "expected": (
+                "<p><italic>- How are the levels ....</p>"
+                "</italic><break /><break />We include eosinophil numbers ....</p>"
+                "<p><italic>I agree ....</italic><break /><break />"
+                "We discuss our <italic>in vivo</italic> results ....</p>")
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))

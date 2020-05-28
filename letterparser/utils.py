@@ -52,10 +52,21 @@ def new_line_replace_with(line_one, line_two):
     line_two = line_two.lstrip().rstrip()
 
     if line_one.endswith('>') and line_two.startswith('<'):
+        if (
+                line_one.startswith('<p><italic>')
+                and not line_one.endswith('</italic></p>')
+                and line_two.startswith('</italic>')):
+            return "</italic><break /><break /><italic>"
+        # default return blank string
         return ""
     else:
         if not line_one.startswith('<p>'):
             if line_one.endswith('</italic>'):
+                return "<break /><break />"
+            elif (
+                    not line_one.startswith('<')
+                    and line_two.startswith('</italic>')
+                    and line_two != '</italic></p>'):
                 return "<break /><break />"
             elif not line_two.startswith('<') and line_two.endswith('</p>'):
                 return "<break /><break />"
@@ -92,6 +103,9 @@ def collapse_newlines(string):
     # remove meaningless break and italic tags due to and edge case fix
     new_string = new_string.replace(
         '<break /><break /></italic><break /><break />',
+        '</italic><break /><break />')
+    new_string = new_string.replace(
+        '<break /><break /></italic>',
         '</italic><break /><break />')
     new_string = new_string.replace(
         '<break /><break /><italic><break /><break />',
