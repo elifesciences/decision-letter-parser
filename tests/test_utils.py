@@ -193,7 +193,7 @@ class TestCollapseNewlines(unittest.TestCase):
             "comment": "Italic open tag on its own line",
             "string": "<p>Paragraph\n<italic>\nItalic content</italic></p>",
             "expected": (
-                "<p>Paragraph<break /><break /><italic><break /><break />"
+                "<p>Paragraph<break /><break /><italic>"
                 "Italic content</italic></p>")
         },
         {
@@ -236,6 +236,20 @@ class TestCollapseNewlines(unittest.TestCase):
             "expected": (
                 "<break /><break /><disp-quote><p>Normal.</p>"
                 "<p><italic>Italic.</italic></p><p>Normal again.</p></disp-quote>")
+        },
+        {
+            "comment": "italic close tag after a new line",
+            "string": (
+                "<p><italic>- How are the levels ....</p>\n"
+                "</italic>We include eosinophil numbers ....</p>\n"
+                "<p><italic>\n"
+                "I agree ....\n"
+                "</italic>We discuss our <italic>in vivo</italic> results ....</p>"),
+            "expected": (
+                "<p><italic>- How are the levels ....</p>"
+                "</italic><break /><break />We include eosinophil numbers ....</p>"
+                "<p><italic>I agree ....</italic><break /><break />"
+                "We discuss our <italic>in vivo</italic> results ....</p>")
         },
         )
     def test_collapse_newlines(self, test_data):
