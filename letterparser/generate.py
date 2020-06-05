@@ -239,7 +239,7 @@ def output_xml(root, pretty=False, indent=""):
     """output root XML Element to a string"""
     encoding = 'utf-8'
     rough_string = ElementTree.tostring(root, encoding)
-    rough_string = utils.xml_string_fix_namespaces(rough_string)
+    rough_string = utils.xml_string_fix_namespaces(rough_string, root.tag)
     reparsed = minidom.parseString(rough_string)
 
     if pretty is True:

@@ -166,19 +166,25 @@ def append_to_parent_tag(parent, tag_name, original_string,
         parent, minidom_tag, attributes=attributes, child_attributes=True)
 
 
-def xml_string_fix_namespaces(xml_string):
+def xml_string_fix_namespaces(xml_string, root_tag):
     """due to some bug with ElementTree.tostring, remove duplicate namespace attributes"""
-    # remove duplicate xmlns:mml="http://www.w3.org/1998/Math/MathML
-    return xml_string.replace(
-        (
-            b'<root xmlns:mml="http://www.w3.org/1998/Math/MathML"'
-            b' xmlns:ali="http://www.niso.org/schemas/ali/1.0/"'
-            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
-            b' xmlns:xlink="http://www.w3.org/1999/xlink">'),
-        (
-            b'<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" '
-            b' xmlns:mml="http://www.w3.org/1998/Math/MathML"'
-            b' xmlns:xlink="http://www.w3.org/1999/xlink">'))
+    # remove duplicate namespaces from root tag e.g. xmlns:mml="http://www.w3.org/1998/Math/MathML
+    root_tag_bytes = bytes(root_tag, 'utf8')
+    match_string = rb'^(<%s.*?>).*' % root_tag_bytes
+    root_tag_match = re.match(match_string, xml_string)
+    if not root_tag_match:
+        return xml_string
+    root_tag_string = root_tag_match.group(1) # original root tag string
+    # extract all tag attributes separated by a space
+    attributes = root_tag_string.rstrip(b'>').split(b' ')[1:]
+    # de-dupe the attributes
+    unique_attributes = set([attr for attr in attributes if attr])
+    # join the unique attributes alphabetically
+    attributes_string = b' '.join(sorted(unique_attributes))
+    # assemble the string to replace the original root tag string
+    new_root_tag_string = b'<%s %s>' % (root_tag_bytes, attributes_string)
+    # now can replace the string
+    return xml_string.replace(root_tag_string, new_root_tag_string)
 
 
 def replace_character_entities(xml_string):
