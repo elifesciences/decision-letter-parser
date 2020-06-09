@@ -251,6 +251,17 @@ class TestCollapseNewlines(unittest.TestCase):
                 "<p><italic>I agree ....</italic><break /><break />"
                 "We discuss our <italic>in vivo</italic> results ....</p>")
         },
+        {
+            "comment": "editors note italic example",
+            "string": (
+                "<p><italic>\n"
+                "</italic>[Editors' note: ....]\n"
+                "<italic>The essential point of discussion ....\n"
+                "</italic></p>"),
+            "expected": (
+                "<p><break /><break />[Editors' note: ....]"
+                "<break /><break /><italic>The essential point of discussion ....</italic></p>")
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
