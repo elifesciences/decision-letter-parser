@@ -251,6 +251,39 @@ class TestCollapseNewlines(unittest.TestCase):
                 "<p><italic>I agree ....</italic><break /><break />"
                 "We discuss our <italic>in vivo</italic> results ....</p>")
         },
+        {
+            "comment": "editors note italic example",
+            "string": (
+                "<p><italic>\n"
+                "</italic>[Editors' note: ....]\n"
+                "<italic>The essential point of discussion ....\n"
+                "</italic></p>"),
+            "expected": (
+                "<p><break /><break />[Editors' note: ....]"
+                "<break /><break /><italic>The essential point of discussion ....</italic></p>")
+        },
+        {
+            "comment": "italic bullet points example",
+            "string": (
+                "<p><italic>\n"
+                "- How are the numbers ....</italic></p>\n"
+                "<p><italic>- How are the levels ...?\n"
+                "</italic>We include eosinophil numbers ....</p>"),
+            "expected": (
+                "<p><italic>- How are the numbers ....</italic></p>"
+                "<p><italic>- How are the levels ...?</italic><break /><break />"
+                "We include eosinophil numbers ....</p>")
+        },
+        {
+            "comment": "line two close italic p from 39122 example",
+            "string": (
+                "<p><italic>And why is σ<sub>h</sub> not shown beyond Figure 1?\n"
+                "</italic></p>\n"
+                "<p>We have selected ...</p>"),
+            "expected": (
+                "<p><italic>And why is σ<sub>h</sub> not shown beyond Figure 1?</italic></p>"
+                "<p>We have selected ...</p>")
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
