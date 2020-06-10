@@ -62,3 +62,18 @@ class TestParse(unittest.TestCase):
         jats_content = parse.best_jats(file_name, config=self.config)
         sections = parse.sections(jats_content)
         self.assertEqual(sections, expected)
+
+
+class TestConvertSecTags(unittest.TestCase):
+
+    def test_convert_sec_tags_blank(self):
+        jats_content = ''
+        expected = ''
+        converted_jats_content = parse.convert_sec_tags(jats_content)
+        self.assertEqual(converted_jats_content, expected)
+
+    def test_convert_sec_tags_sec_title(self):
+        jats_content = '<sec id="sec1"><title>Section title</title><p>Paragraph.</p></sec>'
+        expected = '<p>Section title</p><p>Paragraph.</p>'
+        converted_jats_content = parse.convert_sec_tags(jats_content)
+        self.assertEqual(converted_jats_content, expected)
