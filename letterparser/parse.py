@@ -77,11 +77,31 @@ def best_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     config = ensure_config(config)
     clean_jats_content = clean_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     clean_jats_content = utils.remove_strike(clean_jats_content)
-    jats_content = convert_break_tags(clean_jats_content, root_tag)
+    # convert sec tags
+    jats_content = convert_sec_tags(clean_jats_content)
+    # convert break tags
+    jats_content = convert_break_tags(jats_content, root_tag)
     # wrap in root_tag
     root_open_tag = "<" + root_tag + ">"
     root_close_tag = "</" + root_tag + ">"
     jats_content = root_open_tag + jats_content + root_close_tag
+    return jats_content
+
+
+def convert_sec_tags(jats_content):
+    """remove sec tags and convert title to p tag"""
+    match_string = r'(<sec.*?>.*</sec>)'
+    sec_tag_match = re.finditer(match_string, jats_content)
+    for match_group in sec_tag_match:
+        original_string = match_group.group(1)  # original string
+        # replace first title tag with p tag
+        new_string = re.sub(r'<sec.*?><title.*?>', '<p>', original_string)
+        new_string = re.sub(r'<sec.*?><title.*?>', '<p>', original_string)
+        new_string = re.sub(r'</title>', '</p>', new_string)
+        # remove sec close tag
+        new_string = re.sub(r'</sec>', '', new_string)
+        # replace in original string
+        jats_content = jats_content.replace(original_string, new_string)
     return jats_content
 
 
