@@ -83,6 +83,12 @@ def new_line_replace_with(line_one, line_two):
                 and line_one.endswith('<italic>')
                 and not line_two.startswith('<')):
             return "</italic><break /><break /><italic>"
+        elif (
+                line_one.startswith('<p><italic>')
+                and not line_one.endswith('</italic></p>')
+                and line_two.startswith('</italic>')
+                and line_two != '</italic></p>'):
+            return "</italic><break /><break /><italic>"
         elif not line_one.endswith('>') and not line_two.startswith('<'):
             return "<break /><break />"
         elif (
