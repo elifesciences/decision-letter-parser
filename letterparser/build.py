@@ -541,7 +541,7 @@ def process_list_content(content, prev=None):
         utils.clean_portion(content, "list"), "list", content_xml.attrib, "add", prev.get('wrap'))
 
 
-FIG_CONTENT_START_PATTERN = r'\&lt;[A-Za-z ]+ image [0-9]?\&gt;'
+FIG_CONTENT_START_PATTERN = r'\&lt;[A-Za-z ]+ image [0-9]+?\&gt;'
 
 
 def match_fig_content_start(content):
@@ -549,27 +549,27 @@ def match_fig_content_start(content):
 
 
 def match_fig_content_title_start(content):
-    return bool(re.match(r'^&lt;.*image [0-9]? title\/legend\&gt;', content))
+    return bool(re.match(r'^&lt;.*image [0-9]+? title\/legend\&gt;', content))
 
 
 def match_fig_content_title_end(content):
-    return bool(re.match(r'.*\&lt;.*image [0-9]? title\/legend\&gt;$', content))
+    return bool(re.match(r'.*\&lt;.*image [0-9]+? title\/legend\&gt;$', content))
 
 
 def match_video_content_start(content):
-    return bool(re.match(r'\&lt;.*video [0-9]?\&gt;', content))
+    return bool(re.match(r'\&lt;.*video [0-9]+?\&gt;', content))
 
 
 def match_video_content_title_start(content):
-    return bool(re.match(r'^&lt;.*video [0-9]? title\/legend\&gt;', content))
+    return bool(re.match(r'^&lt;.*video [0-9]+? title\/legend\&gt;', content))
 
 
 def match_video_content_title_end(content):
-    return bool(re.match(r'.*\&lt;.*video [0-9]? title\/legend\&gt;$', content))
+    return bool(re.match(r'.*\&lt;.*video [0-9]+? title\/legend\&gt;$', content))
 
 
 def match_table_content_start(content):
-    return bool(re.match(r'^<bold>.*[tT]able [0-9]?.?<\/bold>$', content))
+    return bool(re.match(r'^<bold>.*[tT]able [0-9]+?.?<\/bold>$', content))
 
 
 def match_table_content_end(content):
