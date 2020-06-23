@@ -339,6 +339,30 @@ class TestProcessContentSections(unittest.TestCase):
             '<label>Author response image 1</label><graphic mimetype="image" xlink:href="todo" />'))
         self.assertEqual(result[1].block_type, 'p')
 
+    def test_process_content_sections_image_no_title_editor_comment(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>&lt;Author response image 2&gt;</p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p><italic>Editor comment paragraph.</italic></p>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Next regular paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'fig')
+        self.assertEqual(result[0].content, (
+            '<label>Author response image 2</label><graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[1].block_type, 'disp-quote')
+        self.assertEqual(result[1].content, '<p>Editor comment paragraph.</p>')
+        self.assertEqual(result[2].block_type, 'p')
+        self.assertEqual(result[2].content, 'Next regular paragraph.')
+
     def test_process_content_sections_video_no_title(self):
         content_sections = [
             OrderedDict([
