@@ -327,21 +327,39 @@ def table_wrap_element_to_string(tag):
 def build_table_wrap(content):
     """parse table content into table-wrap tag"""
     table = OrderedDict()
+
     parts_match = re.match(r'(.*)(<table.*)', content)
     title_content = parts_match.group(1)
     table['table'] = parts_match.group(2)
 
     # check for table label only
-    if not re.match(r'<bold>(.*)<\/bold>\&lt;', title_content):
-        label_content_match = re.match(r'<bold>(.*)<\/bold>', title_content)
-        table['label'] = label_content_match.group(1)
-    else:
-        # strip &lt; open tag from the title_content
+    if re.match(r'^<bold>(.*)?<\/bold>', title_content):
+
+        label_only_content_match = r'^<bold>(.*)?<\/bold>$'
         title_content_match = r'<bold>(.*)<\/bold>\&lt;.*?\&gt;(.*)?'
-        parts_match = re.match(title_content_match, title_content)
-        altered_title_content = '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2))
+
+        if re.match(label_only_content_match, title_content):
+            # simple bold label with no caption
+            parts_match = re.match(label_only_content_match, title_content)
+            table['label'] = parts_match.group(1)
+        elif re.match(title_content_match, title_content):
+            # strip &lt; open tag from the title_content
+            parts_match = re.match(title_content_match, title_content)
+            altered_title_content = (
+                '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2)))
+            (table['label'], table['title'],
+             table['content']) = extract_label_title_content(altered_title_content)
+    else:
+        bold_parts_match = r'.*?<bold>(.*)?<\/bold>(.*)'
+        if re.match(bold_parts_match, title_content):
+            parts_match = re.match(bold_parts_match, title_content)
+            altered_title_content = (
+                '<bold>%s</bold>%s' % (parts_match.group(1), parts_match.group(2)))
+        else:
+            altered_title_content = title_content
         (table['label'], table['title'],
          table['content']) = extract_label_title_content(altered_title_content)
+
     return table
 
 
@@ -569,7 +587,9 @@ def match_video_content_title_end(content):
 
 
 def match_table_content_start(content):
-    return bool(re.match(r'^<bold>.*[tT]able [0-9]+?.?<\/bold>$', content))
+    return bool(
+        re.match(r'^<bold>.*[tT]able [0-9]+?.?<\/bold>$', content) or
+        re.match(r'\&lt;[A-Za-z ]+ .*[tT]able [0-9]+?\&gt;', content))
 
 
 def match_table_content_end(content):

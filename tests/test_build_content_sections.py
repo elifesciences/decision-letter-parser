@@ -405,6 +405,72 @@ class TestProcessContentSections(unittest.TestCase):
             '<label>Author response Table 1.</label><table frame="hsides" rules="groups" />'))
         self.assertEqual(result[1].block_type, 'p')
 
+    def test_process_content_sections_table_no_title_non_bold(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '&lt;Author response Table 1&gt;'),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Next regular paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'table-wrap')
+        self.assertEqual(result[0].content, (
+            '<label>Author response Table 1</label><table frame="hsides" rules="groups" />'))
+        self.assertEqual(result[1].block_type, 'p')
+
+    def test_process_content_sections_table_angle_brackets(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '&lt;Author response Table 1&gt;'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    '&lt;Author response table 1 title/legend&gt;'
+                    '<bold>Author response Table 1.</bold>'
+                    'Coating protocols used to test gliding motility of '
+                    'sporozoites on different substrates.')),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", (
+                    'Gliding assays were performed in 96-well plates and wells were '
+                    'coated with heparin, ICAM-I, laminin, fibronectin and collagen according to '
+                    'the following protocols (Bilsland, Diamond and Springer, 1994; '
+                    'Gao<italic>et al.,</italic>2011). '
+                    '&lt;/Author response table 1 title/legend&gt;')),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table xmlns:mml="http://www.w3.org/1998/Math/MathML"></table>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<p>Next regular paragraph.</p>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        print(result[0].content)
+        self.assertEqual(result[0].block_type, 'table-wrap')
+        self.assertEqual(result[0].content, (
+            '<label>Author response Table 1.</label><caption><title>'
+            'Coating protocols used to test gliding motility of sporozoites on '
+            'different substrates.</title><p>Gliding assays were performed in 96-well '
+            'plates and wells were coated with heparin, ICAM-I, laminin, fibronectin and '
+            'collagen according to the following protocols '
+            '(Bilsland, Diamond and Springer, 1994; Gao<italic>et al.,</italic>2011). '
+            '</p></caption><table frame="hsides" rules="groups" />'))
+        self.assertEqual(result[1].block_type, 'p')
+
     def test_process_content_sections_many_images_no_title(self):
         content_sections = [
             OrderedDict([
