@@ -7,6 +7,46 @@ from tests import data_path, read_fixture
 
 
 @ddt
+class TestRemoveNonBreakingSpace(unittest.TestCase):
+
+    @data(
+        {
+            "comment": "None value",
+            "string": None,
+            "expected": ""
+        },
+        {
+            "comment": "Basic string",
+            "string": "string",
+            "expected": "string"
+        },
+        {
+            "comment": "Test '\\xc2\\xa0' character",
+            "string": "\xc2\xa0",
+            "expected": ""
+        },
+        {
+            "comment": "Test '\\xa0' character",
+            "string": "\xa0",
+            "expected": ""
+        },
+        {
+            "comment": "Test '\\xc2\\xa0\\xa0' sequence",
+            "string": "\xc2\xa0\xa0",
+            "expected": ""
+        },
+        )
+    def test_remove_non_breaking_space(self, test_data):
+        new_string = utils.remove_non_breaking_space(test_data.get("string"))
+        self.assertEqual(
+            new_string, test_data.get("expected"),
+            "{value} does not equal {expected}, scenario {comment}".format(
+                value=new_string,
+                expected=test_data.get("expected"),
+                comment=test_data.get("comment")))
+
+
+@ddt
 class TestRemoveStrike(unittest.TestCase):
 
     @data(
