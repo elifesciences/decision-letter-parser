@@ -68,7 +68,6 @@ def clean_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     jats_content = ""
     raw_jats_content = raw_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     jats_content = utils.collapse_newlines(raw_jats_content)
-    jats_content = utils.remove_non_breaking_space(jats_content)
     return jats_content
 
 

@@ -26,7 +26,7 @@ def reparsing_namespaces(namespace_map):
 
 def remove_non_breaking_space(string):
     """replace non breaking space characters"""
-    return string.replace("\xc2\xa0", "").replace("\xa0", "")
+    return string.replace("\xc2\xa0", "").replace("\xa0", "") if string else ''
 
 
 def remove_strike(string):
