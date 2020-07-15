@@ -207,32 +207,40 @@ def asset_xref_tags(root):
             label['text'] = label.get('text').rstrip('.')
     # look for tags that have a p tag in them
     for p_tag_parent in root.findall('.//p/..'):
-        # loop through the p tags in this parent tag, keeping track of the p tag index
-        for tag_index, child_tag in enumerate(p_tag_parent.iterfind('*')):
-            if not child_tag.tag == 'p':
-                continue
-            tag_string = build.element_to_string(child_tag)
-            modified = False
-            for asset_label in asset_labels:
-                # look for the label in the text but not preceeded by a > char
-                if re.match('.*[^>]' + asset_label.get('text') + '.*', str(tag_string)):
-                    attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
-                    xref_open_tag = utils.open_tag('xref', attr)
-                    xref_close_tag = utils.close_tag('xref')
-                    tag_string = re.sub(
-                        str(asset_label.get('text')),
-                        '%s%s%s' % (xref_open_tag, str(asset_label.get('text')), xref_close_tag),
-                        str(tag_string))
-                    modified = True
-            if modified:
-                # add namespaces before parsing again
-                p_tag_string = '<p %s>' % utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP)
-                tag_string = re.sub(r'^<p>', p_tag_string, str(tag_string))
-                new_p_tag = ElementTree.fromstring(tag_string)
-                # remove old tag
-                p_tag_parent.remove(child_tag)
-                # insert the new tag
-                p_tag_parent.insert(tag_index, new_p_tag)
+        p_tag_parent_asset_xref(p_tag_parent, asset_labels)
+
+
+def p_tag_parent_asset_xref(p_tag_parent, asset_labels):
+    # loop through the p tags in this parent tag, keeping track of the p tag index
+    for tag_index, child_tag in enumerate(p_tag_parent.iterfind('*')):
+        if not child_tag.tag == 'p':
+            continue
+        tag_string = build.element_to_string(child_tag)
+        modified_tag_string = xml_string_asset_xref(tag_string, asset_labels)
+
+        if tag_string != modified_tag_string:
+            # add namespaces before parsing again
+            p_tag_string = '<p %s>' % utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP)
+            modified_tag_string = re.sub(r'^<p>', p_tag_string, str(modified_tag_string))
+            new_p_tag = ElementTree.fromstring(modified_tag_string)
+            # remove old tag
+            p_tag_parent.remove(child_tag)
+            # insert the new tag
+            p_tag_parent.insert(tag_index, new_p_tag)
+
+
+def xml_string_asset_xref(xml_string, asset_labels):
+    for asset_label in asset_labels:
+        # look for the label in the text but not preceeded by a > char
+        if re.match('.*[^>]' + asset_label.get('text') + '.*', str(xml_string)):
+            attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
+            xref_open_tag = utils.open_tag('xref', attr)
+            xref_close_tag = utils.close_tag('xref')
+            xml_string = re.sub(
+                str(asset_label.get('text')),
+                '%s%s%s' % (xref_open_tag, str(asset_label.get('text')), xref_close_tag),
+                str(xml_string))
+    return xml_string
 
 
 def output_xml(root, pretty=False, indent=""):
