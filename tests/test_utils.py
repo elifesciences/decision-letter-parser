@@ -324,6 +324,24 @@ class TestCollapseNewlines(unittest.TestCase):
                 "<p><italic>And why is σ<sub>h</sub> not shown beyond Figure 1?</italic></p>"
                 "<p>We have selected ...</p>")
         },
+        {
+            "comment": "new line before an Author response bold section",
+            "string": (
+                "<p>Paragraph.\n"
+                "Notation.\n"
+                "<bold>Author response</bold></p>\n"
+                "<p><italic>Reviewer #1:\n"
+                "My comments are the following:\n"
+                "...\n"
+                "</italic></p>"),
+            "expected": (
+                "<p>Paragraph.<break /><break />"
+                "Notation.<break /><break />"
+                "<bold>Author response</bold></p>"
+                "<p><italic>Reviewer #1:<break /><break />"
+                "My comments are the following:<break /><break />"
+                "...</italic></p>")
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))
