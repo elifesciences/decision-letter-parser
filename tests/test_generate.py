@@ -4,6 +4,7 @@ import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
+from ddt import ddt, data
 from elifearticle.article import ContentBlock
 from letterparser import generate
 from letterparser.conf import raw_config, parse_raw_config
@@ -244,6 +245,189 @@ class TestAssetXrefTags(unittest.TestCase):
         generate.asset_xref_tags(article_xml)
         article_xml_string = ElementTree.tostring(article_xml)
         self.assertEqual(article_xml_string, expected)
+
+
+class TestProfileAssetLabels(unittest.TestCase):
+
+    def test_profile_asset_labels_empty(self):
+        labels = []
+        expected = []
+        self.assertEqual(generate.profile_asset_labels(labels), expected)
+
+    def test_profile_asset_labels(self):
+        labels = [
+            'Author response image 1',
+            'Author response image 1A',
+            'Author response image 1A-F',
+            'Author response image 1B'
+        ]
+        expected = [
+            OrderedDict([('label', 'Author response image 1'), ('unique', False)]),
+            OrderedDict([('label', 'Author response image 1A'), ('unique', False)]),
+            OrderedDict([('label', 'Author response image 1A-F'), ('unique', True)]),
+            OrderedDict([('label', 'Author response image 1B'), ('unique', True)]),
+        ]
+        self.assertEqual(generate.profile_asset_labels(labels), expected)
+
+
+class TestSortLabels(unittest.TestCase):
+
+    def test_sort_labels_empty(self):
+        labels_data = []
+        expected = []
+        self.assertEqual(generate.sort_labels(labels_data), expected)
+
+    def test_sort_labels(self):
+        labels_data = [
+            OrderedDict([('label', 'Author response image 1'), ('unique', False)]),
+            OrderedDict([('label', 'Author response image 1A'), ('unique', False)]),
+            OrderedDict([('label', 'Author response image 1A-F'), ('unique', True)]),
+            OrderedDict([('label', 'Author response image 1B'), ('unique', True)]),
+        ]
+        expected = [
+            OrderedDict([('label', 'Author response image 1A-F'), ('unique', True)]),
+            OrderedDict([('label', 'Author response image 1B'), ('unique', True)]),
+            OrderedDict([('label', 'Author response image 1'), ('unique', False)]),
+            OrderedDict([('label', 'Author response image 1A'), ('unique', False)]),
+        ]
+        self.assertEqual(generate.sort_labels(labels_data), expected)
+
+
+@ddt
+class TestLabelMatches(unittest.TestCase):
+    @data(
+        {
+            'xml_string': '',
+            'xref_open_tag': '',
+            'label_text': '',
+            'expected_matches': [],
+        },
+        {
+            'xml_string': 'In Author response image 1',
+            'xref_open_tag': '<xref ref-type="fig" rid="sa2fig1">',
+            'label_text': 'Author response image 1',
+            'expected_matches': ['Author response image 1'],
+        },
+        {
+            'xml_string': (
+                'In Author response image 1 and Author response image 1B '
+                'and Author response image 1B-F and Author response image 1A and B '
+                ' and Author response image 1B again.'),
+            'xref_open_tag': '<xref ref-type="fig" rid="sa2fig1">',
+            'label_text': 'Author response image 1',
+            'expected_matches': [
+                'Author response image 1',
+                'Author response image 1B',
+                'Author response image 1B-F',
+                'Author response image 1A',
+                'Author response image 1B'
+            ]
+        },
+        {
+            'xml_string': (
+                'In Author response image 1 and already tagged '
+                '<xref ref-type="fig" rid="sa2fig1">Author response image 1B</xref>'),
+            'xref_open_tag': '<xref ref-type="fig" rid="sa2fig1">',
+            'label_text': 'Author response image 1',
+            'expected_matches': ['Author response image 1'],
+        },
+    )
+    def test_label_matches(self, test_data):
+        matches = generate.label_matches(
+            test_data.get('xml_string'),
+            test_data.get('xref_open_tag'),
+            test_data.get('label_text'))
+        self.assertEqual(matches, test_data.get('expected_matches'))
+
+
+@ddt
+class TestXmlStringAssetXref(unittest.TestCase):
+
+    @data(
+        {
+            'xml_string': (
+                '<p>In Author response image 1, yes.</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', 'Author response image 1')
+                ])],
+            'expected': (
+                '<p>In <xref ref-type="fig" rid="sa2fig1">'
+                'Author response image 1</xref>, yes.</p>'
+            )
+        },
+        {
+            'xml_string': (
+                '<p>In the figure (Author response image 1B), a yes.</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', 'Author response image 1')
+                ])],
+            'expected': (
+                '<p>In the figure (<xref ref-type="fig" rid="sa2fig1">'
+                'Author response image 1B</xref>), a yes.</p>'
+            )
+        },
+        {
+            'xml_string': (
+                '<p>In Author response image 1A-D, also yes.</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', 'Author response image 1')
+                ])],
+            'expected': (
+                '<p>In <xref ref-type="fig" rid="sa2fig1">'
+                'Author response image 1A-D</xref>, also yes.</p>'
+            )
+        },
+        {
+            'xml_string': (
+                '<p>Potential overlapping Author response image 1A-D, '
+                'and Author response image 1A.</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', 'Author response image 1')
+                ])],
+            'expected': (
+                '<p>Potential overlapping <xref ref-type="fig" rid="sa2fig1">'
+                'Author response image 1A-D</xref>, and '
+                '<xref ref-type="fig" rid="sa2fig1">Author response image 1A</xref>.</p>'
+            )
+        },
+        {
+            'xml_string': (
+                '<p>Author response image 1A, then more specific '
+                '<italic>Author response image 1A-D</italic>.</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', 'Author response image 1')
+                ])],
+            'expected': (
+                '<p><xref ref-type="fig" rid="sa2fig1">'
+                'Author response image 1A</xref>, then more specific <italic>'
+                '<xref ref-type="fig" rid="sa2fig1">Author response image 1A-D</xref></italic>.</p>'
+            )
+        },
+    )
+    def test_xml_string_asset_xref(self, test_data):
+        modified_xml_string = generate.xml_string_asset_xref(
+            test_data.get('xml_string'), test_data.get('asset_labels'))
+        self.assertEqual(modified_xml_string, test_data.get('expected'))
 
 
 class TestGenerateMaxLevel(unittest.TestCase):

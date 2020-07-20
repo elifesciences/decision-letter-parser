@@ -207,32 +207,89 @@ def asset_xref_tags(root):
             label['text'] = label.get('text').rstrip('.')
     # look for tags that have a p tag in them
     for p_tag_parent in root.findall('.//p/..'):
-        # loop through the p tags in this parent tag, keeping track of the p tag index
-        for tag_index, child_tag in enumerate(p_tag_parent.iterfind('*')):
-            if not child_tag.tag == 'p':
-                continue
-            tag_string = build.element_to_string(child_tag)
-            modified = False
-            for asset_label in asset_labels:
-                # look for the label in the text but not preceeded by a > char
-                if re.match('.*[^>]' + asset_label.get('text') + '.*', str(tag_string)):
-                    attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
-                    xref_open_tag = utils.open_tag('xref', attr)
-                    xref_close_tag = utils.close_tag('xref')
-                    tag_string = re.sub(
-                        str(asset_label.get('text')),
-                        '%s%s%s' % (xref_open_tag, str(asset_label.get('text')), xref_close_tag),
-                        str(tag_string))
-                    modified = True
-            if modified:
-                # add namespaces before parsing again
-                p_tag_string = '<p %s>' % utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP)
-                tag_string = re.sub(r'^<p>', p_tag_string, str(tag_string))
-                new_p_tag = ElementTree.fromstring(tag_string)
-                # remove old tag
-                p_tag_parent.remove(child_tag)
-                # insert the new tag
-                p_tag_parent.insert(tag_index, new_p_tag)
+        p_tag_parent_asset_xref(p_tag_parent, asset_labels)
+
+
+def p_tag_parent_asset_xref(p_tag_parent, asset_labels):
+    # loop through the p tags in this parent tag, keeping track of the p tag index
+    for tag_index, child_tag in enumerate(p_tag_parent.iterfind('*')):
+        if not child_tag.tag == 'p':
+            continue
+        tag_string = build.element_to_string(child_tag)
+        modified_tag_string = xml_string_asset_xref(tag_string, asset_labels)
+
+        if tag_string != modified_tag_string:
+            # add namespaces before parsing again
+            p_tag_string = '<p %s>' % utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP)
+            modified_tag_string = re.sub(r'^<p>', p_tag_string, str(modified_tag_string))
+            new_p_tag = ElementTree.fromstring(modified_tag_string)
+            # remove old tag
+            p_tag_parent.remove(child_tag)
+            # insert the new tag
+            p_tag_parent.insert(tag_index, new_p_tag)
+
+
+def profile_asset_labels(labels):
+    "check if label term is unique or whether another label starts with it"""
+    labels_data = []
+    for label in labels:
+        labels_start_with = [
+            search_label for search_label in labels
+            if search_label.startswith(label) and search_label != label]
+        data = OrderedDict([
+            ('label', label),
+            ('unique', not bool(labels_start_with))
+        ])
+        labels_data.append(data)
+    return labels_data
+
+
+def sort_labels(labels_data):
+    "sort asset labels with unique ones first then the rest"
+    unique_labels = [
+        match_group for match_group in labels_data if match_group.get('unique')]
+    non_unique_labels = [
+        match_group for match_group in labels_data if not match_group.get('unique')]
+    return unique_labels + non_unique_labels
+
+
+def label_match_pattern(xref_open_tag, label_text):
+    "regular expression to find mentions of a label in text that are not already xref tagged"
+    return r'(?<!%s)(%s[-a-zA-z]*)' % (xref_open_tag, label_text)
+
+
+def label_matches(xml_string, xref_open_tag, label_text):
+    "get list of labels in text that are not already preceeded by the xref tag"
+    return re.findall(label_match_pattern(xref_open_tag, label_text), xml_string)
+
+
+def xml_string_asset_xref(xml_string, asset_labels):
+    """
+    Wrap occurences of each asset label in the XML string with an <xref> tag
+    The label in the text can also include a specific panel name, e.g.
+    a label of "Author response image 1", when adding <xref> tags to the text it can result in
+    all of these example possibilites
+    <xref ref-type="fig" rid="sa2fig1">Author response image 1</xref>
+    <xref ref-type="fig" rid="sa2fig1">Author response image 1B</xref>
+    <xref ref-type="fig" rid="sa2fig1">Author response image 1A-F</xref>
+    <xref ref-type="fig" rid="sa2fig1">Author response image 1A</xref> and B
+    """
+    for asset_label in asset_labels:
+        if asset_label.get('text') in str(xml_string):
+            attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
+            xref_open_tag = utils.open_tag('xref', attr)
+            xref_close_tag = utils.close_tag('xref')
+            # look for label in the text but not preceeded by the xref open tag we want to add
+            label_match_groups = label_matches(xml_string, xref_open_tag, asset_label.get('text'))
+            labels = sort_labels(profile_asset_labels(label_match_groups))
+
+            for label in labels:
+                safe_match_pattern = r'(?<!%s)%s' % (xref_open_tag, label.get('label'))
+                replacement_pattern = r'%s%s%s' % (
+                    xref_open_tag, label.get('label'), xref_close_tag)
+                xml_string = re.sub(safe_match_pattern, replacement_pattern, xml_string)
+
+    return xml_string
 
 
 def output_xml(root, pretty=False, indent=""):
