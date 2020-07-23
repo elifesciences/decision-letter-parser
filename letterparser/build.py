@@ -212,9 +212,9 @@ def extract_label_title_content(content):
         label_content = label_parts_match.group(1)
         return label_content, '', ''
 
-    parts_match = re.match(r'.*<bold>(.*?)</bold>(.*?)$', content)
-    label_content = parts_match.group(1)
-    remainder = parts_match.group(2)
+    parts_match = re.findall(r'<bold>(.*?)</bold>(.*)$', content)
+    label_content = parts_match[0][0]
+    remainder = ''.join(parts_match[0][1:])
     title_parts = remainder.split('.')
     title_label_match = r'^(.*)\&lt;.*\&gt;$'
     if len(title_parts) == 1:
@@ -230,7 +230,9 @@ def extract_label_title_content(content):
                 continue
             open_tag_count = title_content.count(utils.open_tag('italic'))
             close_tag_count = title_content.count(utils.close_tag('italic'))
-            if open_tag_count != close_tag_count:
+            open_bold_tag_count = title_content.count(utils.open_tag('bold'))
+            close_bold_tag_count = title_content.count(utils.close_tag('bold'))
+            if open_tag_count != close_tag_count or open_bold_tag_count != close_bold_tag_count:
                 title_content += title_part + '.'
             else:
                 content_remainders.append(title_part)
