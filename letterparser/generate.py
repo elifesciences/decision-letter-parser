@@ -275,7 +275,7 @@ def xml_string_asset_xref(xml_string, asset_labels):
     <xref ref-type="fig" rid="sa2fig1">Author response image 1A</xref> and B
     """
     for asset_label in asset_labels:
-        if asset_label.get('text') in str(xml_string):
+        if asset_label.get('text') and asset_label.get('text') in str(xml_string):
             attr = {'rid': asset_label.get('id'), 'ref-type': asset_label.get('type')}
             xref_open_tag = utils.open_tag('xref', attr)
             xref_close_tag = utils.close_tag('xref')

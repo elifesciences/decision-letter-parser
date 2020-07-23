@@ -423,6 +423,20 @@ class TestXmlStringAssetXref(unittest.TestCase):
                 '<xref ref-type="fig" rid="sa2fig1">Author response image 1A-D</xref></italic>.</p>'
             )
         },
+        {
+            'xml_string': (
+                '<p>Author response image 1A</p>'
+            ),
+            'asset_labels': [
+                OrderedDict([
+                    ('id', 'sa2fig1'),
+                    ('type', 'fig'),
+                    ('text', '')
+                ])],
+            'expected': (
+                '<p>Author response image 1A</p>'
+            )
+        },
     )
     def test_xml_string_asset_xref(self, test_data):
         modified_xml_string = generate.xml_string_asset_xref(
