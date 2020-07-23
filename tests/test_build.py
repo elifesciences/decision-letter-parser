@@ -136,11 +136,11 @@ class TestExtractLabelTitleContent(unittest.TestCase):
         "edge case with more than one bold tag and second one is around the title full stop"
         content = (
             '<bold>Label</bold>The title<bold>.</bold> Another <bold>bold term</bold>.'
-            '&lt;/Legend&gt;')
+            'Another paragraph.&lt;/Legend&gt;')
         label, title, caption = build.extract_label_title_content(content)
         self.assertEqual(label, 'Label')
         self.assertEqual(title, 'The title<bold>.</bold> Another <bold>bold term</bold>.')
-        self.assertEqual(caption, '')
+        self.assertEqual(caption, 'Another paragraph.')
 
 
 class TestBuildFig(unittest.TestCase):
