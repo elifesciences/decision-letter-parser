@@ -525,3 +525,49 @@ class TestProcessContentSections(unittest.TestCase):
         self.assertEqual(result[1].block_type, 'fig')
         self.assertEqual(result[1].content, (
             '<label>Author response image 2</label><graphic mimetype="image" xlink:href="todo" />'))
+
+    def test_process_content_sections_fig_then_table(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '&lt;Author response image 1&gt;'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '<bold>Author response table 1</bold>'),
+            ]),
+            OrderedDict([
+                ("tag_name", "table"),
+                ("content", '<table></table>'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'fig')
+        self.assertEqual(result[0].content, (
+            '<label>Author response image 1</label><graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[1].block_type, 'table-wrap')
+        self.assertEqual(result[1].content, (
+            '<label>Author response table 1</label><table frame="hsides" rules="groups" />'))
+
+    def test_process_content_sections_fig_then_media(self):
+        content_sections = [
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '&lt;Author response image 1&gt;'),
+            ]),
+            OrderedDict([
+                ("tag_name", "p"),
+                ("content", '&lt;Author response video 1&gt;'),
+            ]),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, 'fig')
+        self.assertEqual(result[0].content, (
+            '<label>Author response image 1</label><graphic mimetype="image" xlink:href="todo" />'))
+        self.assertEqual(result[1].block_type, 'media')
+        self.assertEqual(result[1].content, (
+            '<label>Author response video 1</label>'))
+        self.assertEqual(result[1].attr, {
+            'mimetype': 'video',
+            'xlink:href': 'todo'
+        })

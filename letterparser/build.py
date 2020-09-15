@@ -649,9 +649,17 @@ def process_p_content(content, prev, prefs=None):
                 content = '%s%s' % (prev.get('content'), content)
                 action = 'add'
             else:
-                # after a fig with no caption, check if the next paragraph will be a disp-quote
+                # after a fig with no caption, check if the next paragraph
+                # is another type of wrap or will be a disp-quote
                 if not match_disp_quote_content(content):
-                    wrap = None
+                    if match_table_content_start(content):
+                        wrap = 'table-wrap'
+                        action = "add"
+                    elif match_video_content_start(content):
+                        wrap = 'media'
+                        action = "add"
+                    else:
+                        wrap = None
                 else:
                     wrap = 'disp-quote'
                     content = clean_italic_p(content)
