@@ -162,7 +162,8 @@ def convert_break_tags(jats_content, root_tag="root"):
             if (
                     not content.endswith("</p>")
                     and not content.endswith("</table>")
-                    and not content.endswith("</disp-quote>")):
+                    and not content.endswith("</disp-quote>")
+                    and not content.endswith("</list>")):
                 content += "</p>"
 
         converted_jats_content += content
