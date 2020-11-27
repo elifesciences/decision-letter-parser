@@ -107,6 +107,18 @@ class TestGenerateFromZip(unittest.TestCase):
         self.assertIsNotNone(pretty_xml)
 
 
+class TestGenerateKitchenSinkZip(unittest.TestCase):
+
+    def test_generate_xml_from_zip(self):
+        """simple test for code coverage"""
+        file_name = data_path('elife-00666.zip')
+        xml_string = read_fixture('elife-00666.xml', mode="rb")
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_zip(
+            file_name, pretty=True, indent="    ", config=config)
+        self.assertEqual(pretty_xml, xml_string)
+
+
 class TestGenerateFromDocx(unittest.TestCase):
 
     def test_generate_xml_from_docx(self):

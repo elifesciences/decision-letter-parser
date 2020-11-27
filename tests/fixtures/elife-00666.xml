@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sub-article article-type="decision-letter" id="sa1">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.sa1</article-id>
+            <title-group>
+                <article-title>Decision letter</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <boxed-text>
+                <p>If you need to change the standard text in boxed-text at the start of the decision letter (which is usually “In the interests of transparency, eLife publishes the most substantive revision requests and the accompanying author responses.”) then this can be done here. If this doesn’t need changing, then this preamble section can simply not be present, as the standard text will be used.</p>
+            </boxed-text>
+            <p>
+                Thank you for submitting your article &quot;The eLife research article&quot; for consideration by 
+                <italic>eLife</italic>
+                . Your article has been reviewed by three peer reviewers, one of whom, Joe Bloggs, is a member of our editorial board and also oversaw the process as Senior editor. John Doe (peer reviewer) has agreed to reveal his identity.
+            </p>
+            <p>The reviewers have discussed the reviews with one another and the Reviewing Editor has drafted this decision to help you prepare a revised submission.</p>
+            <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging to generate a typeset PDF from the XML with no additional information provided.</p>
+            <fig id="sa1fig1">
+                <label>Decision letter image 1.</label>
+                <caption>
+                    <title>Single figure: The header of an eLife article example on the HTML page.</title>
+                </caption>
+                <graphic mimetype="image" xlink:href="elife-00666-sa1-fig1.jpg"/>
+            </fig>
+        </body>
+    </sub-article>
+    <sub-article article-type="reply" id="sa2">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.00666.sa2</article-id>
+            <title-group>
+                <article-title>Author response</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <disp-quote content-type="editor-comment">
+                <p>The reviewers have discussed the reviews with one another and the Reviewing Editor has drafted this decision to help you prepare a revised submission.</p>
+                <p>You need to make sure the XML structure you creates works on the display of the PMC platform and also that there is enough information contained within the tagging to generate a typeset PDF from the XML with no additional information provided.</p>
+            </disp-quote>
+            <p>
+                In response to this comment, we validated the XML against the DTD (JATS 1) each time we made an update. We also regularly used the PMC validator to check our decisions against display on the PMC site, see 
+                <xref ref-type="fig" rid="sa2fig1">Author response image 1</xref>
+                ., 
+                <xref ref-type="video" rid="sa2video1">Author response video 1</xref>
+                 and 
+                <xref ref-type="table" rid="sa2table1">Author response table 1</xref>
+                .
+            </p>
+            <fig id="sa2fig1">
+                <label>Author response image 1.</label>
+                <caption>
+                    <title>Single figure: The header of an eLife article example on the HTML page.</title>
+                </caption>
+                <graphic mimetype="image" xlink:href="elife-00666-sa2-fig1.jpg"/>
+            </fig>
+            <table-wrap id="sa2table1">
+                <label>Author response table 1.</label>
+                <caption>
+                    <title>Author response table</title>
+                </caption>
+                <table frame="hsides" rules="groups">
+                    <thead>
+                        <tr>
+                            <th>Sample</th>
+                            <th>Same</th>
+                            <th>Difference more than 10%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DKO1.cell.1</td>
+                            <td>77.00%</td>
+                            <td>6.90%</td>
+                        </tr>
+                        <tr>
+                            <td>DKO1.cell.2</td>
+                            <td>78.80%</td>
+                            <td>7.20%</td>
+                        </tr>
+                        <tr>
+                            <td>DKO1.cell.3</td>
+                            <td>79.10%</td>
+                            <td>6.70%</td>
+                        </tr>
+                        <tr>
+                            <td>DKO1.exo.1</td>
+                            <td>78.90%</td>
+                            <td>6.50%</td>
+                        </tr>
+                        <tr>
+                            <td>DKO1.exo.2</td>
+                            <td>80.00%</td>
+                            <td>5.80%</td>
+                        </tr>
+                        <tr>
+                            <td>DKO1.exo.3</td>
+                            <td>86.80%</td>
+                            <td>2.30%</td>
+                        </tr>
+                        <tr>
+                            <td>DKS8.cell.1</td>
+                            <td>77.30%</td>
+                            <td>7.80%</td>
+                        </tr>
+                        <tr>
+                            <td>DKS8.cell.2</td>
+                            <td>79.70%</td>
+                            <td>6.70%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </table-wrap>
+            <media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">
+                <label>Author response video 1.</label>
+                <caption>
+                    <title>Caption and/or a title is required for all author response assets</title>
+                </caption>
+            </media>
+            <p>However, some decisions required some communication with PMC to discuss whether any of our updates could be accomodated by them - during this review we aimed to reduce the complexity of the XML structure and remove all formatting and bioler plate text required for a PDF display format. We also produced buisness rules {Insert table} in order to produce rules for the production systems and the website to follow. These buisness rules also informed the basis for a set of Schematron rules for our references.{Insert table}</p>
+            <p>If an author referes to a reference in the response letter it is cross linked to the reference in the reference list (Coyne and Orr, 1989), however, if it is a new reference only cited in the decision letter or author response it is not added to the main reference link and is just listed as free text, for example, Butcher et al, 2006. If the author provides the reference it can be added as free text to the end of the letter, however, this is not a requirement.</p>
+            <p>
+                Adding some MathML to the sub-article. 
+                <inline-formula>
+                    <mml:math alttext="m{\overset{}{p}}_{m} = 0" display="inline" id="sa2m1">
+                        <mml:mrow>
+                            <mml:mi>m</mml:mi>
+                            <mml:msub>
+                                <mml:mover>
+                                    <mml:mi>p</mml:mi>
+                                    <mml:mrow/>
+                                </mml:mover>
+                                <mml:mi>m</mml:mi>
+                            </mml:msub>
+                            <mml:mo>=</mml:mo>
+                            <mml:mn>0</mml:mn>
+                        </mml:mrow>
+                    </mml:math>
+                </inline-formula>
+            </p>
+            <p>May also contain a formula as a block</p>
+            <p>
+                <disp-formula id="sa2equ1">
+                    <mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" display="block" id="sa2m2">
+                        <mml:mrow>
+                            <mml:mi>ϕ</mml:mi>
+                            <mml:mo>=</mml:mo>
+                            <mml:msup>
+                                <mml:mi>e</mml:mi>
+                                <mml:mrow>
+                                    <mml:mo>−</mml:mo>
+                                    <mml:mfrac>
+                                        <mml:mtext mathvariant="normal">zFV</mml:mtext>
+                                        <mml:mtext mathvariant="normal">nRT</mml:mtext>
+                                    </mml:mfrac>
+                                </mml:mrow>
+                            </mml:msup>
+                        </mml:mrow>
+                    </mml:math>
+                </disp-formula>
+                Figures, tables and videos without a title or caption should be captured as below (see 
+                <xref ref-type="fig" rid="sa2fig2">Author response image 2</xref>
+                ; Author response Table 2; 
+                <xref ref-type="video" rid="sa2video2">Author response video 2</xref>
+                ). The first mention of the assets label in the text will be captured as a link to that asset.
+            </p>
+            <fig id="sa2fig2">
+                <label>Author response image 2.</label>
+                <graphic mimetype="image" xlink:href="elife-00666-sa2-fig2.jpg"/>
+            </fig>
+            <table-wrap id="sa2table2">
+                <label>Author response table 2.</label>
+                <table frame="hsides" rules="groups">
+                    <thead>
+                        <tr>
+                            <th>
+                                <p>Genotype/</p>
+                                <p>Cell-type</p>
+                            </th>
+                            <th>
+                                <p>Gaussian/</p>
+                                <p>Normal AIC</p>
+                            </th>
+                            <th>Gamma AIC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <italic>BAC, GFP-</italic>
+                            </td>
+                            <td>13166.75</td>
+                            <td>11812.54</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <italic>RC, GFP-</italic>
+                            </td>
+                            <td>8252.910</td>
+                            <td>7721.240</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <italic>GS, GFP-</italic>
+                            </td>
+                            <td>5373.360</td>
+                            <td>4919.803</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <italic>BAC, GFP+</italic>
+                            </td>
+                            <td>10312.09</td>
+                            <td>9476.535</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <italic>RC.GFP+</italic>
+                            </td>
+                            <td>7324.117</td>
+                            <td>6825.080</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <italic>GS, GFP+</italic>
+                            </td>
+                            <td>5305.298</td>
+                            <td>4880.877</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </table-wrap>
+            <media id="sa2video2" mimetype="video" xlink:href="elife-00666-sa2-video2.mp4">
+                <label>Author response video 2.</label>
+            </media>
+            <p>Here is some other formatting such as and a bulleted list:</p>
+            <list list-type="bullet">
+                <list-item>
+                    <p>List item 1.</p>
+                    <list list-type="bullet">
+                        <list-item>
+                            <p>Nested list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+                <list-item>
+                    <p>List item 2.</p>
+                </list-item>
+                <list-item>
+                    <p>List item 3.</p>
+                    <list list-type="bullet">
+                        <list-item>
+                            <p>Nested list item 3.</p>
+                            <list list-type="bullet">
+                                <list-item>
+                                    <p>2 levels of nesting.</p>
+                                </list-item>
+                                <list-item>
+                                    <p>And again.</p>
+                                </list-item>
+                            </list>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 4.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+                <list-item>
+                    <p>List item 4.</p>
+                </list-item>
+                <list-item>
+                    <p>List item 5.</p>
+                </list-item>
+                <list-item>
+                    <p>List item 6.</p>
+                </list-item>
+            </list>
+            <p>Here are some ordered lists:</p>
+            <list list-type="number">
+                <list-item>
+                    <p>Ordered list item 1.</p>
+                    <list list-type="alpha-lower">
+                        <list-item>
+                            <p>Nested ordered list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested ordered list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+            </list>
+            <list list-type="alpha-lower">
+                <list-item>
+                    <label>a)</label>
+                    <p>This is an alpha lower list.</p>
+                    <list list-type="alpha-lower">
+                        <list-item>
+                            <p>Nested list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+            </list>
+            <list list-type="alpha-upper">
+                <list-item>
+                    <label>A)</label>
+                    <p>This is an alpha upper list.</p>
+                    <list list-type="alpha-upper">
+                        <list-item>
+                            <p>Nested list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+            </list>
+            <list list-type="roman-upper">
+                <list-item>
+                    <p>This is a roman upper list.</p>
+                    <list list-type="roman-upper">
+                        <list-item>
+                            <p>Nested list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+            </list>
+            <list list-type="roman-lower">
+                <list-item>
+                    <p>This is a roman lower list.</p>
+                    <list list-type="roman-lower">
+                        <list-item>
+                            <p>Nested list item 1.</p>
+                        </list-item>
+                        <list-item>
+                            <p>Nested list item 2.</p>
+                        </list-item>
+                    </list>
+                </list-item>
+            </list>
+        </body>
+    </sub-article>
+</root>
