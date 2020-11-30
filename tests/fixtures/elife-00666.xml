@@ -161,7 +161,9 @@
                 </disp-formula>
                 Figures, tables and videos without a title or caption should be captured as below (see 
                 <xref ref-type="fig" rid="sa2fig2">Author response image 2</xref>
-                ; Author response Table 2; 
+                ; 
+                <xref ref-type="table" rid="sa2table2">Author response table 2</xref>
+                ; 
                 <xref ref-type="video" rid="sa2video2">Author response video 2</xref>
                 ). The first mention of the assets label in the text will be captured as a link to that asset.
             </p>
