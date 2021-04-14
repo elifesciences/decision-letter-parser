@@ -342,6 +342,45 @@ class TestCollapseNewlines(unittest.TestCase):
                 "My comments are the following:<break /><break />"
                 "...</italic></p>")
         },
+        {
+            "comment": "exact match of italic tag on one line",
+            "string": (
+                "<p>The sign ...\n"
+                "<inline-formula><alternatives>\n"
+                "<tex-math><![CDATA[{\\widetilde{v}}_{i}]]></tex-math>\n"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:msub><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo>'
+                "</mml:mover><mml:mi>i</mml:mi></mml:msub>"
+                "</mml:math></alternatives></inline-formula> ....\n"
+                "<italic>\n"
+                "2. The description ...</italic>\n"
+                "<inline-formula><alternatives>\n"
+                "<tex-math><![CDATA[- 2\\widetilde{v}]]></tex-math>\n"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:mrow><mml:mo>−</mml:mo><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo></mml:mover></mml:mrow>'
+                "</mml:math></alternatives></inline-formula><italic>.</italic></p>"
+            ),
+            "expected": (
+                "<p>The sign ..."
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[{\\widetilde{v}}_{i}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:msub><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo>'
+                "</mml:mover><mml:mi>i</mml:mi></mml:msub>"
+                "</mml:math></alternatives></inline-formula> ...."
+                "<break /><break />"
+                "<italic>2. The description ...</italic>"
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[- 2\\widetilde{v}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:mrow><mml:mo>−</mml:mo><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo></mml:mover></mml:mrow>'
+                "</mml:math></alternatives></inline-formula><italic>.</italic></p>"
+            ),
+        },
         )
     def test_collapse_newlines(self, test_data):
         new_string = utils.collapse_newlines(test_data.get("string"))

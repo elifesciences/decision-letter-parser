@@ -371,3 +371,32 @@ class TestProcessP(unittest.TestCase):
         expected = ('blah blah&lt;/Author response video 1 title/legend&gt;',
                     'p', None, 'add', None)
         self.assertEqual(build.process_p_content(content, prev), expected)
+
+    def test_process_p_italic_inline_formula(self):
+        content = (
+            "<p><italic>2. The description ...</italic>"
+            "<inline-formula><alternatives>"
+            "<tex-math><![CDATA[- 2\\widetilde{v}]]></tex-math>"
+            '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+            "<mml:mrow><mml:mo>−</mml:mo><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+            '<mml:mo accent="true">∼</mml:mo></mml:mover></mml:mrow></mml:math>'
+            "</alternatives></inline-formula><italic>.</italic></p>"
+        )
+        prev = {}
+        prefs = {"italic_to_disp_quote": True}
+        expected = (
+            (
+                "<p>2. The description ..."
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[- 2\\widetilde{v}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:mrow><mml:mo>−</mml:mo><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo></mml:mover></mml:mrow></mml:math>'
+                "</alternatives></inline-formula>.</p>"
+            ),
+            "p",
+            None,
+            "add",
+            "disp-quote",
+        )
+        self.assertEqual(build.process_p_content(content, prev, prefs), expected)

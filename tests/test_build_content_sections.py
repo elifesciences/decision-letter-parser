@@ -571,3 +571,99 @@ class TestProcessContentSections(unittest.TestCase):
             'mimetype': 'video',
             'xlink:href': 'todo'
         })
+
+    def test_process_content_sections_p_then_italic_inline_formula(self):
+        content_sections = [
+            OrderedDict(
+                [
+                    ("tag_name", "p"),
+                    (
+                        "content",
+                        (
+                            "The sign convention ... "
+                            "<inline-formula><alternatives>"
+                            "<tex-math><![CDATA[{\\widetilde{v}}_{i}]]></tex-math>"
+                            '<mml:math display="inline" '
+                            'xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                            "<mml:msub><mml:mover><mml:mi>v</mml:mi>"
+                            '<mml:mo accent="true">∼</mml:mo>'
+                            "</mml:mover><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                            "</alternatives></inline-formula> remains the same."
+                        ),
+                    ),
+                ]
+            ),
+            OrderedDict(
+                [
+                    ("tag_name", "p"),
+                    (
+                        "content",
+                        (
+                            "<italic>2. The description ...</italic> "
+                            "<inline-formula><alternatives>"
+                            "<tex-math><![CDATA[{2\\widetilde{v}}_{i}]]></tex-math>"
+                            '<mml:math display="inline" '
+                            'xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                            "<mml:msub><mml:mrow><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                            '<mml:mo accent="true">∼</mml:mo>'
+                            "</mml:mover></mml:mrow><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                            "</alternatives></inline-formula> "
+                            "<italic>-1? ...</italic> "
+                            "<inline-formula><alternatives>"
+                            "<tex-math><![CDATA[{2\\widetilde{v}}_{i}]]></tex-math>"
+                            '<mml:math display="inline" '
+                            'xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                            "<mml:msub><mml:mrow><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                            '<mml:mo accent="true">∼</mml:mo>'
+                            "</mml:mover></mml:mrow><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                            "</alternatives></inline-formula><italic>.</italic>"
+                        ),
+                    ),
+                ]
+            ),
+            OrderedDict(
+                [
+                    ("tag_name", "p"),
+                    ("content", "We thank the reviewer ...."),
+                ]
+            ),
+        ]
+        result = build.process_content_sections(content_sections)
+        self.assertEqual(result[0].block_type, "p")
+        self.assertEqual(
+            result[0].content,
+            (
+                "The sign convention ... "
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[{\\widetilde{v}}_{i}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:msub><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo>'
+                "</mml:mover><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                "</alternatives></inline-formula> remains the same."
+            ),
+        )
+        self.assertEqual(result[1].block_type, "p")
+        self.assertEqual(
+            result[1].content,
+            (
+                "<italic>2. The description ...</italic> "
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[{2\\widetilde{v}}_{i}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:msub><mml:mrow><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo>'
+                "</mml:mover></mml:mrow><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                "</alternatives></inline-formula> "
+                "<italic>-1? ...</italic> "
+                "<inline-formula><alternatives>"
+                "<tex-math><![CDATA[{2\\widetilde{v}}_{i}]]></tex-math>"
+                '<mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+                "<mml:msub><mml:mrow><mml:mn>2</mml:mn><mml:mover><mml:mi>v</mml:mi>"
+                '<mml:mo accent="true">∼</mml:mo>'
+                "</mml:mover></mml:mrow><mml:mi>i</mml:mi></mml:msub></mml:math>"
+                "</alternatives></inline-formula><italic>.</italic>"
+            ),
+        )
+        self.assertEqual(result[2].block_type, "p")
+        self.assertEqual(result[2].content, ("We thank the reviewer ...."))

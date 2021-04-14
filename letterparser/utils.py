@@ -61,7 +61,9 @@ def new_line_replace_with(line_one, line_two):
         return ""
     else:
         if not line_one.startswith('<p>'):
-            if line_one.endswith('</italic>'):
+            if line_two == "<italic>":
+                return "<break /><break />"
+            elif line_one.endswith("</italic>"):
                 return "<break /><break />"
             elif line_one.startswith('</italic>') and line_two.startswith('<italic>'):
                 return "<break /><break />"
