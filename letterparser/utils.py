@@ -260,8 +260,20 @@ def manuscript_from_file_name(file_name):
 
 def remove_complex_scripts_styles(document_xml):
     """given docx document.xml contents remove complex scripts style tags"""
-    # remove complex scripts bold style tags
-    document_xml = re.sub(rb'<w:bCs.*?/>', b'', document_xml)
-    # remove complex scripts italic style tags
-    document_xml = re.sub(rb'<w:iCs.*?/>', b'', document_xml)
-    return document_xml
+
+    # pattern for matching run tags w:r
+    run_tag_match_pattern = re.compile(rb"(<w:r\s+.*?>.*?</w:r>)")
+    # pattern for matching complex styles bold formatting tags
+    complex_bold_match_pattern = re.compile(rb"<w:bCs.*?/>")
+    # pattern for matching complex styles italic formatting tags
+    complex_italic_match_pattern = re.compile(rb"<w:iCs.*?/>")
+
+    new_document_xml = b""
+    for xml_part in re.split(run_tag_match_pattern, document_xml):
+        # if the w:rFonts tag contains a specific attribute, then do not remove the complex styles
+        if not (b"<w:rFonts" in xml_part and b"w:cstheme" in xml_part):
+            xml_part = re.sub(complex_bold_match_pattern, b"", xml_part)
+            xml_part = re.sub(complex_italic_match_pattern, b"", xml_part)
+        new_document_xml += xml_part
+
+    return new_document_xml

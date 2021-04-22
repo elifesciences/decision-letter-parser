@@ -499,8 +499,25 @@ class TestRemoveComplexScriptsStyles(unittest.TestCase):
         self.assertEqual(xml_string, expected)
 
     def test_remove_complex_scripts_style_edge_cases(self):
-        xml_string = b'<w:iCs/><w:bCs><w:iCs w:val="false"/>'
-        expected = b''
+        xml_string = (
+            b'<w:pPr><w:r><w:rFonts w:cs="Calibri" w:ascii="Cambria" w:hAnsi="Cambria"'
+            b' w:asciiTheme="minorHAnsi" w:hAnsiTheme="minorHAnsi"/>'
+            b'<w:iCs/><w:bCs><w:iCs w:val="false"/></w:r></w:pPr>'
+        )
+        expected = (
+            b'<w:pPr><w:r><w:rFonts w:cs="Calibri" w:ascii="Cambria" w:hAnsi="Cambria"'
+            b' w:asciiTheme="minorHAnsi" w:hAnsiTheme="minorHAnsi"/>'
+            b'</w:r></w:pPr>'
+        )
+        xml_string = utils.remove_complex_scripts_styles(xml_string)
+        self.assertEqual(xml_string, expected)
+
+    def test_remove_complex_scripts_style_do_not_remove(self):
+        xml_string = (
+            b'<w:pPr><w:r id="a"><w:rFonts w:eastAsia="Times New Roman" w:cstheme="minorHAnsi"/>'
+            b'<w:iCs/><w:bCs><w:iCs w:val="false"/></w:r></w:pPr>'
+        )
+        expected = xml_string
         xml_string = utils.remove_complex_scripts_styles(xml_string)
         self.assertEqual(xml_string, expected)
 
