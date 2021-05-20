@@ -512,6 +512,24 @@ class TestRemoveComplexScriptsStyles(unittest.TestCase):
         xml_string = utils.remove_complex_scripts_styles(xml_string)
         self.assertEqual(xml_string, expected)
 
+        # another example
+        xml_string = (
+            b'<w:r w:rsidRPr="000634ED">'
+            b'<w:rPr><w:rFonts w:ascii="Cambria" w:eastAsia="Times New Roman"'
+            b' w:hAnsi="Cambria" w:cstheme="minorHAnsi"/>'
+            b'<w:bCs/><w:lang w:val="en-US" w:eastAsia="en-GB"/>'
+            b'</w:rPr><w:t xml:space="preserve">The Introduction ....</w:t></w:r>'
+        )
+        expected = (
+            b'<w:r w:rsidRPr="000634ED">'
+            b'<w:rPr><w:rFonts w:ascii="Cambria" w:eastAsia="Times New Roman"'
+            b' w:hAnsi="Cambria" w:cstheme="minorHAnsi"/>'
+            b'<w:lang w:val="en-US" w:eastAsia="en-GB"/>'
+            b'</w:rPr><w:t xml:space="preserve">The Introduction ....</w:t></w:r>'
+        )
+        xml_string = utils.remove_complex_scripts_styles(xml_string)
+        self.assertEqual(xml_string, expected)
+
     def test_remove_complex_scripts_style_do_not_remove(self):
         xml_string = (
             b'<w:pPr><w:r id="a"><w:rFonts w:eastAsia="Times New Roman" w:cstheme="minorHAnsi"/>'

@@ -271,7 +271,9 @@ def remove_complex_scripts_styles(document_xml):
     new_document_xml = b""
     for xml_part in re.split(run_tag_match_pattern, document_xml):
         # if the w:rFonts tag contains a specific attribute, then do not remove the complex styles
-        if not (b"<w:rFonts" in xml_part and b"w:cstheme" in xml_part):
+        if not (b"<w:rFonts" in xml_part and b"w:cstheme" in xml_part) or (
+            b"<w:rFonts" in xml_part and b"w:cstheme" and b"w:ascii" in xml_part
+        ):
             xml_part = re.sub(complex_bold_match_pattern, b"", xml_part)
             xml_part = re.sub(complex_italic_match_pattern, b"", xml_part)
         new_document_xml += xml_part
