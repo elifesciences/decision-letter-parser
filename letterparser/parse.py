@@ -76,8 +76,10 @@ def best_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     config = ensure_config(config)
     clean_jats_content = clean_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
     clean_jats_content = utils.remove_strike(clean_jats_content)
+    # remove empty paragraphs
+    jats_content = utils.remove_empty_p_tags(clean_jats_content)
     # convert sec tags
-    jats_content = convert_sec_tags(clean_jats_content)
+    jats_content = convert_sec_tags(jats_content)
     # convert break tags
     jats_content = convert_break_tags(jats_content, root_tag)
     # wrap in root_tag

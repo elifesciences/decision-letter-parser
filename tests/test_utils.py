@@ -97,6 +97,41 @@ class TestRemoveStrike(unittest.TestCase):
 
 
 @ddt
+class TestRemoveEmptyPTags(unittest.TestCase):
+    @data(
+        {"comment": "None value", "string": None, "expected": ""},
+        {"comment": "Basic string", "string": "string", "expected": "string"},
+        {
+            "comment": "Normal paragraph",
+            "string": "<p><italic>A normal paragraph.</italic></p>",
+            "expected": "<p><italic>A normal paragraph.</italic></p>",
+        },
+        {"comment": "One space character", "string": "<p> </p>", "expected": ""},
+        {
+            "comment": "Multiple whitespace characters",
+            "string": "<p> \t\t \n</p>",
+            "expected": "",
+        },
+        {
+            "comment": "Tag with attributes",
+            "string": '<p id="paragraph"> </p>',
+            "expected": "",
+        },
+    )
+    def test_remove_empty_p_tags(self, test_data):
+        new_string = utils.remove_empty_p_tags(test_data.get("string"))
+        self.assertEqual(
+            new_string,
+            test_data.get("expected"),
+            "{value} does not equal {expected}, scenario {comment}".format(
+                value=new_string,
+                expected=test_data.get("expected"),
+                comment=test_data.get("comment"),
+            ),
+        )
+
+
+@ddt
 class TestNewLineReplaceWith(unittest.TestCase):
 
     @data(
