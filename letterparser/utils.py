@@ -42,6 +42,14 @@ def remove_strike(string):
     return string
 
 
+def remove_empty_p_tags(string):
+    """remove paragraphs which only contain whitespace"""
+    if not string:
+        return ""
+    empty_p_tag_match_pattern = re.compile(r"<p[^>]*?>\s+?</p>")
+    return re.sub(empty_p_tag_match_pattern, "", string)
+
+
 def new_line_replace_with(line_one, line_two):
     """determine the whitespace to use when concatenating two lines together"""
     if line_one is None:
