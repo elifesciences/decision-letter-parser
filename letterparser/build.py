@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 from collections import OrderedDict
 import elifearticle.utils as eautils
-from elifearticle.article import Article, ContentBlock
+from elifearticle.article import Article, ContentBlock, RelatedArticle
 from letterparser import parse, utils
 from letterparser.conf import raw_config, parse_raw_config
 
@@ -28,27 +28,58 @@ def build_articles(jats_content, file_name=None, config=None):
     articles = []
     preamble_section = None
     id_count = 1
+
+    # get a sciety link from the first preamble section
+    related_material = None
+    for preamble_section in [
+        section for section in sections if section.get("section_type") == "preamble"
+    ]:
+        sciety_link_match_pattern = re.compile(
+            r'.*xlink:href="(https://sciety.org/.*?)".*'
+        )
+        sciety_match = sciety_link_match_pattern.match(preamble_section.get("content"))
+        if sciety_match:
+            related_material = RelatedArticle()
+            related_material.xlink_href = sciety_match.group(1)
+            related_material.ext_link_type = "hasRelatedMaterial"
+            break
+
+    # add the editor evaluation section first, if present
+    if [
+        section
+        for section in sections
+        if section.get("section_type") == "editors_evaluation"
+    ]:
+        id_count = 0
+
     for section in sections:
-        # detect the preamble sections
         if section.get("section_type") == "preamble":
             preamble_section = section
             continue
 
-        # set the default preamble
         if not preamble_section:
             preamble_section = default_preamble(config)
 
-        id_value = 'sa%s' % id_count
+        id_value = "sa%s" % id_count
 
         # set the DOI, if possible
         manuscript = utils.manuscript_from_file_name(file_name)
         doi = build_doi(file_name, id_value, config)
 
-        if section.get("section_type") == "decision_letter":
+        if section.get("section_type") == "editors_evaluation":
+            article = build_editors_evaluation(
+                section, config, id_value, doi, manuscript
+            )
+            if related_material:
+                article.related_articles = [related_material]
+        elif section.get("section_type") == "decision_letter":
             article = build_decision_letter(
-                section, config, preamble_section, id_value, doi, manuscript)
+                section, config, preamble_section, id_value, doi, manuscript
+            )
         else:
-            article = build_sub_article(section, config, "reply", id_value, doi, manuscript)
+            article = build_sub_article(
+                section, config, "reply", id_value, doi, manuscript
+            )
         articles.append(article)
         # reset the counter
         id_count += 1
@@ -64,6 +95,12 @@ def build_doi(file_name, id_value, config):
             manuscript=utils.manuscript_from_file_name(file_name),
             id=id_value)
     return None
+
+
+def build_editors_evaluation(section, config, id_value=None, doi=None, manuscript=None):
+    return build_sub_article(
+        section, config, "editor-report", id_value, doi, manuscript
+    )
 
 
 def build_decision_letter(section, config, preamble_section=None, id_value=None, doi=None,
@@ -117,6 +154,7 @@ def set_title(article):
     """set the article title"""
     # for now use boilerplate values based on the article_type
     title_map = {
+        "editor-report": "Editor's evaluation",
         "decision-letter": "Decision letter",
         "reply": "Author response"
     }

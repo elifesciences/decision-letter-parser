@@ -199,6 +199,17 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(asset_labels, expected)
 
 
+class TestEditorEvaluation(unittest.TestCase):
+
+    def test_generate_editor_evaluation(self):
+        file_name = data_path('elife-68041.docx')
+        expected = read_fixture("elife-68041.xml", mode="rb")
+        config = parse_raw_config(raw_config('elife'))
+        pretty_xml = generate.generate_xml_from_docx(
+            file_name, pretty=True, indent="    ", config=config)
+        self.assertEqual(pretty_xml, expected)
+
+
 class TestAssetXrefTags(unittest.TestCase):
 
     def test_asset_xref_tags(self):
