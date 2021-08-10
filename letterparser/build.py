@@ -44,6 +44,13 @@ def build_articles(jats_content, file_name=None, config=None):
             related_material.ext_link_type = "hasRelatedMaterial"
             break
 
+    # filter a list of decision letter sections to check against later
+    decision_letter_sections = [
+        section
+        for section in sections
+        if section.get("section_type") == "decision_letter"
+    ]
+
     # add the editor evaluation section first, if present
     if [
         section
@@ -56,6 +63,14 @@ def build_articles(jats_content, file_name=None, config=None):
         if section.get("section_type") == "preamble":
             preamble_section = section
             continue
+
+        # use sa2 as the id value for the first author response if there is no decision letter
+        if (
+            id_count == 1
+            and section.get("section_type") == "author_response"
+            and not decision_letter_sections
+        ):
+            id_count += 1
 
         if not preamble_section:
             preamble_section = default_preamble(config)
