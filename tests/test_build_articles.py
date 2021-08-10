@@ -69,10 +69,20 @@ class TestBuildArticles(unittest.TestCase):
             '<label>Author response image 1.</label><caption>'
             '<title>Title up to first full stop.</title>'
             '<p>Caption <sup>2+</sup> calculated using</p></caption>'
-            '<graphic mimetype="image" xlink:href="elife-00666-sa1-fig1" />'))
+            '<graphic mimetype="image" xlink:href="elife-00666-sa2-fig1" />'))
         self.assertEqual(articles[0].content_blocks[3].block_type, "disp-quote")
         self.assertEqual(articles[0].content_blocks[3].content, "<p>Editor comment paragraph.</p>")
         self.assertEqual(articles[0].content_blocks[4].block_type, "p")
         self.assertEqual(articles[0].content_blocks[4].content, "Paragraph one.")
         self.assertEqual(articles[0].content_blocks[5].block_type, "p")
         self.assertEqual(articles[0].content_blocks[5].content, "Paragraph two.")
+
+    def test_build_articles_no_decision_letter(self):
+        """build article with no decision letter to test id attribute of the author response"""
+        jats_content = "<p><bold>Author response</bold></p><p>Test</p>"
+        articles = build.build_articles(jats_content, config=self.config)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].article_type, "reply")
+        self.assertEqual(articles[0].id, "sa2")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "p")
+        self.assertEqual(articles[0].content_blocks[0].content, "Test")
