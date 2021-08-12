@@ -7,12 +7,12 @@ from tests import data_path, read_fixture
 
 
 class TestGenerateFromFile(unittest.TestCase):
-
     def test_generate_xml_from_file_docx(self):
         """simple test for code coverage"""
-        file_name = data_path('elife-99999.docx')
-        config = parse_raw_config(raw_config('elife'))
-        expected = read_fixture('elife-99999.xml', mode="rb")
+        file_name = data_path("elife-99999.docx")
+        config = parse_raw_config(raw_config("elife"))
+        expected = read_fixture("elife-99999.xml", mode="rb")
         pretty_xml = generate.generate_xml_from_file(
-            file_name, pretty=True, indent="    ", config=config)
+            file_name, pretty=True, indent="    ", config=config
+        )
         self.assertEqual(pretty_xml, expected)
