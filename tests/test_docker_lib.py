@@ -17,12 +17,11 @@ class FakeClient:
 
 
 class TestDockerLib(unittest.TestCase):
-
-    @patch.object(docker_lib, 'get_docker_client')
+    @patch.object(docker_lib, "get_docker_client")
     def test_call_pandoc(self, fake_get_docker_client):
         """simple test for coverage"""
-        output = b'something'
-        expected = output.decode('utf8')
-        docker_image = 'example/image_name_for_test_case'
+        output = b"something"
+        expected = output.decode("utf8")
+        docker_image = "example/image_name_for_test_case"
         fake_get_docker_client.return_value = FakeClient(output)
-        self.assertEqual(docker_lib.call_pandoc('file_name', docker_image), expected)
+        self.assertEqual(docker_lib.call_pandoc("file_name", docker_image), expected)

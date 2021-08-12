@@ -11,7 +11,11 @@ def base_sub_article(title, article_type, article_id):
 
 
 def base_decision_letter():
-    return base_sub_article("Decision letter", "decision-letter", "sa1",)
+    return base_sub_article(
+        "Decision letter",
+        "decision-letter",
+        "sa1",
+    )
 
 
 def base_author_response():
