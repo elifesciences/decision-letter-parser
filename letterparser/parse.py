@@ -13,7 +13,7 @@ SECTION_MAP = {
     "editors_evaluation": "<p><bold>Editors evaluation</bold></p>",
     "preamble": "<p><bold>Preamble</bold></p>",
     "decision_letter": "<p><bold>Decision letter</bold></p>",
-    "author_response": "<p><bold>Author response</bold></p>"
+    "author_response": "<p><bold>Author response</bold></p>",
 }
 
 
@@ -30,6 +30,7 @@ def pandoc_output(file_name):
     except OSError:
         # todo!! log exception pandoc is probably not installed locally
         pass
+    return None
 
 
 def docker_pandoc_output(file_name, config):
@@ -44,6 +45,7 @@ def docker_pandoc_output(file_name, config):
     except requests.exceptions.ConnectionError:
         # todo !! log exception - docker may not be running
         pass
+    return None
 
 
 def parse_file(file_name, config=None, temp_dir="tmp"):
@@ -75,7 +77,9 @@ def clean_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
 def best_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
     """from file input, produce the best JATS output possible"""
     config = ensure_config(config)
-    clean_jats_content = clean_jats(file_name, root_tag, config=config, temp_dir=temp_dir)
+    clean_jats_content = clean_jats(
+        file_name, root_tag, config=config, temp_dir=temp_dir
+    )
     clean_jats_content = utils.remove_strike(clean_jats_content)
     # remove empty paragraphs
     jats_content = utils.remove_empty_p_tags(clean_jats_content)
@@ -92,16 +96,16 @@ def best_jats(file_name, root_tag="root", config=None, temp_dir="tmp"):
 
 def convert_sec_tags(jats_content):
     """remove sec tags and convert title to p tag"""
-    match_string = r'(<sec.*?>.*</sec>)'
+    match_string = r"(<sec.*?>.*</sec>)"
     sec_tag_match = re.finditer(match_string, jats_content)
     for match_group in sec_tag_match:
         original_string = match_group.group(1)  # original string
         # replace first title tag with p tag
-        new_string = re.sub(r'<sec.*?><title.*?>', '<p>', original_string)
-        new_string = re.sub(r'<sec.*?><title.*?>', '<p>', original_string)
-        new_string = re.sub(r'</title>', '</p>', new_string)
+        new_string = re.sub(r"<sec.*?><title.*?>", "<p>", original_string)
+        new_string = re.sub(r"<sec.*?><title.*?>", "<p>", original_string)
+        new_string = re.sub(r"</title>", "</p>", new_string)
         # remove sec close tag
-        new_string = re.sub(r'</sec>', '', new_string)
+        new_string = re.sub(r"</sec>", "", new_string)
         # replace in original string
         jats_content = jats_content.replace(original_string, new_string)
     return jats_content
@@ -115,16 +119,18 @@ def convert_break_tags(jats_content, root_tag="root"):
 
     # replace break tags in tables first
     jats_content = re.sub(
-        r'<td(.*?)<break /><break />(.*?)</td>', r'<td\1<break />\2</td>', jats_content)
+        r"<td(.*?)<break /><break />(.*?)</td>", r"<td\1<break />\2</td>", jats_content
+    )
     jats_content = re.sub(
-        r'<th(.*?)<break /><break />(.*?)</th>', r'<th\1<break />\2</th>', jats_content)
+        r"<th(.*?)<break /><break />(.*?)</th>", r"<th\1<break />\2</th>", jats_content
+    )
 
     # collapse double break tags into paragraph tags
     break_section_match = "<break /><break />"
     break_section_map = {"": break_section_match}
     break_sections = sections(jats_content, root_tag, break_section_map)
     # add blank content to the end for last iteration
-    break_sections.append({"content": ''})
+    break_sections.append({"content": ""})
     # hanging tags could possibly be still open across <break /><break /> dividers
     hanging_tags = ["italic", "bold"]
     open_tags = set()
@@ -133,13 +139,13 @@ def convert_break_tags(jats_content, root_tag="root"):
 
         content = content.replace(break_section_match, "")
 
-        if i > 0 and i < len(break_sections)-1:
+        if 0 < i < len(break_sections) - 1:
             for tag_name in open_tags:
                 content = utils.open_tag(tag_name) + content
             if not content.startswith("<p>"):
                 content = "<p>" + content
 
-        if i < len(break_sections)-1:
+        if i < len(break_sections) - 1:
             # detect and close any open tags
             for tag_name in hanging_tags:
                 open_tag_count = content.count(utils.open_tag(tag_name))
@@ -152,8 +158,11 @@ def convert_break_tags(jats_content, root_tag="root"):
                 if open_tag_count > close_tag_count and tag_name not in open_tags:
                     content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
-                elif (first_close_tag_index and first_open_tag_index and
-                      first_close_tag_index < first_open_tag_index):
+                elif (
+                    first_close_tag_index
+                    and first_open_tag_index
+                    and first_close_tag_index < first_open_tag_index
+                ):
                     # do the same if tag counts equal but close tag comes before the open tag
                     content += utils.close_tag(tag_name)
                     open_tags.add(tag_name)
@@ -163,10 +172,11 @@ def convert_break_tags(jats_content, root_tag="root"):
                     open_tags.add(tag_name)
 
             if (
-                    not content.endswith("</p>")
-                    and not content.endswith("</table>")
-                    and not content.endswith("</disp-quote>")
-                    and not content.endswith("</list>")):
+                not content.endswith("</p>")
+                and not content.endswith("</table>")
+                and not content.endswith("</disp-quote>")
+                and not content.endswith("</list>")
+            ):
                 content += "</p>"
 
         converted_jats_content += content
@@ -192,7 +202,9 @@ def sections(jats_content, root_tag="root", section_map=None):
     # find the string indicies for the section markers
     string_indexes = [0]
     for section_marker in list(section_map.values()):
-        string_indexes += [match.start() for match in re.finditer(section_marker, jats_content)]
+        string_indexes += [
+            match.start() for match in re.finditer(section_marker, jats_content)
+        ]
     string_indexes.append(len(jats_content))
     # add sections
     for i, string_index in enumerate(sorted(string_indexes)):
@@ -200,7 +212,9 @@ def sections(jats_content, root_tag="root", section_map=None):
             # set the substring_start from the first 0 index
             substring_start = string_index
             continue
-        portion = utils.clean_portion(jats_content[substring_start:string_index], root_tag)
+        portion = utils.clean_portion(
+            jats_content[substring_start:string_index], root_tag
+        )
         # set the section type based on the match string
         portion_section_type = section_type(portion, section_map)
         # populate the section

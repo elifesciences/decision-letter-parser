@@ -7,8 +7,8 @@ def get_docker_client():
     return docker.from_env()
 
 
-def create_docker_volumes_dict(source_path, bind_path='/data', mode='ro'):
-    return {source_path: {'bind': bind_path, 'mode': mode}}
+def create_docker_volumes_dict(source_path, bind_path="/data", mode="ro"):
+    return {source_path: {"bind": bind_path, "mode": mode}}
 
 
 def call_pandoc(file_name, docker_image, output_format="jats"):
@@ -18,4 +18,4 @@ def call_pandoc(file_name, docker_image, output_format="jats"):
     volumes = create_docker_volumes_dict(file_name_path)
     command = '--wrap=none --to=%s "%s"' % (output_format, file_name_file)
     output = client.containers.run(docker_image, command, volumes=volumes)
-    return output.decode('utf8')
+    return output.decode("utf8")
