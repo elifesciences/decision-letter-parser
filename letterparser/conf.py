@@ -1,7 +1,7 @@
 import configparser as configparser
 import json
 
-CONFIG_FILE = 'letterparser.cfg'
+CONFIG_FILE = "letterparser.cfg"
 BOOLEAN_VALUES = []
 INT_VALUES = []
 LIST_VALUES = []
