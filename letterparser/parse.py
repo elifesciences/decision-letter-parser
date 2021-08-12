@@ -30,6 +30,7 @@ def pandoc_output(file_name):
     except OSError:
         # todo!! log exception pandoc is probably not installed locally
         pass
+    return None
 
 
 def docker_pandoc_output(file_name, config):
@@ -44,6 +45,7 @@ def docker_pandoc_output(file_name, config):
     except requests.exceptions.ConnectionError:
         # todo !! log exception - docker may not be running
         pass
+    return None
 
 
 def parse_file(file_name, config=None, temp_dir="tmp"):
@@ -137,7 +139,7 @@ def convert_break_tags(jats_content, root_tag="root"):
 
         content = content.replace(break_section_match, "")
 
-        if i > 0 and i < len(break_sections) - 1:
+        if 0 < i < len(break_sections) - 1:
             for tag_name in open_tags:
                 content = utils.open_tag(tag_name) + content
             if not content.startswith("<p>"):

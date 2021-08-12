@@ -641,11 +641,11 @@ def finish_wrap(content_blocks, content, appended_content, prev):
 def process_content(tag_name, content, prev, prefs=None):
     if tag_name == "list":
         return process_list_content(content, prev)
-    elif tag_name == "table":
+    if tag_name == "table":
         return process_table_content(content)
-    elif tag_name == "p":
+    if tag_name == "p":
         return process_p_content(content, prev, prefs)
-    elif tag_name == "disp-quote":
+    if tag_name == "disp-quote":
         return process_disp_quote_content(content, prev)
     # default
     return content, None, None, "add", prev.get("wrap")

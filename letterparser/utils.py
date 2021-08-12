@@ -2,7 +2,6 @@
 
 "utility helper functions"
 import os
-import sys
 import re
 from elifetools import xmlio
 from elifetools import utils as etoolsutils
@@ -68,51 +67,51 @@ def new_line_replace_with(line_one, line_two):
             return "</italic><break /><break /><italic>"
         # default return blank string
         return ""
-    else:
-        if not line_one.startswith("<p>"):
-            if line_two == "<italic>":
-                return "<break /><break />"
-            elif line_one.endswith("</italic>"):
-                return "<break /><break />"
-            elif line_one.startswith("</italic>") and line_two.startswith("<italic>"):
-                return "<break /><break />"
-            elif (
-                not line_one.startswith("<")
-                and line_two.startswith("</italic>")
-                and line_two != "</italic></p>"
-            ):
-                return "<break /><break />"
-            elif line_two.startswith("<bold>") and line_two.endswith("</bold></p>"):
-                return "<break /><break />"
-            elif not line_two.startswith("<") and line_two.endswith("</p>"):
-                return "<break /><break />"
-            elif not line_two.endswith("</p>") and not line_one.startswith("<"):
-                return "<break /><break />"
-        elif line_two == "<italic>":
+
+    if not line_one.startswith("<p>"):
+        if line_two == "<italic>":
             return "<break /><break />"
-        elif not line_one.endswith(">") and line_two.startswith("<italic>"):
+        if line_one.endswith("</italic>"):
             return "<break /><break />"
-        elif (
-            line_one != "<p><italic>"
-            and line_one.endswith("<italic>")
-            and not line_two.startswith("<")
-        ):
-            return "</italic><break /><break /><italic>"
-        elif (
-            line_one.startswith("<p><italic>")
-            and not line_one.endswith("</italic></p>")
+        if line_one.startswith("</italic>") and line_two.startswith("<italic>"):
+            return "<break /><break />"
+        if (
+            not line_one.startswith("<")
             and line_two.startswith("</italic>")
             and line_two != "</italic></p>"
         ):
-            return "</italic><break /><break /><italic>"
-        elif not line_one.endswith(">") and not line_two.startswith("<"):
             return "<break /><break />"
-        elif (
-            not line_one.endswith(">")
-            and line_two.startswith("<bold>")
-            and line_two.endswith("</p>")
-        ):
+        if line_two.startswith("<bold>") and line_two.endswith("</bold></p>"):
             return "<break /><break />"
+        if not line_two.startswith("<") and line_two.endswith("</p>"):
+            return "<break /><break />"
+        if not line_two.endswith("</p>") and not line_one.startswith("<"):
+            return "<break /><break />"
+    elif line_two == "<italic>":
+        return "<break /><break />"
+    elif not line_one.endswith(">") and line_two.startswith("<italic>"):
+        return "<break /><break />"
+    elif (
+        line_one != "<p><italic>"
+        and line_one.endswith("<italic>")
+        and not line_two.startswith("<")
+    ):
+        return "</italic><break /><break /><italic>"
+    elif (
+        line_one.startswith("<p><italic>")
+        and not line_one.endswith("</italic></p>")
+        and line_two.startswith("</italic>")
+        and line_two != "</italic></p>"
+    ):
+        return "</italic><break /><break /><italic>"
+    elif not line_one.endswith(">") and not line_two.startswith("<"):
+        return "<break /><break />"
+    elif (
+        not line_one.endswith(">")
+        and line_two.startswith("<bold>")
+        and line_two.endswith("</p>")
+    ):
+        return "<break /><break />"
     return ""
 
 
@@ -241,8 +240,8 @@ def xml_string_fix_namespaces(xml_string, root_tag):
     root_tag_string = root_tag_match.group(1)  # original root tag string
     # extract all tag attributes separated by a space
     attributes = root_tag_string.rstrip(b">").split(b" ")[1:]
-    # de-dupe the attributes
-    unique_attributes = set([attr for attr in attributes if attr])
+    # de-dupe the attributes using set comprehension
+    unique_attributes = {attr for attr in attributes if attr}
     # join the unique attributes alphabetically
     attributes_string = b" ".join(sorted(unique_attributes))
     # assemble the string to replace the original root tag string
@@ -324,7 +323,7 @@ def remove_complex_scripts_styles(document_xml):
     for xml_part in re.split(run_tag_match_pattern, document_xml):
         # if the w:rFonts tag contains a specific attribute, then do not remove the complex styles
         if not (b"<w:rFonts" in xml_part and b"w:cstheme" in xml_part) or (
-            b"<w:rFonts" in xml_part and b"w:cstheme" and b"w:ascii" in xml_part
+            b"<w:rFonts" in xml_part and b"w:ascii" in xml_part
         ):
             xml_part = re.sub(complex_bold_match_pattern, b"", xml_part)
             xml_part = re.sub(complex_italic_match_pattern, b"", xml_part)
