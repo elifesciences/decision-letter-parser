@@ -1,0 +1,57 @@
+<root><p>Decision letter</p>
+<p>...</p>
+<p>Author response</p>
+<p>...</p>
+<list list-type="order">
+  <list-item>
+    <p specific-use="wrapper">
+      <disp-quote>
+        <p>Ordered list item 1</p>
+      </disp-quote>
+    </p>
+    <list list-type="order">
+      <list-item>
+        <p specific-use="wrapper">
+          <disp-quote>
+            <p>Nested ordered list item 1</p>
+          </disp-quote>
+        </p>
+      </list-item>
+      <list-item>
+        <p specific-use="wrapper">
+          <disp-quote>
+            <p>Nested ordered list item 2</p>
+          </disp-quote>
+        </p>
+      </list-item>
+    </list>
+  </list-item>
+</list>
+<list list-type="alpha-lower">
+  <list-item>
+    <label>a)</label>
+    <p>alpha-lower list</p>
+  </list-item>
+</list>
+<list list-type="alpha-upper">
+  <list-item>
+    <label>A)</label>
+    <p>alpha-upper list</p>
+  </list-item>
+</list>
+<list list-type="roman-lower">
+  <list-item>
+    <p>roman-lower list</p>
+  </list-item>
+</list>
+<list list-type="roman-upper">
+  <list-item>
+    <p>roman-upper list</p>
+  </list-item>
+</list>
+<list list-type="bullet">
+  <list-item>
+    <p>bullet list</p>
+  </list-item>
+</list>
+</root>

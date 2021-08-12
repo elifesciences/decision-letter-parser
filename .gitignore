@@ -1,0 +1,13 @@
+*.log
+*.pyc
+*.py~
+venv/*
+.tox/*
+build/
+dist/
+letterparser.egg-info
+.coverage
+tmp/*
+!tmp/.keepme
+tests/tmp/*
+!tests/tmp/.keepme

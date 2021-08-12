@@ -1,0 +1,296 @@
+<root><p><bold>Decision letter</bold></p>
+<p>...</p>
+<p><bold>Author response</bold></p>
+<p><italic>
+...</italic></p>
+<p><bold>Author response table 1.</bold></p>
+<p>&lt;Author response table 1 title/legend&gt;Expression values excluding sex-bias FC&gt;2 (ancestry not considered).&lt;/Author response table 1 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>adults</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>adults</p></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Female Z:A</td>
+      <td>0.86 N.S.</td>
+      <td>0.81 N.S.</td>
+      <td>0.93 N.S.</td>
+      <td>0.69 *</td>
+    </tr>
+    <tr>
+      <td>Male Z:A</td>
+      <td>1.55 ***</td>
+      <td>1.18 N.S.</td>
+      <td>1.21*</td>
+      <td>1.14 N.S.</td>
+    </tr>
+    <tr>
+      <td>Z(F:M) / A(F:M)</td>
+      <td>0.58 ***</td>
+      <td>0.68 ***</td>
+      <td>0.67 ***</td>
+      <td>0.63 ***</td>
+    </tr>
+    <tr>
+      <td>Z(fem) : Z(male)</td>
+      <td>0.61 **</td>
+      <td>0.76 *</td>
+      <td>0.70 *</td>
+      <td>0.73 *</td>
+    </tr>
+    <tr>
+      <td>A(fem) : A(male)</td>
+      <td>1.04 N.S.</td>
+      <td>1.11 *</td>
+      <td>1.05 N.S.</td>
+      <td>1.15 *</td>
+    </tr>
+    <tr>
+      <td>N (Z)</td>
+      <td>237</td>
+      <td>189</td>
+      <td>298</td>
+      <td>224</td>
+    </tr>
+    <tr>
+      <td>N (A)</td>
+      <td>2,364</td>
+      <td>1,447</td>
+      <td>2,364</td>
+      <td>1,447</td>
+    </tr>
+  </tbody>
+</table>
+<p><bold>Author response table 2.</bold></p>
+<p>&lt;Author response table 2 title/legend&gt;Expression values excluding sex-bias FC&gt;2 (considering ancestry).&lt;/Author response table 2 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th></th>
+      <th><italic>S. japonicum</italic> schistosomula</th>
+      <th><italic>S. japonicum</italic> adults</th>
+      <th><italic>S. mansoni</italic> schistosomula</th>
+      <th><italic>S. mansoni</italic> adults</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Female Z:A</td>
+      <td>0.83*</td>
+      <td>0.71*</td>
+      <td>0.92 N.S.</td>
+      <td>0.72 N.S.</td>
+    </tr>
+    <tr>
+      <td>Male Z:A</td>
+      <td>1.23 N.S.</td>
+      <td>1.38 N.S.</td>
+      <td>1.20*</td>
+      <td>1.34 N.S.</td>
+    </tr>
+    <tr>
+      <td>Z(F:M) / A(F:M)</td>
+      <td>0.67 ***</td>
+      <td>0.52***</td>
+      <td>O.77***</td>
+      <td>0.54***</td>
+    </tr>
+    <tr>
+      <td>Z(fem) : Z(male)</td>
+      <td>0.65*</td>
+      <td>0.50*</td>
+      <td>0.78 N.S.</td>
+      <td>0.56*</td>
+    </tr>
+    <tr>
+      <td>A(fem) : A(male)</td>
+      <td>0.98 N.S.</td>
+      <td>0.97 N.S.</td>
+      <td>1.02 N.S.</td>
+      <td>1.03 N.S.</td>
+    </tr>
+    <tr>
+      <td>N (Z)</td>
+      <td>50</td>
+      <td>31</td>
+      <td>111</td>
+      <td>66</td>
+    </tr>
+    <tr>
+      <td>N (A)</td>
+      <td>2,364</td>
+      <td>1,447</td>
+      <td>2,364</td>
+      <td>1,447</td>
+    </tr>
+  </tbody>
+</table>
+<p>...</p>
+<p><bold>Author response table 3.</bold></p>
+<p>&lt;Author response table 3 title/legend&gt;Ratio of expression values, with minimum threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We did not account for ancestry. Level of significance (Wilcoxon test): *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001,</p>
+<p>N.S. P-value&gt;0.05.&lt;/Author response table 3 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>adults</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>adults</p></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Female Z:A</td>
+      <td>0.76**</td>
+      <td>0.67**</td>
+      <td>0.76***</td>
+      <td>0.76*</td>
+    </tr>
+    <tr>
+      <td>Male Z:A</td>
+      <td>1.39***</td>
+      <td>1.22*</td>
+      <td>1.18*</td>
+      <td>1.33*</td>
+    </tr>
+    <tr>
+      <td>Z(F:M) / A(F:M)</td>
+      <td>0.57***</td>
+      <td>0.63***</td>
+      <td>0.69***</td>
+      <td>0.64***</td>
+    </tr>
+    <tr>
+      <td>Z(fem) : Z(male)</td>
+      <td>0.59***</td>
+      <td>0.68**</td>
+      <td>0.73***</td>
+      <td>0.72**</td>
+    </tr>
+    <tr>
+      <td>A(fem) : A(male)</td>
+      <td>1.04</td>
+      <td>1.07</td>
+      <td>1.06*</td>
+      <td>1.12*</td>
+    </tr>
+    <tr>
+      <td>N (Z)</td>
+      <td>43</td>
+      <td>38</td>
+      <td>55</td>
+      <td>46</td>
+    </tr>
+    <tr>
+      <td>N (A)</td>
+      <td>486</td>
+      <td>321</td>
+      <td>486</td>
+      <td>321</td>
+    </tr>
+  </tbody>
+</table>
+<p><bold>Author response table 4.</bold></p>
+<p>&lt;Author response table 4 title/legend&gt;Ratio of expression values, with minimum expression threshold of RPKM&gt;1 and maximum expression threshold of RPKM&lt;5. We normalized by the ancestral state of expression. Level of significance (Wilcoxon test *P-value&lt;0.05, **P-value&lt;0.001, ***P-value&lt;0.0001, N.S. P-value&gt;0.05.&lt;/Author response table 4 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. japonicum</italic></p>
+      <p>adults</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>schistosomula</p></th>
+      <th><p><italic>S. mansoni</italic></p>
+      <p>adults</p></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Female Z:A</td>
+      <td>0.82*</td>
+      <td>0.79 N.S.</td>
+      <td>0.90 N.S.</td>
+      <td>1.05 N.S.</td>
+    </tr>
+    <tr>
+      <td>Male Z:A</td>
+      <td>1.22 N.S.</td>
+      <td>1.17 N.S.</td>
+      <td>1.22 N.S.</td>
+      <td>1.50*</td>
+    </tr>
+    <tr>
+      <td>Z(F:M) / A(F:M)</td>
+      <td>0.67***</td>
+      <td>0.67*</td>
+      <td>0.74*</td>
+      <td>0.70*</td>
+    </tr>
+    <tr>
+      <td>Z(fem) : Z(male)</td>
+      <td>0.62*</td>
+      <td>0.66 N.S.</td>
+      <td>0.79 N.S.</td>
+      <td>0.72 N.S.</td>
+    </tr>
+    <tr>
+      <td>A(fem) : A(male)</td>
+      <td>0.93 N.S.</td>
+      <td>0.98 N.S.</td>
+      <td>1.07 N.S.</td>
+      <td>1.02 N.S.</td>
+    </tr>
+    <tr>
+      <td>N (Z)</td>
+      <td>11</td>
+      <td>8</td>
+      <td>23</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>N (A)</td>
+      <td>486</td>
+      <td>321</td>
+      <td>486</td>
+      <td>321</td>
+    </tr>
+  </tbody>
+</table>
+</root>

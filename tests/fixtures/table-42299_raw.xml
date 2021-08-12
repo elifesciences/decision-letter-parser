@@ -1,0 +1,104 @@
+<root><p><bold>Decision letter</bold></p>
+<p>...</p>
+<p><bold>Author response</bold></p>
+<p>...</p>
+<p><bold>Author response table 1.</bold></p>
+<p>&lt;Author response table 1 title/legend&gt;InterRBC-PO2 and EATs dependence on the size of the selection window. The measurements were acquired in 373 capillaries in n = 7 awake mice. Data are expressed as mean±SEM.&lt;/Author response table 1 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th>Selection window size</th>
+      <th>InterRBC-PO2 (mmHg)</th>
+      <th>EATs (mmHg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>40%</td>
+      <td>38.0±3.7</td>
+      <td>12.0±1.7</td>
+    </tr>
+    <tr>
+      <td>30%</td>
+      <td>37.7±3.7</td>
+      <td>12.2±1.7</td>
+    </tr>
+    <tr>
+      <td>20%</td>
+      <td>37.4±3.7</td>
+      <td>12.4±1.8</td>
+    </tr>
+    <tr>
+      <td>10%</td>
+      <td>37.0±3.6</td>
+      <td>12.7±1.8</td>
+    </tr>
+  </tbody>
+</table>
+<p>...</p>
+<p><bold>Author response table 2.</bold></p>
+<p>&lt;Author response table 2 title/legend&gt;Measurement information for the main analysis in Figures 2-7.&lt;/Author response table 2 title/legend&gt;</p>
+<table>
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <col align="left" />
+  <thead>
+    <tr>
+      <th><bold>Parameters</bold></th>
+      <th><bold>Depth</bold></th>
+      <th><bold>Numbers of samples/mice</bold></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><bold>Capillaries</bold></td>
+      <td><bold>Arterioles</bold></td>
+      <td><bold>Venules</bold></td>
+    </tr>
+    <tr>
+      <td><bold>Mean-PO<sub>2</sub></bold></td>
+      <td>0-600 µm</td>
+      <td>978/15</td>
+      <td>11/7</td>
+      <td>14/7</td>
+    </tr>
+    <tr>
+      <td><bold>RBC Flux</bold></td>
+      <td>0-600 µm</td>
+      <td>978/15</td>
+      <td>N.A.</td>
+      <td>N.A.</td>
+    </tr>
+    <tr>
+      <td><bold>Temporal Fluctuation</bold></td>
+      <td>0-600 µm</td>
+      <td>373/7</td>
+      <td>N.A.</td>
+      <td>N.A.</td>
+    </tr>
+    <tr>
+      <td><bold>EATs</bold></td>
+      <td>0-600 µm</td>
+      <td>373/7</td>
+      <td>N.A.</td>
+      <td>N.A.</td>
+    </tr>
+    <tr>
+      <td><bold>Branching Orders</bold></td>
+      <td>0-300 µm</td>
+      <td>97/5</td>
+      <td>N.A.</td>
+      <td>N.A.</td>
+    </tr>
+  </tbody>
+</table>
+</root>

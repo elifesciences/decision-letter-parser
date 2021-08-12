@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sub-article article-type="editor-report" id="sa0">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.68041.sa0</article-id>
+            <title-group>
+                <article-title>Editor's evaluation</article-title>
+            </title-group>
+            <related-object link-type="hasRelatedMaterial" xlink:href="https://sciety.org/articles/activity/10.1101/865006"/>
+        </front-stub>
+        <body>
+            <p>This is an Editor’s evaluation, previously called an acceptance summary, which explains what the Editors found interesting or important about the work presented in the article. It will typically be a short paragraph, or perhaps two. It will not contain figures or tables or maths.</p>
+        </body>
+    </sub-article>
+    <sub-article article-type="decision-letter" id="sa1">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.68041.sa1</article-id>
+            <title-group>
+                <article-title>Decision letter</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <boxed-text>
+                <p>
+                    Our editorial process produces two outputs: i) 
+                    <ext-link ext-link-type="uri" xlink:href="https://sciety.org/articles/activity/10.1101/865006">public reviews</ext-link>
+                     designed to be posted alongside 
+                    <ext-link ext-link-type="uri" xlink:href="https://www.biorxiv.org/content/10.1101/865006v2">the preprint</ext-link>
+                     for the benefit of readers; ii) feedback on the manuscript for the authors, including requests for revisions, shown below. We also include an acceptance summary that explains what the editors found interesting or important about the work.
+                </p>
+            </boxed-text>
+            <p>Thank you ....</p>
+        </body>
+    </sub-article>
+    <sub-article article-type="reply" id="sa2">
+        <front-stub>
+            <article-id pub-id-type="doi">10.7554/eLife.68041.sa2</article-id>
+            <title-group>
+                <article-title>Author response</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <disp-quote content-type="editor-comment">
+                <p>The reviewers have discussed ....</p>
+            </disp-quote>
+            <p>In response to this comment ....</p>
+        </body>
+    </sub-article>
+</root>

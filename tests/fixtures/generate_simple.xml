@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sub-article article-type="decision-letter" id="sa1">
+        <front-stub>
+            <title-group>
+                <article-title>Decision letter</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <boxed-text>
+                <p>Preamble</p>
+            </boxed-text>
+            <p>
+                Thank you for submitting your article &quot;ZZ9 Plural Z α&quot; to 
+                <italic>eLife</italic>
+                .
+            </p>
+        </body>
+    </sub-article>
+    <sub-article article-type="reply" id="sa2">
+        <front-stub>
+            <title-group>
+                <article-title>Author response</article-title>
+            </title-group>
+        </front-stub>
+        <body>
+            <p>Essential revisions:</p>
+            <disp-quote content-type="editor-comment">
+                <p>1) I am not sure that I understand ....</p>
+            </disp-quote>
+        </body>
+    </sub-article>
+</root>
