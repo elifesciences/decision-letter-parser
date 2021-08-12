@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import unittest
-import configparser as configparser
+import configparser
 from letterparser import conf
 
 
