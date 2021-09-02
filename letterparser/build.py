@@ -43,7 +43,7 @@ def build_articles(jats_content, file_name=None, config=None):
         if sciety_match:
             related_material = RelatedArticle()
             related_material.xlink_href = sciety_match.group(1)
-            related_material.ext_link_type = "hasRelatedMaterial"
+            related_material.ext_link_type = "continued-by"
             break
 
     # filter a list of decision letter sections to check against later
