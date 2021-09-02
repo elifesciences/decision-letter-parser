@@ -6,7 +6,7 @@
             <title-group>
                 <article-title>Editor's evaluation</article-title>
             </title-group>
-            <related-object link-type="hasRelatedMaterial" xlink:href="https://sciety.org/articles/activity/10.1101/865006"/>
+            <related-object link-type="continued-by" xlink:href="https://sciety.org/articles/activity/10.1101/865006"/>
         </front-stub>
         <body>
             <p>This is an Editor’s evaluation, previously called an acceptance summary, which explains what the Editors found interesting or important about the work presented in the article. It will typically be a short paragraph, or perhaps two. It will not contain figures or tables or maths.</p>
