@@ -142,6 +142,20 @@ class TestExtractLabelTitleContent(unittest.TestCase):
         )
         self.assertEqual(caption, "Another paragraph.")
 
+    def test_ext_link_tag(self):
+        "edge case with an ext-link tag in the title and challenging full stop separations"
+        content = '&lt;Author response image 2&gt;&lt;Author response image 2 title/legend&gt;<bold>Author response image 2.</bold> (Figure 2A from <ext-link ext-link-type="uri" xlink:href="https://example.org/one/two">(Anonymous et al., 2011)</ext-link>)<bold>.</bold> Comparison of Tests against Γ ( 4,5) (a = 0.05). The normality tests used were severely underpowered for n&lt;100.&lt;/Author response image 2 title/legend&gt;'
+        label, title, caption = build.extract_label_title_content(content)
+        self.assertEqual(label, "Author response image 2.")
+        self.assertEqual(
+            title,
+            '(Figure 2A from <ext-link ext-link-type="uri" xlink:href="https://example.org/one/two">(Anonymous et al., 2011)</ext-link>)<bold>.</bold> Comparison of Tests against Γ ( 4,5) (a = 0.',
+        )
+        self.assertEqual(
+            caption,
+            "05). The normality tests used were severely underpowered for n&lt;100.",
+        )
+
 
 class TestBuildFig(unittest.TestCase):
     def test_build_fig(self):
@@ -249,6 +263,37 @@ class TestBuildSubArticle(unittest.TestCase):
         self.assertEqual(
             article.content_blocks[0].attr["xlink:href"], "elife-00666-sa2-video1"
         )
+        self.assertEqual(article.content_blocks[0].content, expected_content)
+
+    def test_build_sub_article_graphic_ext_link(self):
+        doi = "10.7554/eLife.00666"
+        id_value = "sa2"
+        article_type = "reply"
+        manuscript = 666
+        content = (
+            "<p>&lt;Author response image 1&gt;</p><p>&lt;Author response image 1 title/legend&gt;"
+            "<bold>Author response image 1.</bold>"
+            ' Title with <ext-link xlink:href="https://example.org/">link</ext-link>.'
+            " Caption <sup>2+</sup>.&lt;/Author response image 1 title/legend&gt;</p>"
+        )
+        section = OrderedDict(
+            [("section_type", "author_response"), ("content", content)]
+        )
+        expected_content = (
+            "<label>Author response image 1.</label>"
+            "<caption>"
+            '<title>Title with <ext-link xlink:href="https://example.org/">link</ext-link>.</title>'
+            "<p>Caption <sup>2+</sup>.</p></caption>"
+            '<graphic mimetype="image" xlink:href="elife-00666-sa2-fig1" />'
+        )
+        article = build.build_sub_article(
+            section, self.config, article_type, id_value, doi, manuscript
+        )
+        self.assertEqual(article.doi, doi)
+        self.assertEqual(article.id, id_value)
+        self.assertEqual(article.manuscript, manuscript)
+        self.assertEqual(article.article_type, article_type)
+        self.assertEqual(article.content_blocks[0].block_type, "fig")
         self.assertEqual(article.content_blocks[0].content, expected_content)
 
 
