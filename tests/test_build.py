@@ -265,6 +265,37 @@ class TestBuildSubArticle(unittest.TestCase):
         )
         self.assertEqual(article.content_blocks[0].content, expected_content)
 
+    def test_build_sub_article_graphic_ext_link(self):
+        doi = "10.7554/eLife.00666"
+        id_value = "sa2"
+        article_type = "reply"
+        manuscript = 666
+        content = (
+            "<p>&lt;Author response image 1&gt;</p><p>&lt;Author response image 1 title/legend&gt;"
+            "<bold>Author response image 1.</bold>"
+            ' Title with <ext-link xlink:href="https://example.org/">link</ext-link>.'
+            " Caption <sup>2+</sup>.&lt;/Author response image 1 title/legend&gt;</p>"
+        )
+        section = OrderedDict(
+            [("section_type", "author_response"), ("content", content)]
+        )
+        expected_content = (
+            "<label>Author response image 1.</label>"
+            "<caption>"
+            '<title>Title with <ext-link xlink:href="https://example.org/">link</ext-link>.</title>'
+            "<p>Caption <sup>2+</sup>.</p></caption>"
+            '<graphic mimetype="image" xlink:href="elife-00666-sa2-fig1" />'
+        )
+        article = build.build_sub_article(
+            section, self.config, article_type, id_value, doi, manuscript
+        )
+        self.assertEqual(article.doi, doi)
+        self.assertEqual(article.id, id_value)
+        self.assertEqual(article.manuscript, manuscript)
+        self.assertEqual(article.article_type, article_type)
+        self.assertEqual(article.content_blocks[0].block_type, "fig")
+        self.assertEqual(article.content_blocks[0].content, expected_content)
+
 
 class TestSetContentBlocks(unittest.TestCase):
     def test_author_response_image(self):

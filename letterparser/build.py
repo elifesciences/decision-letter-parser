@@ -158,7 +158,7 @@ def build_sub_article(
                 image_file_name=image_file_name
             )
             content_block.content = re.sub(
-                r'xlink:href=".*?"', href, content_block.content
+                r'(<graphic.*?)xlink:href=".*?"', r"\1%s" % href, content_block.content
             )
             fig_num += 1
         elif content_block.block_type == "media":
