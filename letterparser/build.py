@@ -297,9 +297,14 @@ def extract_label_title_content(content):
             close_tag_count = title_content.count(utils.close_tag("italic"))
             open_bold_tag_count = title_content.count(utils.open_tag("bold"))
             close_bold_tag_count = title_content.count(utils.close_tag("bold"))
+            open_ext_link_tag_count = title_content.count(
+                utils.open_tag("ext-link").rstrip(">")
+            )
+            close_ext_link_tag_count = title_content.count(utils.close_tag("ext-link"))
             if (
                 open_tag_count != close_tag_count
                 or open_bold_tag_count != close_bold_tag_count
+                or open_ext_link_tag_count != close_ext_link_tag_count
             ):
                 title_content += title_part + "."
             else:

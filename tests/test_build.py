@@ -142,6 +142,20 @@ class TestExtractLabelTitleContent(unittest.TestCase):
         )
         self.assertEqual(caption, "Another paragraph.")
 
+    def test_ext_link_tag(self):
+        "edge case with an ext-link tag in the title and challenging full stop separations"
+        content = '&lt;Author response image 2&gt;&lt;Author response image 2 title/legend&gt;<bold>Author response image 2.</bold> (Figure 2A from <ext-link ext-link-type="uri" xlink:href="https://example.org/one/two">(Anonymous et al., 2011)</ext-link>)<bold>.</bold> Comparison of Tests against Γ ( 4,5) (a = 0.05). The normality tests used were severely underpowered for n&lt;100.&lt;/Author response image 2 title/legend&gt;'
+        label, title, caption = build.extract_label_title_content(content)
+        self.assertEqual(label, "Author response image 2.")
+        self.assertEqual(
+            title,
+            '(Figure 2A from <ext-link ext-link-type="uri" xlink:href="https://example.org/one/two">(Anonymous et al., 2011)</ext-link>)<bold>.</bold> Comparison of Tests against Γ ( 4,5) (a = 0.',
+        )
+        self.assertEqual(
+            caption,
+            "05). The normality tests used were severely underpowered for n&lt;100.",
+        )
+
 
 class TestBuildFig(unittest.TestCase):
     def test_build_fig(self):
