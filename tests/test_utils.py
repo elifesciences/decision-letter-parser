@@ -607,3 +607,29 @@ class TestFixNamespaces(unittest.TestCase):
         self.assertEqual(
             utils.xml_string_fix_namespaces(xml_string, self.root_tag), expected
         )
+
+
+@ddt
+class TestObjectIdFromUri(unittest.TestCase):
+    @data(
+        {
+            "uri": None,
+            "expected": None,
+        },
+        {
+            "uri": "https://sciety.org/articles/activity/10.1101/865006",
+            "expected": "10.1101/865006",
+        },
+        {
+            "uri": "https://example.org/10/1101/865006",
+            "expected": "https://example.org/10/1101/865006",
+        },
+        {
+            "uri": "https://example.org/10.1101/10.865006",
+            "expected": "10.1101/10.865006",
+        },
+    )
+    def test_object_id_from_uri(self, test_data):
+        self.assertEqual(
+            utils.object_id_from_uri(test_data.get("uri")), test_data.get("expected")
+        )
