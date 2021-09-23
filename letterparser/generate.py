@@ -151,11 +151,18 @@ def set_front_stub(parent, article):
         article_title_tag = SubElement(title_group_tag, "article-title")
         article_title_tag.text = article.title
     # add related-object link to Editor's evaluation
+    related_object_num = 1
     for related_material in article.related_articles:
         if related_material.ext_link_type and related_material.xlink_href:
             related_object_tag = SubElement(front_stub_tag, "related-object")
+            related_object_tag.set("id", "%sro%s" % (article.id, related_object_num))
+            related_object_tag.set("object-id-type", "id")
+            related_object_tag.set(
+                "object-id", utils.object_id_from_uri(related_material.xlink_href)
+            )
             related_object_tag.set("link-type", related_material.ext_link_type)
             related_object_tag.set("xlink:href", related_material.xlink_href)
+            related_object_num += 1
 
 
 def set_body(parent, article):
