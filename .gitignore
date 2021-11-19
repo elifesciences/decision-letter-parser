@@ -2,7 +2,6 @@
 *.pyc
 *.py~
 venv/*
-.tox/*
 build/
 dist/
 letterparser.egg-info
