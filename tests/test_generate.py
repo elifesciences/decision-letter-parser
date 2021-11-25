@@ -3,7 +3,7 @@
 import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 from ddt import ddt, data
 from elifearticle.article import ContentBlock
 from letterparser import generate
@@ -72,6 +72,58 @@ class TestGenerateOutputXMLEscaped(unittest.TestCase):
             b"&#x0026;&#x003C;&#x003E;&#x0022;</root>"
         )
         self.assertEqual(generate.output_xml_escaped(root), expected)
+
+
+class TestGenerateOutputXMLModified(unittest.TestCase):
+    def test_output_xml_modified(self):
+        """test non-pretty output of a simple ElementTree object"""
+        root = Element("root")
+        expected = b'<?xml version="1.0" encoding="utf-8"?><root/>'
+        self.assertEqual(generate.output_xml_modified(root), expected)
+
+    def test_output_xml_modified_character_entities(self):
+        """test replacing XML special character entities using a simple ElementTree object"""
+        root = Element("root")
+        root.text = '&<>"'
+        expected = (
+            b'<?xml version="1.0" encoding="utf-8"?><root>'
+            b"&#x0026;&#x003C;&#x003E;&#x0022;</root>"
+        )
+        self.assertEqual(generate.output_xml_modified(root), expected)
+
+    def test_output_xml_modified_unicode_entities(self):
+        """test replacing greek characters and similar from a simple ElementTree object"""
+        root = Element("root")
+        root.text = (
+            "\u00ba\u00cf\u03b1\u03b2"
+            "\u03b3\u03b4\u03b5\u03d5"
+            "\u03c3\u2014\u2019\u201c"
+            "\u201d\u2212"
+            "\U0001d400"
+        )
+        expected = (
+            b'<?xml version="1.0" encoding="utf-8"?><root>'
+            b"&#x00ba;&#x00cf;&#x03b1;&#x03b2;"
+            b"&#x03b3;&#x03b4;&#x03b5;&#x03d5;"
+            b"&#x03c3;&#x2014;&#x2019;&#x201c;"
+            b"&#x201d;&#x2212;"
+            b"&#x1d400;"
+            b"</root>"
+        )
+        self.assertEqual(generate.output_xml_modified(root), expected)
+
+    def test_output_xml_modified_mathml(self):
+        """test rewriting mml tag names on a simple ElementTree object"""
+        ElementTree.register_namespace("mml", "http://www.w3.org/1998/Math/MathML")
+        root = Element("root")
+        mml_math_tag = SubElement(root, "{http://www.w3.org/1998/Math/MathML}math")
+        expected = (
+            b'<?xml version="1.0" encoding="utf-8"?>'
+            b'<root xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+            b"<math/>"
+            b"</root>"
+        )
+        self.assertEqual(generate.output_xml_modified(root), expected)
 
 
 class TestGenerate(unittest.TestCase):

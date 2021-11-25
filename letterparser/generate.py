@@ -349,3 +349,12 @@ def output_xml(root, pretty=False, indent=""):
 def output_xml_escaped(root, pretty=False, indent=""):
     """output root XML Element to a string with character entities replaced"""
     return utils.replace_character_entities(output_xml(root, pretty, indent))
+
+
+def output_xml_modified(root, pretty=False, indent=""):
+    """output root XML Element to a string with many modified tags and characters"""
+    xml_string = output_xml(root, pretty, indent)
+    xml_string = utils.replace_character_entities(xml_string)
+    xml_string = utils.replace_unicode_entities(xml_string)
+    xml_string = utils.replace_math_mml_tags(xml_string)
+    return xml_string
