@@ -250,6 +250,17 @@ def xml_string_fix_namespaces(xml_string, root_tag):
     return xml_string.replace(root_tag_string, new_root_tag_string)
 
 
+def replace_strings(string, replacement_map):
+    """general purpose string replacement function"""
+    for from_string, to_string in replacement_map.items():
+        try:
+            string = string.replace(from_string, to_string)
+        except TypeError:
+            # convert string to bytes if required
+            string = string.encode("utf8").replace(from_string, to_string)
+    return string
+
+
 def replace_character_entities(xml_string):
     """replace standard XML character entities with hexadecimal replacements"""
     char_map = {
@@ -258,13 +269,47 @@ def replace_character_entities(xml_string):
         b"&lt;": b"&#x003C;",
         b"&quot;": b"&#x0022;",
     }
-    for from_char, to_char in char_map.items():
-        try:
-            xml_string = xml_string.replace(from_char, to_char)
-        except TypeError:
-            # convert string to bytes if required
-            xml_string = xml_string.encode("utf8").replace(from_char, to_char)
-    return xml_string
+    return replace_strings(xml_string, char_map)
+
+
+def unicode_entity_map():
+    "return a map of character to entity replacement values"
+    # a few particular characters to replace
+    char_map = {
+        "\u00ba": "&#x00ba;",  # ordinal or degree temp char
+        "\u00cf": "&#x00cf;",  # uppercase i umlaut
+        "\u2014": "&#x2014;",  # em dash
+        "\u2019": "&#x2019;",  # smart apostrophe
+        "\u201c": "&#x201c;",  # left smart quotation mark
+        "\u201d": "&#x201d;",  # right smart quotation mark
+        "\u2212": "&#x2212;",  # minus sign
+    }
+    # greek character ranges - U+0393 to U+03D6
+    for char_num in list(range(915, 983)):
+        char_map[chr(char_num)] = "&#x0%s;" % str(hex(char_num)).lstrip("0x")
+    # maths bold and bold italic characters - U+1D400 to U+1D66F
+    for char_num in list(range(119808, 120432)):
+        char_map[chr(char_num)] = "&#x%s;" % str(hex(char_num)).lstrip("0x")
+    return char_map
+
+
+def replace_unicode_entities(xml_string):
+    """replace a specific list of unicode characters with hexadecimal entityreplacements"""
+    char_map = unicode_entity_map()
+    # step through each character and replace characters
+    new_xml_string = ""
+    for char in xml_string.decode("utf8")[0:]:
+        new_xml_string += char_map.get(char, char)
+    return bytes(new_xml_string, "utf8")
+
+
+def replace_math_mml_tags(xml_string):
+    """replace a specific list of unicode characters with hexadecimal entityreplacements"""
+    replacement_map = {
+        b"<mml:": b"<",
+        b"</mml:": b"</",
+    }
+    return replace_strings(xml_string, replacement_map)
 
 
 def get_file_name_path(file_name):
