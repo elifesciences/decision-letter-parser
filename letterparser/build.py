@@ -281,6 +281,9 @@ def extract_label_title_content(content):
     label_content = parts_match[0][0]
     remainder = "".join(parts_match[0][1:])
     title_parts = remainder.split(".")
+    # if the first part contains an mml tag, it is probably too complicated to process as parts
+    if "<mml" in title_parts[0]:
+        title_parts = [remainder]
     title_label_match = r"^(.*)\&lt;.*\&gt;$"
     if len(title_parts) == 1:
         content_match = re.match(title_label_match, title_parts[0])
