@@ -156,6 +156,20 @@ class TestExtractLabelTitleContent(unittest.TestCase):
             "05). The normality tests used were severely underpowered for n&lt;100.",
         )
 
+    def test_mml_tag(self):
+        "edge case where a full stop in math formula should not be used as separate parts"
+        content = '&lt;Author response image 1&gt;&lt;Author response image 1 title/legend&gt;<bold>Author response image 1.</bold> For one participant <inline-formula><mml:math alttext="" display="inline"><mml:mspace width="0.222em" /></mml:math></inline-formula> is a formula.&lt;/Author response image 1 title/legend&gt;'
+        label, title, caption = build.extract_label_title_content(content)
+        self.assertEqual(label, "Author response image 1.")
+        self.assertEqual(
+            title,
+            'For one participant <inline-formula><mml:math alttext="" display="inline"><mml:mspace width="0.222em" /></mml:math></inline-formula> is a formula.',
+        )
+        self.assertEqual(
+            caption,
+            None,
+        )
+
 
 class TestBuildFig(unittest.TestCase):
     def test_build_fig(self):
