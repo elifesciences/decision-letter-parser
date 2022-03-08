@@ -100,6 +100,7 @@ class TestGenerateOutputXMLModified(unittest.TestCase):
             "\u03c3\u2014\u2019\u201c"
             "\u201d\u2212"
             "\U0001d400"
+            "\U0001d434"
         )
         expected = (
             b'<?xml version="1.0" encoding="utf-8"?><root>'
@@ -107,7 +108,8 @@ class TestGenerateOutputXMLModified(unittest.TestCase):
             b"&#x03b3;&#x03b4;&#x03b5;&#x03d5;"
             b"&#x03c3;&#x2014;&#x2019;&#x201c;"
             b"&#x201d;&#x2212;"
-            b"&#x1d400;"
+            b"\xf0\x9d\x90\x80"
+            b"&#x1d434;"
             b"</root>"
         )
         self.assertEqual(generate.output_xml_modified(root), expected)
