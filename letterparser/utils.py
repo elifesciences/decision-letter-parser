@@ -287,8 +287,8 @@ def unicode_entity_map():
     # greek character ranges - U+0393 to U+03D6
     for char_num in list(range(915, 983)):
         char_map[chr(char_num)] = "&#x0%s;" % str(hex(char_num)).lstrip("0x")
-    # maths italic and bold italic characters - U+1D434 to U+1D66F
-    for char_num in list(range(119860, 120432)):
+    # characters after maths italic and bold italic ones - U+1D49C to U+1D7C9
+    for char_num in list(range(119964, 120777)):
         char_map[chr(char_num)] = "&#x%s;" % str(hex(char_num)).lstrip("0x")
     return char_map
 
