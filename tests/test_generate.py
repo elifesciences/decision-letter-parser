@@ -111,7 +111,7 @@ class TestGenerateOutputXMLModified(unittest.TestCase):
             b"&#x201d;&#x2212;"
             b"\xf0\x9d\x90\x80"
             b"\xf0\x9d\x90\xb4"
-            b"&#x1d49c;"
+            b"\xf0\x9d\x92\x9c"
             b"</root>"
         )
         self.assertEqual(generate.output_xml_modified(root), expected)
