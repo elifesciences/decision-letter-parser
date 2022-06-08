@@ -3,6 +3,7 @@
 "utility helper functions"
 import os
 import re
+import unicodedata
 from elifetools import xmlio
 from elifetools import utils as etoolsutils
 
@@ -13,6 +14,14 @@ XML_NAMESPACE_MAP = {
     "mml": "http://www.w3.org/1998/Math/MathML",
     "xlink": "http://www.w3.org/1999/xlink",
 }
+
+# characters after maths italic and bold italic ones - U+1D49C to U+1D7C9
+MATH_SYMBOL_CHARS = [chr(char_num) for char_num in list(range(119964, 120777))]
+
+# problem characters e.g. 8232 is a LINE SEPARATOR character
+PROBLEM_PUNCTUATION_CHARS = [chr(8232)]
+
+PROBLEM_CHARS = PROBLEM_PUNCTUATION_CHARS + MATH_SYMBOL_CHARS
 
 
 def reparsing_namespaces(namespace_map):
@@ -250,6 +259,24 @@ def xml_string_fix_namespaces(xml_string, root_tag):
     return xml_string.replace(root_tag_string, new_root_tag_string)
 
 
+def detect_characters(string, char_list):
+    "return a list of characters found in string"
+    return [char for char in char_list if char in string]
+
+
+def detect_problem_characters(string):
+    "return a list of problematic characters found in the string"
+    if isinstance(string, bytes):
+        # convert bytes to string if required
+        string = string.decode("utf8")
+    return detect_characters(string, PROBLEM_CHARS)
+
+
+def unicode_char_name(char):
+    "look up the name of a unicode character"
+    return unicodedata.name(char)
+
+
 def replace_strings(string, replacement_map):
     """general purpose string replacement function"""
     for from_string, to_string in replacement_map.items():
@@ -287,9 +314,6 @@ def unicode_entity_map():
     # greek character ranges - U+0393 to U+03D6
     for char_num in list(range(915, 983)):
         char_map[chr(char_num)] = "&#x0%s;" % str(hex(char_num)).lstrip("0x")
-    # characters after maths italic and bold italic ones - U+1D49C to U+1D7C9
-    for char_num in list(range(119964, 120777)):
-        char_map[chr(char_num)] = "&#x%s;" % str(hex(char_num)).lstrip("0x")
     return char_map
 
 

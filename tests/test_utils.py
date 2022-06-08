@@ -551,6 +551,28 @@ class TestRemoveComplexScriptsStyles(unittest.TestCase):
         self.assertEqual(xml_string, expected)
 
 
+class TestDetectProblemCharacters(unittest.TestCase):
+    def test_detect_problem_characters_maths(self):
+        string = "𝓮𝓛𝓲𝓯𝓮"
+        expected = ["𝓛", "𝓮", "𝓯", "𝓲"]
+        problem_chars = utils.detect_problem_characters(string)
+        self.assertEqual(problem_chars, expected)
+
+    def test_detect_problem_characters_punctuation(self):
+        "line feed character test"
+        string = bytes(chr(8232), encoding="utf8")
+        expected = ["\u2028"]
+        problem_chars = utils.detect_problem_characters(string)
+        self.assertEqual(problem_chars, expected)
+
+
+class TestUnicodeCharName(unittest.TestCase):
+    def test_unicode_char_name(self):
+        char = "\u2028"
+        expected = "LINE SEPARATOR"
+        self.assertEqual(utils.unicode_char_name(char), expected)
+
+
 class TestReplaceCharacterEntities(unittest.TestCase):
     def test_replace_character_entities(self):
         xml_string = b"&quot;Test&quot; &amp; &lt;&gt;"
