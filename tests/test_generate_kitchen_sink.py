@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import sys
 import unittest
 from elifearticle.article import ContentBlock
 from letterparser import generate
@@ -237,4 +238,14 @@ class TestGenerateKitchenSink(unittest.TestCase):
         root = generate.generate(articles)
         pretty_xml = generate.output_xml(root, pretty=True, indent="    ")
         expected = read_fixture("kitchen_sink.xml", mode="rb")
+        if sys.version_info < (3, 8):
+            # pre Python 3.8 tag attributes are automatically alphabetised
+            expected = expected.replace(
+                b'<media mimetype="video" xlink:href="elife-00666-sa2-video1.mp4" id="sa2video1">',
+                b'<media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">',
+            )
+            expected = expected.replace(
+                rb'<mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2">',
+                rb'<mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2" xmlns:mml="http://www.w3.org/1998/Math/MathML">',
+            )
         self.assertEqual(pretty_xml, expected)

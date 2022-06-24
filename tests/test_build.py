@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import sys
 import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
@@ -58,6 +59,12 @@ class TestSplitContentSections(unittest.TestCase):
         )
         expected = read_fixture("author_response_image_1_sections.py")
         sections = build.split_content_sections(section)
+        if sys.version_info < (3, 8):
+            # pre Python 3.8 tag attributes are in a different order
+            sections[-1]["content"] = sections[-1]["content"].replace(
+                '<mml:math alttext="n" display="inline">',
+                '<mml:math display="inline" alttext="n">',
+            )
         self.assertEqual(sections, expected)
 
 
@@ -318,6 +325,12 @@ class TestSetContentBlocks(unittest.TestCase):
             [("section_type", "author_response"), ("content", content)]
         )
         expected = read_fixture("author_response_image_1_content_block.py")
+        if sys.version_info < (3, 8):
+            # pre Python 3.8 tag attributes are automatically alphabetised
+            expected.content = expected.content.replace(
+                '<mml:math display="inline" alttext="n">',
+                '<mml:math alttext="n" display="inline">',
+            )
         article = Article()
         build.set_content_blocks(article, section)
         self.assertEqual(article.content_blocks[0].block_type, expected.block_type)
