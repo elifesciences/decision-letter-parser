@@ -64,7 +64,7 @@ EXPECTED = [
                 "content",
                 (
                     '<p xmlns:mml="http://www.w3.org/1998/Math/MathML">under symmetrical ionic conditions.'
-                    ' The number of barriers <inline-formula><mml:math alttext="n" display="inline">'
+                    ' The number of barriers <inline-formula><mml:math display="inline" alttext="n">'
                     "<mml:mi>n</mml:mi></mml:math></inline-formula> have their usual meanings."
                     "&lt;/Author response image 1 title/legend&gt;</p>"
                 ),

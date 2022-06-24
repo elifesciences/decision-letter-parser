@@ -112,7 +112,7 @@
                     </tbody>
                 </table>
             </table-wrap>
-            <media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">
+            <media mimetype="video" xlink:href="elife-00666-sa2-video1.mp4" id="sa2video1">
                 <label>Author response video 1.</label>
                 <caption>
                     <p>Caption and/or a title is required for all author response assets</p>
@@ -147,7 +147,7 @@
             <p>
                 May also contain a formula as a block
                 <disp-formula id="sa2equ1">
-                    <mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2" xmlns:mml="http://www.w3.org/1998/Math/MathML">
+                    <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2">
                         <mml:mrow>
                             <mml:mi>ϕ</mml:mi>
                             <mml:mo>=</mml:mo>

@@ -112,7 +112,7 @@
                     </tbody>
                 </table>
             </table-wrap>
-            <media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">
+            <media mimetype="video" xlink:href="elife-00666-sa2-video1.mp4" id="sa2video1">
                 <label>Author response video 1.</label>
                 <caption>
                     <title>Caption and/or a title is required for all author response assets</title>
@@ -123,7 +123,7 @@
             <p>
                 Adding some MathML to the sub-article. 
                 <inline-formula>
-                    <mml:math alttext="m{\overset{}{p}}_{m} = 0" display="inline" id="sa2m1">
+                    <mml:math display="inline" alttext="m{\overset{}{p}}_{m} = 0" id="sa2m1">
                         <mml:mrow>
                             <mml:mi>m</mml:mi>
                             <mml:msub>
@@ -142,7 +142,7 @@
             <p>May also contain a formula as a block</p>
             <p>
                 <disp-formula id="sa2equ1">
-                    <mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" display="block" id="sa2m2">
+                    <mml:math display="block" alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2">
                         <mml:mrow>
                             <mml:mi>ϕ</mml:mi>
                             <mml:mo>=</mml:mo>
@@ -233,7 +233,7 @@
                     </tbody>
                 </table>
             </table-wrap>
-            <media id="sa2video2" mimetype="video" xlink:href="elife-00666-sa2-video2.mp4">
+            <media mimetype="video" xlink:href="elife-00666-sa2-video2.mp4" id="sa2video2">
                 <label>Author response video 2.</label>
             </media>
             <p>Here is some other formatting such as and a bulleted list:</p>
