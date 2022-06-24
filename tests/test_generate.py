@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import sys
 import unittest
 from collections import OrderedDict
 from xml.etree import ElementTree
@@ -176,6 +177,24 @@ class TestGenerateKitchenSinkZip(unittest.TestCase):
         """simple test for code coverage"""
         file_name = data_path("elife-00666.zip")
         xml_string = read_fixture("elife-00666.xml", mode="rb")
+        if sys.version_info < (3, 8):
+            # pre Python 3.8 tag attributes are in a different order
+            xml_string = xml_string.replace(
+                b'<media mimetype="video" xlink:href="elife-00666-sa2-video1.mp4" id="sa2video1">',
+                b'<media id="sa2video1" mimetype="video" xlink:href="elife-00666-sa2-video1.mp4">',
+            )
+            xml_string = xml_string.replace(
+                rb'<mml:math display="inline" alttext="m{\overset{}{p}}_{m} = 0" id="sa2m1">',
+                rb'<mml:math alttext="m{\overset{}{p}}_{m} = 0" display="inline" id="sa2m1">',
+            )
+            xml_string = xml_string.replace(
+                rb'<mml:math display="block" alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" id="sa2m2">',
+                rb'<mml:math alttext="\phi = e^{- \frac{\text{zFV}}{\text{nRT}}}" display="block" id="sa2m2">',
+            )
+            xml_string = xml_string.replace(
+                b'<media mimetype="video" xlink:href="elife-00666-sa2-video2.mp4" id="sa2video2">',
+                b'<media id="sa2video2" mimetype="video" xlink:href="elife-00666-sa2-video2.mp4">',
+            )
         config = parse_raw_config(raw_config("elife"))
         pretty_xml = generate.generate_xml_from_zip(
             file_name, pretty=True, indent="    ", config=config
@@ -284,6 +303,12 @@ class TestEditorEvaluation(unittest.TestCase):
     def test_generate_editor_evaluation(self):
         file_name = data_path("elife-68041.docx")
         expected = read_fixture("elife-68041.xml", mode="rb")
+        if sys.version_info < (3, 8):
+            # pre Python 3.8 tag attributes are in a different order
+            expected = expected.replace(
+                b'<related-object id="sa0ro1" object-id-type="id" object-id="10.1101/865006" link-type="continued-by" xlink:href="https://sciety.org/articles/activity/10.1101/865006"/>',
+                b'<related-object id="sa0ro1" link-type="continued-by" object-id="10.1101/865006" object-id-type="id" xlink:href="https://sciety.org/articles/activity/10.1101/865006"/>',
+            )
         config = parse_raw_config(raw_config("elife"))
         pretty_xml = generate.generate_xml_from_docx(
             file_name, pretty=True, indent="    ", config=config

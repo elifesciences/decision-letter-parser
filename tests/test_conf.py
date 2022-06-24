@@ -16,11 +16,11 @@ def build_raw_config_for_testing(value_name, value):
 class TestConf(unittest.TestCase):
     def setUp(self):
         # some values for testing
-        self.boolean_value = u"True"
+        self.boolean_value = "True"
         self.boolean_expected = True
-        self.int_value = u"42"
+        self.int_value = "42"
         self.int_expected = 42
-        self.list_value = u"[1,1,2,3,5]"
+        self.list_value = "[1,1,2,3,5]"
         self.list_expected = [1, 1, 2, 3, 5]
 
     def test_load_config(self):
@@ -37,7 +37,7 @@ class TestConf(unittest.TestCase):
     def test_boolean_config(self):
         "test parsing a boolean value"
         value = self.boolean_value
-        value_name = u"test"
+        value_name = "test"
         expected = self.boolean_expected
         raw_config = build_raw_config_for_testing(value_name, value)
         self.assertEqual(conf.boolean_config(raw_config, value_name), expected)
@@ -45,7 +45,7 @@ class TestConf(unittest.TestCase):
     def test_int_config(self):
         "test parsing an int value"
         value = self.int_value
-        value_name = u"test"
+        value_name = "test"
         expected = self.int_expected
         raw_config = build_raw_config_for_testing(value_name, value)
         self.assertEqual(conf.int_config(raw_config, value_name), expected)
@@ -53,7 +53,7 @@ class TestConf(unittest.TestCase):
     def test_list_config(self):
         "test parsing a list value"
         value = self.list_value
-        value_name = u"test"
+        value_name = "test"
         expected = self.list_expected
         raw_config = build_raw_config_for_testing(value_name, value)
         self.assertEqual(conf.list_config(raw_config, value_name), expected)
@@ -61,14 +61,14 @@ class TestConf(unittest.TestCase):
     def test_parse_raw_config(self):
         "test parsing a raw config of all the different value types"
         # override the library values
-        conf.BOOLEAN_VALUES = [u"test_boolean"]
-        conf.INT_VALUES = [u"test_int"]
-        conf.LIST_VALUES = [u"test_list"]
+        conf.BOOLEAN_VALUES = ["test_boolean"]
+        conf.INT_VALUES = ["test_int"]
+        conf.LIST_VALUES = ["test_list"]
         # build a config object
         config = configparser.ConfigParser(interpolation=None)
-        config["DEFAULT"][u"test_boolean"] = self.boolean_value
-        config["DEFAULT"][u"test_int"] = self.int_value
-        config["DEFAULT"][u"test_list"] = self.list_value
+        config["DEFAULT"]["test_boolean"] = self.boolean_value
+        config["DEFAULT"]["test_int"] = self.int_value
+        config["DEFAULT"]["test_list"] = self.list_value
         # parse the raw config for coverage
         config_dict = conf.parse_raw_config(config["DEFAULT"])
         # assert some things

@@ -14,24 +14,18 @@ class TestParse(unittest.TestCase):
     @patch.object(pypandoc, "convert_file")
     def test_pandoc_output_exception(self, fake_convert_file):
         fake_convert_file.side_effect = OSError()
-        self.assertRaises(OSError, parse.pandoc_output("file_name"))
+        self.assertEqual(parse.pandoc_output("file_name"), None)
 
     @patch.object(docker_lib, "call_pandoc")
     def test_docker_pandoc_output_with_config(self, fake_call_pandoc):
         config = {"docker_image": "image_name"}
         fake_call_pandoc.side_effect = requests.exceptions.ConnectionError()
-        self.assertRaises(
-            requests.exceptions.ConnectionError,
-            parse.docker_pandoc_output("file_name", config),
-        )
+        self.assertEqual(parse.docker_pandoc_output("file_name", config), None)
 
     @patch.object(docker_lib, "call_pandoc")
     def test_docker_pandoc_output_exception(self, fake_call_pandoc):
         fake_call_pandoc.side_effect = requests.exceptions.ConnectionError()
-        self.assertRaises(
-            requests.exceptions.ConnectionError,
-            parse.docker_pandoc_output("file_name", None),
-        )
+        self.assertEqual(parse.docker_pandoc_output("file_name", None), None)
 
     @patch.object(parse, "docker_pandoc_output")
     @patch.object(parse, "pandoc_output")
