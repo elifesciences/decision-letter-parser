@@ -7,6 +7,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 from ddt import ddt, data
 from elifearticle.article import ContentBlock
+from jatsgenerator import build as jats_build
 from letterparser import generate
 from letterparser.conf import raw_config, parse_raw_config
 from tests import data_path, helpers, read_fixture
@@ -578,8 +579,8 @@ class TestXmlStringAssetXref(unittest.TestCase):
 class TestGenerateMaxLevel(unittest.TestCase):
     def test_generate_max_level(self):
         """test exceeding the MAX_LEVEL of nested content"""
-        max_level_original = generate.MAX_LEVEL
-        generate.MAX_LEVEL = 1
+        max_level_original = jats_build.MAX_LEVEL
+        jats_build.MAX_LEVEL = 1
         # add two levels of nested content
         article = helpers.base_decision_letter()
         parent_block = ContentBlock("p", "First level paragraph.")
@@ -589,4 +590,4 @@ class TestGenerateMaxLevel(unittest.TestCase):
         articles = [article]
         self.assertRaises(Exception, generate.generate, articles)
         # reset the module MAX_LEVEL value
-        generate.MAX_LEVEL = max_level_original
+        jats_build.MAX_LEVEL = max_level_original

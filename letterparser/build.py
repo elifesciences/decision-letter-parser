@@ -6,6 +6,7 @@ from xml.etree.ElementTree import Element, SubElement
 from collections import OrderedDict
 import elifearticle.utils as eautils
 from elifearticle.article import Article, ContentBlock, RelatedArticle
+from jatsgenerator import utils as jats_utils
 from letterparser import parse, utils
 from letterparser.conf import raw_config, parse_raw_config
 
@@ -212,11 +213,11 @@ def split_content_sections(section):
     """split first child level tags into content parts"""
     content_sections = []
     # register namespaces
-    for prefix, uri in utils.XML_NAMESPACE_MAP.items():
+    for prefix, uri in jats_utils.XML_NAMESPACE_MAP.items():
         ElementTree.register_namespace(prefix, uri)
     # parse content
     xml_string = "<root %s>%s</root>" % (
-        utils.reparsing_namespaces(utils.XML_NAMESPACE_MAP),
+        jats_utils.reparsing_namespaces(jats_utils.XML_NAMESPACE_MAP),
         section.get("content"),
     )
     section_xml = ElementTree.fromstring(xml_string)
@@ -256,7 +257,7 @@ def clean_math_alternatives(section_xml):
         ".//inline-formula"
     ):
         mml_tag = formula_tag.find(
-            ".//{http://www.w3.org/1998/Math/MathML}math", utils.XML_NAMESPACE_MAP
+            ".//{http://www.w3.org/1998/Math/MathML}math", jats_utils.XML_NAMESPACE_MAP
         )
         tex_math_tag = formula_tag.find(".//tex-math")
         mml_tag.set("alttext", tex_math_tag.text)
@@ -341,11 +342,15 @@ def fig_element(label, title, content):
         caption_tag = SubElement(fig_tag, "caption")
 
     if title:
-        utils.append_to_parent_tag(caption_tag, "title", title, utils.XML_NAMESPACE_MAP)
+        jats_utils.append_to_tag(
+            caption_tag, "title", title, jats_utils.XML_NAMESPACE_MAP
+        )
 
     # append content as a p tag in the caption
     if content:
-        utils.append_to_parent_tag(caption_tag, "p", content, utils.XML_NAMESPACE_MAP)
+        jats_utils.append_to_tag(
+            caption_tag, "p", content, jats_utils.XML_NAMESPACE_MAP
+        )
 
     graphic_tag = SubElement(fig_tag, "graphic")
     graphic_tag.set("mimetype", "image")
@@ -370,14 +375,14 @@ def media_element(label, title, content, mimetype="video"):
     if title or content:
         caption_tag = SubElement(media_tag, "caption")
         if title:
-            utils.append_to_parent_tag(
-                caption_tag, "title", title, utils.XML_NAMESPACE_MAP
+            jats_utils.append_to_tag(
+                caption_tag, "title", title, jats_utils.XML_NAMESPACE_MAP
             )
 
         # append content as a p tag in the caption
         if content:
-            utils.append_to_parent_tag(
-                caption_tag, "p", content, utils.XML_NAMESPACE_MAP
+            jats_utils.append_to_tag(
+                caption_tag, "p", content, jats_utils.XML_NAMESPACE_MAP
             )
 
     return media_tag
@@ -388,8 +393,8 @@ def disp_quote_element(content):
     root_tag = Element("disp-quote")
 
     if content:
-        utils.append_to_parent_tag(
-            root_tag, "disp-quote", content, utils.XML_NAMESPACE_MAP
+        jats_utils.append_to_tag(
+            root_tag, "disp-quote", content, jats_utils.XML_NAMESPACE_MAP
         )
 
     return root_tag[0]
@@ -477,20 +482,20 @@ def table_wrap_element(label, title, content, table):
     if title or content:
         caption_tag = SubElement(table_wrap_tag, "caption")
         if title:
-            utils.append_to_parent_tag(
-                caption_tag, "title", title, utils.XML_NAMESPACE_MAP
+            jats_utils.append_to_tag(
+                caption_tag, "title", title, jats_utils.XML_NAMESPACE_MAP
             )
 
         # append content as a p tag in the caption
         if content:
-            utils.append_to_parent_tag(
-                caption_tag, "p", content, utils.XML_NAMESPACE_MAP
+            jats_utils.append_to_tag(
+                caption_tag, "p", content, jats_utils.XML_NAMESPACE_MAP
             )
 
     if table:
         clean_table = table_content(table)
-        utils.append_to_parent_tag(
-            table_wrap_tag, "table", clean_table, utils.XML_NAMESPACE_MAP
+        jats_utils.append_to_tag(
+            table_wrap_tag, "table", clean_table, jats_utils.XML_NAMESPACE_MAP
         )
         # add attributes to the table tag
         table_tag = table_wrap_tag[-1]
