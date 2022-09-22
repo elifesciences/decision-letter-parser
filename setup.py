@@ -16,6 +16,7 @@ setup(
     install_requires=[
         "elifearticle",
         "elifetools",
+        "jatsgenerator>=0.3.0",
         "pypandoc",
         "requests",
         "docker",

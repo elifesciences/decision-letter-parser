@@ -6,11 +6,9 @@ from collections import OrderedDict
 from xml.dom import minidom
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
+from jatsgenerator import build as jats_build
+from jatsgenerator import utils as jats_utils
 from letterparser import build, parse, utils, zip_lib
-
-
-# max level of recursion adding content blocks supported
-MAX_LEVEL = 5
 
 
 def set_if_value(element, name, value):
@@ -87,7 +85,7 @@ def generate(articles, root_tag="root", temp_dir="tmp"):
         set_if_value(sub_article_tag, "article-type", article.article_type)
         set_if_value(sub_article_tag, "id", article.id)
         set_front_stub(sub_article_tag, article)
-        set_body(sub_article_tag, article)
+        jats_build.set_body(sub_article_tag, article)
         # set tag id attributes per sub-article
         set_id_attributes(sub_article_tag, "mml:math", article.id)
         set_id_attributes(sub_article_tag, "disp-formula", article.id)
@@ -143,69 +141,11 @@ def set_id_attributes(root, tag_name, article_id):
 def set_front_stub(parent, article):
     front_stub_tag = SubElement(parent, "front-stub")
     if article.doi:
-        doi_tag = SubElement(front_stub_tag, "article-id")
-        doi_tag.set("pub-id-type", "doi")
-        doi_tag.text = article.doi
+        jats_build.set_article_id(front_stub_tag, article)
     if article.title:
-        title_group_tag = SubElement(front_stub_tag, "title-group")
-        article_title_tag = SubElement(title_group_tag, "article-title")
-        article_title_tag.text = article.title
+        jats_build.set_title_group(front_stub_tag, article)
     # add related-object link to Editor's evaluation
-    related_object_num = 1
-    for related_material in article.related_articles:
-        if related_material.ext_link_type and related_material.xlink_href:
-            related_object_tag = SubElement(front_stub_tag, "related-object")
-            related_object_tag.set("id", "%sro%s" % (article.id, related_object_num))
-            related_object_tag.set("object-id-type", "id")
-            related_object_tag.set(
-                "object-id", utils.object_id_from_uri(related_material.xlink_href)
-            )
-            related_object_tag.set("link-type", related_material.ext_link_type)
-            related_object_tag.set("xlink:href", related_material.xlink_href)
-            related_object_num += 1
-
-
-def set_body(parent, article):
-    body_tag = SubElement(parent, "body")
-    set_content_blocks(body_tag, article.content_blocks)
-    return body_tag
-
-
-def set_content_blocks(parent, content_blocks, level=1):
-    if level > MAX_LEVEL:
-        raise Exception("Maximum level of nested content blocks reached")
-    for block in content_blocks:
-        block_tag = None
-        if block.block_type in [
-            "boxed-text",
-            "disp-formula",
-            "disp-quote",
-            "fig",
-            "list",
-            "media",
-            "p",
-            "table-wrap",
-        ]:
-            # retain standard tag attributes as well as any specific ones from the block object
-            if block.content:
-                utils.append_to_parent_tag(
-                    parent,
-                    block.block_type,
-                    block.content,
-                    utils.XML_NAMESPACE_MAP,
-                    attributes=block.attr_names(),
-                    attributes_text=block.attr_string(),
-                )
-                block_tag = parent[-1]
-            else:
-                # add empty tags too
-                block_tag = SubElement(parent, block.block_type)
-                block_tag.text = block.content
-                for key, value in block.attr.items():
-                    block_tag.set(key, value)
-        if block_tag is not None and block.content_blocks:
-            # recursion
-            set_content_blocks(block_tag, block.content_blocks, level + 1)
+    jats_build.set_related_object(front_stub_tag, article)
 
 
 def labels(root):
@@ -252,8 +192,8 @@ def p_tag_parent_asset_xref(p_tag_parent, asset_labels):
 
         if tag_string != modified_tag_string:
             # add namespaces before parsing again
-            p_tag_string = "<p %s>" % utils.reparsing_namespaces(
-                utils.XML_NAMESPACE_MAP
+            p_tag_string = "<p %s>" % jats_utils.reparsing_namespaces(
+                jats_utils.XML_NAMESPACE_MAP
             )
             modified_tag_string = re.sub(
                 r"^<p>", p_tag_string, str(modified_tag_string)
