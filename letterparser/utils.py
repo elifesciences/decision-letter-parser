@@ -8,8 +8,8 @@ from elifetools import xmlio
 from elifetools import utils as etoolsutils
 
 
-# characters after maths italic and bold italic ones - U+1D49C to U+1D7C9
-MATH_SYMBOL_CHARS = [chr(char_num) for char_num in list(range(119964, 120777))]
+# characters after maths italic and bold italic ones - U+1D400 to U+1D7C9
+MATH_SYMBOL_CHARS = [chr(char_num) for char_num in list(range(119808, 120777))]
 
 # problem characters e.g. 8232 is a LINE SEPARATOR character
 PROBLEM_PUNCTUATION_CHARS = [chr(8232)]
