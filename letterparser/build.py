@@ -58,7 +58,7 @@ def build_articles(jats_content, file_name=None, config=None):
     if [
         section
         for section in sections
-        if section.get("section_type") == "editors_evaluation"
+        if section.get("section_type") in ["editors_evaluation", "elife_assessment"]
     ]:
         id_count = 0
 
@@ -84,10 +84,15 @@ def build_articles(jats_content, file_name=None, config=None):
         manuscript = utils.manuscript_from_file_name(file_name)
         doi = build_doi(file_name, id_value, config)
 
-        if section.get("section_type") == "editors_evaluation":
-            article = build_editors_evaluation(
-                section, config, id_value, doi, manuscript
-            )
+        if section.get("section_type") in ["editors_evaluation", "elife_assessment"]:
+            if section.get("section_type") == "editors_evaluation":
+                article = build_editors_evaluation(
+                    section, config, id_value, doi, manuscript
+                )
+            if section.get("section_type") == "elife_assessment":
+                article = build_elife_assessment(
+                    section, config, id_value, doi, manuscript
+                )
             if related_material:
                 article.related_articles = [related_material]
         elif section.get("section_type") == "decision_letter":
@@ -119,6 +124,10 @@ def build_editors_evaluation(section, config, id_value=None, doi=None, manuscrip
     return build_sub_article(
         section, config, "editor-report", id_value, doi, manuscript
     )
+
+
+def build_elife_assessment(section, config, id_value=None, doi=None, manuscript=None):
+    return build_editors_evaluation(section, config, id_value, doi, manuscript)
 
 
 def build_decision_letter(

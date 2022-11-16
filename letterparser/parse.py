@@ -11,6 +11,7 @@ DEFAULT_DOCKER_IMAGE = "pandoc/core:2.9.1.1"
 
 SECTION_MAP = {
     "editors_evaluation": "<p><bold>Editors evaluation</bold></p>",
+    "elife_assessment": "<p><bold>eLife assessment</bold></p>",
     "preamble": "<p><bold>Preamble</bold></p>",
     "decision_letter": "<p><bold>Decision letter</bold></p>",
     "author_response": "<p><bold>Author response</bold></p>",
