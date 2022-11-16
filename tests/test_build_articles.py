@@ -40,6 +40,26 @@ class TestBuildArticles(unittest.TestCase):
         self.assertEqual(articles[0].content_blocks[1].block_type, "p")
         self.assertEqual(articles[0].content_blocks[1].content, "Test")
 
+    def test_build_articles_elife_assessment(self):
+        "test building eLife assessment section"
+        jats_content = (
+            "<p><bold>eLife assessment</bold></p><p>Test</p>"
+            "<p><bold>Preamble</bold></p>"
+            '<p><ext-link xlink:href="https://sciety.org/test">Link</ext-link></p>'
+        )
+        articles = build.build_articles(jats_content, config=self.config)
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0].article_type, "editor-report")
+        self.assertEqual(articles[0].content_blocks[0].block_type, "p")
+        self.assertEqual(
+            articles[0].content_blocks[0].content,
+            "Test",
+        )
+        self.assertEqual(
+            articles[0].related_articles[0].xlink_href, "https://sciety.org/test"
+        )
+        self.assertEqual(articles[0].related_articles[0].ext_link_type, "continued-by")
+
     def test_build_articles_fig(self):
         """edge case with fig caption and block order"""
         file_name = "elife-00666.docx"
