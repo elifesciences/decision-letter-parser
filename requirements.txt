@@ -1,7 +1,7 @@
 configparser==3.5.0
 coverage==6.4.2
 ddt==1.1.0
-docker==4.0.2
+docker==6.1.2
 elifearticle==0.4.0
 elifetools==0.17.0
 jatsgenerator==0.3.0
